@@ -9,7 +9,6 @@
 #import <Foundation/Foundation.h>
 
 @interface DFClassParser : NSObject
-
-- (void)parseFile:(NSString*)fileName;
-
+- (id)initWithFileName:(NSString*)fileName;
+- (void)parse;
 @end
