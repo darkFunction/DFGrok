@@ -1,0 +1,7 @@
+//
+// Prefix header for all source files of the 'ObjC2yUML' target in the 'ObjC2yUML' project
+//
+
+#ifdef __OBJC__
+    #import <Foundation/Foundation.h>
+#endif
