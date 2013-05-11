@@ -47,7 +47,7 @@ static IndexerCallbacks indexerCallbacks = {
     return self;
 }
 
-- (void)parseFile:(NSString*)fileName {
+- (void)parse {
 
     CXIndex index = clang_createIndex(1, 1);
     if (!index) {
