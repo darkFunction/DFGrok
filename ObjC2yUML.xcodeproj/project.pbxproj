@@ -1,0 +1,259 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		386B490C173E734F004174C9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 386B490B173E734F004174C9 /* Foundation.framework */; };
+		386B490F173E734F004174C9 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 386B490E173E734F004174C9 /* main.m */; };
+		386B4913173E734F004174C9 /* ObjC2yUML.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 386B4912173E734F004174C9 /* ObjC2yUML.1 */; };
+		386B491A173E80C9004174C9 /* libclang.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 386B4919173E80C9004174C9 /* libclang.dylib */; };
+		386B491D173E81C2004174C9 /* DFClassParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 386B491C173E81C2004174C9 /* DFClassParser.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		386B4905173E734F004174C9 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+				386B4913173E734F004174C9 /* ObjC2yUML.1 in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		386B4907173E734F004174C9 /* ObjC2yUML */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ObjC2yUML; sourceTree = BUILT_PRODUCTS_DIR; };
+		386B490B173E734F004174C9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		386B490E173E734F004174C9 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		386B4911173E734F004174C9 /* ObjC2yUML-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ObjC2yUML-Prefix.pch"; sourceTree = "<group>"; };
+		386B4912173E734F004174C9 /* ObjC2yUML.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = ObjC2yUML.1; sourceTree = "<group>"; };
+		386B4919173E80C9004174C9 /* libclang.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libclang.dylib; path = "../../../../../../usr/lib/clang+llvm-3.2-x86_64-apple-darwin11/lib/libclang.dylib"; sourceTree = "<group>"; };
+		386B491B173E81C2004174C9 /* DFClassParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFClassParser.h; sourceTree = "<group>"; };
+		386B491C173E81C2004174C9 /* DFClassParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DFClassParser.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		386B4904173E734F004174C9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				386B490C173E734F004174C9 /* Foundation.framework in Frameworks */,
+				386B491A173E80C9004174C9 /* libclang.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		386B48FC173E734F004174C9 = {
+			isa = PBXGroup;
+			children = (
+				386B490D173E734F004174C9 /* ObjC2yUML */,
+				386B490A173E734F004174C9 /* Frameworks */,
+				386B4908173E734F004174C9 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		386B4908173E734F004174C9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				386B4907173E734F004174C9 /* ObjC2yUML */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		386B490A173E734F004174C9 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				386B4919173E80C9004174C9 /* libclang.dylib */,
+				386B490B173E734F004174C9 /* Foundation.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		386B490D173E734F004174C9 /* ObjC2yUML */ = {
+			isa = PBXGroup;
+			children = (
+				386B490E173E734F004174C9 /* main.m */,
+				386B4912173E734F004174C9 /* ObjC2yUML.1 */,
+				386B4910173E734F004174C9 /* Supporting Files */,
+				386B491B173E81C2004174C9 /* DFClassParser.h */,
+				386B491C173E81C2004174C9 /* DFClassParser.m */,
+			);
+			path = ObjC2yUML;
+			sourceTree = "<group>";
+		};
+		386B4910173E734F004174C9 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				386B4911173E734F004174C9 /* ObjC2yUML-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		386B4906173E734F004174C9 /* ObjC2yUML */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 386B4916173E734F004174C9 /* Build configuration list for PBXNativeTarget "ObjC2yUML" */;
+			buildPhases = (
+				386B4903173E734F004174C9 /* Sources */,
+				386B4904173E734F004174C9 /* Frameworks */,
+				386B4905173E734F004174C9 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ObjC2yUML;
+			productName = ObjC2yUML;
+			productReference = 386B4907173E734F004174C9 /* ObjC2yUML */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		386B48FE173E734F004174C9 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0430;
+				ORGANIZATIONNAME = "darkFunction Software";
+			};
+			buildConfigurationList = 386B4901173E734F004174C9 /* Build configuration list for PBXProject "ObjC2yUML" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 386B48FC173E734F004174C9;
+			productRefGroup = 386B4908173E734F004174C9 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				386B4906173E734F004174C9 /* ObjC2yUML */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		386B4903173E734F004174C9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				386B490F173E734F004174C9 /* main.m in Sources */,
+				386B491D173E81C2004174C9 /* DFClassParser.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		386B4914173E734F004174C9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		386B4915173E734F004174C9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		386B4917173E734F004174C9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_WARN_OBJCPP_ARC_ABI = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ObjC2yUML/ObjC2yUML-Prefix.pch";
+				HEADER_SEARCH_PATHS = "/usr/lib/clang+llvm-3.2-x86_64-apple-darwin11/include";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"/usr/lib/clang+llvm-3.2-x86_64-apple-darwin11/lib\"",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		386B4918173E734F004174C9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_WARN_OBJCPP_ARC_ABI = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ObjC2yUML/ObjC2yUML-Prefix.pch";
+				HEADER_SEARCH_PATHS = "/usr/lib/clang+llvm-3.2-x86_64-apple-darwin11/include";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"/usr/lib/clang+llvm-3.2-x86_64-apple-darwin11/lib\"",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		386B4901173E734F004174C9 /* Build configuration list for PBXProject "ObjC2yUML" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				386B4914173E734F004174C9 /* Debug */,
+				386B4915173E734F004174C9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		386B4916173E734F004174C9 /* Build configuration list for PBXNativeTarget "ObjC2yUML" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				386B4917173E734F004174C9 /* Debug */,
+				386B4918173E734F004174C9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 386B48FE173E734F004174C9 /* Project object */;
+}
