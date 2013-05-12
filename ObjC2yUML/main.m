@@ -7,14 +7,14 @@
 //
 
 #import <Foundation/Foundation.h>
-#include "DFClassParser.h"
+#import "DFyUMLBuilder.h"
 
 int main(int argc, const char * argv[])
 {
     @autoreleasepool {
         
-        DFClassParser* parser = [[DFClassParser alloc] initWithFileName:@"/Users/samtaylor/Desktop/Projects/StuntTank/trunk/StuntTank/GameObject.m"];
-        [parser parseWithCompletion:nil];
+        NSArray* filenames = [NSArray arrayWithObject:@"/Users/samtaylor/Desktop/Projects/StuntTank/trunk/StuntTank/GameObject.m"];
+        DFyUMLBuilder* builder = [[DFyUMLBuilder alloc] initWithFilenames:filenames];
         
     }
     return 0;

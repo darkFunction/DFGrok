@@ -8,11 +8,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "ObjC2yUML/DFClassParser.m"
-         timestampString = "390066943.848592"
+         timestampString = "390076913.534784"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "73"
-         endingLineNumber = "73"
+         startingLineNumber = "76"
+         endingLineNumber = "76"
          landmarkName = "@implementation DFClassParser"
          landmarkType = "3">
       </FileBreakpoint>

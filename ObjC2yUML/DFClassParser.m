@@ -7,6 +7,7 @@
 //
 
 #import "DFClassParser.h"
+#import "DFClassParserDelegate.h"
 
 // Supported indexer callback functions
 void indexDeclaration(CXClientData client_data, const CXIdxDeclInfo *declaration);
@@ -42,6 +43,7 @@ static IndexerCallbacks indexerCallbacks = {
         }
         return;
     }
+    
     CXTranslationUnit translationUnit = clang_parseTranslationUnit(index, [self.fileName fileSystemRepresentation], NULL, 0, NULL, 0, CXTranslationUnit_None);
     if (!translationUnit) {
         if (completion) {
@@ -49,6 +51,7 @@ static IndexerCallbacks indexerCallbacks = {
         }
         return;
     }
+    
     CXIndexAction action = clang_IndexAction_create(index);
 
     int indexResult = clang_indexTranslationUnit(action,
