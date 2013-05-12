@@ -7,26 +7,12 @@
 //
 
 #import "DFClassParser.h"
-#include "clang-c/Index.h"
 
-int abortQuery(CXClientData client_data, void *reserved);
-void diagnostic(CXClientData client_data, CXDiagnosticSet diagnostic_set, void *reserved);
-CXIdxClientFile enteredMainFile(CXClientData client_data, CXFile mainFile, void *reserved);
-CXIdxClientFile ppIncludedFile(CXClientData client_data, const CXIdxIncludedFileInfo *included_file);
-CXIdxClientASTFile importedASTFile(CXClientData client_data, const CXIdxImportedASTFileInfo *_imported_ast);
-CXIdxClientContainer startedTranslationUnit(CXClientData client_data, void *reserved);
+// Supported indexer callback functions
 void indexDeclaration(CXClientData client_data, const CXIdxDeclInfo *declaration);
-void indexEntityReference(CXClientData client_data, const CXIdxEntityRefInfo *entity_ref);
-
+ 
 static IndexerCallbacks indexerCallbacks = {
-    .abortQuery = abortQuery,
-    .diagnostic = diagnostic,
-    .enteredMainFile = enteredMainFile,
-    .ppIncludedFile = ppIncludedFile,
-    .importedASTFile = importedASTFile,
-    .startedTranslationUnit = startedTranslationUnit,
     .indexDeclaration = indexDeclaration,
-    .indexEntityReference = indexEntityReference
 };
 
 @interface DFClassParser ( /* Private */ )
@@ -47,30 +33,33 @@ static IndexerCallbacks indexerCallbacks = {
     return self;
 }
 
-- (void)parse {
+- (void)parseWithCompletion:(void(^)(NSError*))completion {
 
     CXIndex index = clang_createIndex(1, 1);
     if (!index) {
-        NSLog(@"fail: couldn't create translation unit");
+        if (completion) {
+            completion([[NSError alloc] initWithDomain:@"ClangParseErrorDomain" code:DFClangParseErrorInit userInfo:nil]);
+        }
         return;
     }
-    CXTranslationUnit translationUnit = clang_parseTranslationUnit(index, [self.fileName fileSystemRepresentation], NULL, 0, NULL, 0, CXTranslationUnit_DetailedPreprocessingRecord);
+    CXTranslationUnit translationUnit = clang_parseTranslationUnit(index, [self.fileName fileSystemRepresentation], NULL, 0, NULL, 0, CXTranslationUnit_None);
     if (!translationUnit) {
-        NSLog(@"fail: couldn't compile %@", self.fileName);
+        if (completion) {
+            completion([[NSError alloc] initWithDomain:@"ClangParseErrorDomain" code:DFClangParseErrorCompilation userInfo:nil]);
+        }
         return;
     }
     CXIndexAction action = clang_IndexAction_create(index);
 
-    // Parsing begin
-    
     int indexResult = clang_indexTranslationUnit(action,
                                                  (__bridge CXClientData)self,
                                                  &indexerCallbacks,
                                                  sizeof(indexerCallbacks),
                                                  CXIndexOpt_SuppressWarnings,
                                                  translationUnit);
-
-    // Parsing finished
+    if (completion) {
+        completion(nil);
+    }
     
     clang_IndexAction_dispose(action);
     clang_disposeTranslationUnit(translationUnit);
@@ -81,36 +70,10 @@ static IndexerCallbacks indexerCallbacks = {
 
 #pragma mark - Indexer callbacks
 
-int abortQuery(CXClientData client_data, void *reserved) {
-    return 0;
-}
-
-void diagnostic(CXClientData client_data, CXDiagnosticSet diagnostic_set, void *reserved) {
-    
-}
-
-CXIdxClientFile enteredMainFile(CXClientData client_data, CXFile mainFile, void *reserved) {
-    return NULL;
-}
-
-CXIdxClientFile ppIncludedFile(CXClientData client_data, const CXIdxIncludedFileInfo *included_file) {
-    return NULL;
-}
-
-CXIdxClientASTFile importedASTFile(CXClientData client_data, const CXIdxImportedASTFileInfo *_imported_ast) {
-    return NULL;
-}
-
-CXIdxClientContainer startedTranslationUnit(CXClientData client_data, void *reserved) {
-    return NULL;
-}
-
 void indexDeclaration(CXClientData client_data, const CXIdxDeclInfo *declaration) {
-    
+    DFClassParser* parser = (__bridge DFClassParser*)client_data;
+    [parser.delegate classParser:parser foundDeclaration:declaration];
 }
 
-void indexEntityReference(CXClientData client_data, const CXIdxEntityRefInfo *entity_ref) {
-    
-}
 
 @end

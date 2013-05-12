@@ -7,8 +7,21 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <clang-c/Index.h>
+
+@protocol DFClassParserDelegate;
 
 @interface DFClassParser : NSObject
-- (id)initWithFileName:(NSString*)fileName;
-- (void)parse;
+    @property (nonatomic, weak) id<DFClassParserDelegate>delegate;
+    - (id)initWithFileName:(NSString*)fileName;
+    - (void)parseWithCompletion:(void(^)(NSError*))completion;
 @end
+
+@protocol DFClassParserDelegate <NSObject>
+    - (void)classParser:(DFClassParser*)parser foundDeclaration:(CXIdxDeclInfo const *)declaration;
+@end
+
+typedef NS_ENUM(NSInteger, DFClangParseError) {
+    DFClangParseErrorInit,
+    DFClangParseErrorCompilation,
+};

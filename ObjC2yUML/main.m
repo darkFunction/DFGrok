@@ -14,7 +14,7 @@ int main(int argc, const char * argv[])
     @autoreleasepool {
         
         DFClassParser* parser = [[DFClassParser alloc] initWithFileName:@"/Users/samtaylor/Desktop/Projects/StuntTank/trunk/StuntTank/GameObject.m"];
-        [parser parse];
+        [parser parseWithCompletion:nil];
         
     }
     return 0;
