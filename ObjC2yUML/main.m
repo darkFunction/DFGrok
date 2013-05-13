@@ -13,8 +13,14 @@ int main(int argc, const char * argv[])
 {
     @autoreleasepool {
         
-        NSArray* filenames = [NSArray arrayWithObject:@"/Users/samtaylor/Desktop/Projects/StuntTank/trunk/StuntTank/GameObject.m"];
-        DFyUMLBuilder* builder = [[DFyUMLBuilder alloc] initWithFilenames:filenames];
+        NSArray* filenames = [NSArray arrayWithObjects: @"/Users/samtaylor/ObjC2yUML/ObjC2yUML/DFClassModel.m",
+                                                        @"/Users/samtaylor/ObjC2yUML/ObjC2yUML/DFClassParser.m",
+                                                        nil];
+        NSArray* classNames = [NSArray arrayWithObjects: @"DFClassModel", @"DFClassParser", nil];
+        DFyUMLBuilder* builder = [[DFyUMLBuilder alloc] initWithFilenames:filenames andClassNames:classNames];
+        
+        NSString* yUML = [builder buildyUML];
+        (void)yUML;
         
     }
     return 0;

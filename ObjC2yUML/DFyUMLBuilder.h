@@ -10,5 +10,6 @@
 #import "DFClassParserDelegate.h"
 
 @interface DFyUMLBuilder : NSObject <DFClassParserDelegate>
-- (id)initWithFilenames:(NSArray*)filenames;
+- (id)initWithFilenames:(NSArray*)fileNames andClassNames:(NSArray*)classNames;
+- (NSString*)buildyUML;
 @end
