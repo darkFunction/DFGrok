@@ -11,7 +11,7 @@
 
 // Supported indexer callback functions
 void indexDeclaration(CXClientData client_data, const CXIdxDeclInfo *declaration);
- 
+
 static IndexerCallbacks indexerCallbacks = {
     .indexDeclaration = indexDeclaration,
 };
@@ -74,7 +74,6 @@ static IndexerCallbacks indexerCallbacks = {
 #pragma mark - Indexer callbacks
 
 void indexDeclaration(CXClientData client_data, const CXIdxDeclInfo *declaration) {
-    // Callbacks come from different thread
     @autoreleasepool {        
         DFClassParser* parser = (__bridge DFClassParser*)client_data;
         [parser.delegate classParser:parser foundDeclaration:declaration];
