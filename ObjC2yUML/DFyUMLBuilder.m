@@ -8,12 +8,12 @@
 
 #import "DFyUMLBuilder.h"
 #import "DFClassParser.h"
-#import "DFClassModel.h"
+#import "DFClassDefinition.h"
+#import "DFImplementationFinder.h"
 
 @interface DFyUMLBuilder ( /* Private */ )
 @property (nonatomic) NSArray* fileNames;
-@property (nonatomic) NSMutableDictionary* classModels;
-@property (nonatomic) NSMutableDictionary* superclasses;
+@property (nonatomic) NSDictionary* classDefinitions;
 @end
 
 @implementation DFyUMLBuilder
@@ -27,15 +27,15 @@
 }
 
 - (NSString*)buildyUML {
-    self.classModels = [[NSMutableDictionary alloc] init];
+    DFImplementationFinder* implementationFinder = [[DFImplementationFinder alloc] initWithFilenames:self.fileNames];
+    self.classDefinitions = [implementationFinder createClassDefinitions];
     
     [self.fileNames enumerateObjectsUsingBlock:^(NSString* obj, NSUInteger idx, BOOL *stop) {
         @autoreleasepool {
-            self.superclasses = [[NSMutableDictionary alloc] init];
             DFClassParser* parser = [[DFClassParser alloc] initWithFileName:obj];
             parser.delegate = self;
             [parser parseWithCompletion:^(NSError* error){
-                self.superclasses = nil;
+                
             }];
         }
     }];
@@ -44,49 +44,38 @@
 }
 
 - (void)classParser:(id)parser foundDeclaration:(const CXIdxDeclInfo *)declaration {
-    
     const char * const name = declaration->entityInfo->name;
     if (name == NULL)
         return;
 
     NSString *declarationName = [NSString stringWithUTF8String:name];
     
+    DFClassDefinition* classDefinition = [self.classDefinitions objectForKey:declarationName];
+    if (!classDefinition) {
+        return; // not interested
+    }
+    
     switch (declaration->entityInfo->kind) {
         case CXIdxEntity_ObjCClass:
-        {            
-            // Keep a dictionary of class names -> superclass names
+        {
             const CXIdxObjCInterfaceDeclInfo* declarationInfo = clang_index_getObjCInterfaceDeclInfo(declaration);
             if (declarationInfo) {
-
                 const CXIdxObjCContainerDeclInfo* containerInfo = clang_index_getObjCContainerDeclInfo(declaration);
                 if (containerInfo && containerInfo->kind == CXIdxObjCContainer_Interface) {
+                    
+                    // Find superclass
                     const CXIdxBaseClassInfo* superClassInfo = declarationInfo->superInfo;
                     if (superClassInfo) {
                         const char* name = superClassInfo->base->name;
                         if (name) {
-                            NSString* superClassName = [NSString stringWithUTF8String:name];
-                            [self.superclasses setObject:superClassName forKey:declarationName];
+                            DFClassDefinition* superClassDefintion = [[DFClassDefinition alloc] initWithName:[NSString stringWithUTF8String:name]];
+                            classDefinition.superClass = superClassDefintion;
                         }
                         name = NULL;
                     }
-                }
-            }
-            
-            // Check if we have found an @implementation
-            if (declaration->isContainer) {
-                const CXIdxObjCContainerDeclInfo* containerInfo = clang_index_getObjCContainerDeclInfo(declaration);
-                if (containerInfo && containerInfo->kind == CXIdxObjCContainer_Implementation) {
                     
-                    // Get a class definition
-                    DFClassModel* classModel = [self.classModels objectForKey:declarationName];
-                    if (!classModel) {
-                        classModel = [[DFClassModel alloc] init];
-                        [self.classModels setObject:classModel forKey:declarationName];
-                        classModel.name = declarationName;
-                        
-                        // We can safely assume that we have already parsed the interface and so found the superclass
-                        classModel.superClass = [self.superclasses objectForKey:declarationName];
-                    }
+                    // Find children
+                    
                 }
             }
             

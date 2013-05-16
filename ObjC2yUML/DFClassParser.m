@@ -50,7 +50,7 @@ static IndexerCallbacks indexerCallbacks = {
                                                                    [self.fileName fileSystemRepresentation],
                                                                    NULL, 0, NULL, 0,
                                                                    // CXTranslationUnit_DetailedPreprocessingRecord enables ppIncludedFile callback
-                                                                   CXTranslationUnit_SkipFunctionBodies | CXTranslationUnit_DetailedPreprocessingRecord); 
+                                                                   CXTranslationUnit_SkipFunctionBodies /* | CXTranslationUnit_DetailedPreprocessingRecord */);
     if (!translationUnit) {
         if (completion) {
             completion([[NSError alloc] initWithDomain:@"ClangParseErrorDomain" code:DFClangParseErrorCompilation userInfo:nil]);

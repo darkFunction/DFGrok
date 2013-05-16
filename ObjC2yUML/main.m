@@ -13,7 +13,7 @@ int main(int argc, const char * argv[])
 {
     @autoreleasepool {
         
-        NSArray* filenames = [NSArray arrayWithObjects: @"/Users/samtaylor/ObjC2yUML/ObjC2yUML/DFClassModel.m",
+        NSArray* filenames = [NSArray arrayWithObjects: @"/Users/samtaylor/ObjC2yUML/ObjC2yUML/DFClassDefinition.m",
                                                         @"/Users/samtaylor/ObjC2yUML/ObjC2yUML/DFClassParser.m",
                                                         nil];
         DFyUMLBuilder* builder = [[DFyUMLBuilder alloc] initWithFilenames:filenames];
