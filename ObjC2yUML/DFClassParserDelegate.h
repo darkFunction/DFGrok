@@ -12,5 +12,7 @@
 @class DFClassParser;
 
 @protocol DFClassParserDelegate <NSObject>
+@optional
 - (void)classParser:(DFClassParser*)parser foundDeclaration:(CXIdxDeclInfo const *)declaration;
+- (CXIdxClientFile)classParser:(DFClassParser*)parser includedFile:(const CXIdxIncludedFileInfo *)includedFile;
 @end
