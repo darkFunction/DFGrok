@@ -236,7 +236,7 @@
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ObjC2yUML/ObjC2yUML-Prefix.pch";
-				HEADER_SEARCH_PATHS = "/usr/lib/clang+llvm-3.2-x86_64-apple-darwin11/include";
+				HEADER_SEARCH_PATHS = /Users/samtaylor/llvm/tools/clang/include;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"/usr/lib/clang+llvm-3.2-x86_64-apple-darwin11/lib\"",
@@ -250,7 +250,7 @@
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ObjC2yUML/ObjC2yUML-Prefix.pch";
-				HEADER_SEARCH_PATHS = "/usr/lib/clang+llvm-3.2-x86_64-apple-darwin11/include";
+				HEADER_SEARCH_PATHS = /Users/samtaylor/llvm/tools/clang/include;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"/usr/lib/clang+llvm-3.2-x86_64-apple-darwin11/lib\"",
