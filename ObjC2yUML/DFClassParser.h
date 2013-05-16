@@ -11,9 +11,9 @@
 @protocol DFClassParserDelegate;
 
 @interface DFClassParser : NSObject
-    @property (nonatomic, weak) id<DFClassParserDelegate>delegate;
-    - (id)initWithFileName:(NSString*)fileName;
-    - (void)parseWithCompletion:(void(^)(NSError*))completion;
+@property (nonatomic, weak) id<DFClassParserDelegate>delegate;
+- (id)initWithFileName:(NSString*)fileName;
+- (void)parseWithCompletion:(void(^)(NSError*))completion;
 @end
 
 typedef NS_ENUM(NSInteger, DFClangParseError) {
