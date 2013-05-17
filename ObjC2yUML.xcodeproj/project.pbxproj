@@ -8,10 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		383BB8A017455544007CFE77 /* DFImplementationFinder.m in Sources */ = {isa = PBXBuildFile; fileRef = 383BB89F17455544007CFE77 /* DFImplementationFinder.m */; };
+		383BB8A217464FD8007CFE77 /* libclang.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 383BB8A117464FD8007CFE77 /* libclang.dylib */; };
 		386B490C173E734F004174C9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 386B490B173E734F004174C9 /* Foundation.framework */; };
 		386B490F173E734F004174C9 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 386B490E173E734F004174C9 /* main.m */; };
 		386B4913173E734F004174C9 /* ObjC2yUML.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 386B4912173E734F004174C9 /* ObjC2yUML.1 */; };
-		386B491A173E80C9004174C9 /* libclang.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 386B4919173E80C9004174C9 /* libclang.dylib */; };
 		386B491D173E81C2004174C9 /* DFClassParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 386B491C173E81C2004174C9 /* DFClassParser.m */; };
 		38E59CCD1740078C005404B3 /* DFClassDefinition.m in Sources */ = {isa = PBXBuildFile; fileRef = 38E59CCC1740078C005404B3 /* DFClassDefinition.m */; };
 		38E59CD01740179F005404B3 /* DFyUMLBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = 38E59CCF1740179F005404B3 /* DFyUMLBuilder.m */; };
@@ -33,12 +33,12 @@
 /* Begin PBXFileReference section */
 		383BB89E17455544007CFE77 /* DFImplementationFinder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFImplementationFinder.h; sourceTree = "<group>"; };
 		383BB89F17455544007CFE77 /* DFImplementationFinder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DFImplementationFinder.m; sourceTree = "<group>"; };
+		383BB8A117464FD8007CFE77 /* libclang.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libclang.dylib; path = "../BTSync/llvm/Release+Asserts/lib/libclang.dylib"; sourceTree = "<group>"; };
 		386B4907173E734F004174C9 /* ObjC2yUML */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ObjC2yUML; sourceTree = BUILT_PRODUCTS_DIR; };
 		386B490B173E734F004174C9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		386B490E173E734F004174C9 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		386B4911173E734F004174C9 /* ObjC2yUML-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ObjC2yUML-Prefix.pch"; sourceTree = "<group>"; };
 		386B4912173E734F004174C9 /* ObjC2yUML.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = ObjC2yUML.1; sourceTree = "<group>"; };
-		386B4919173E80C9004174C9 /* libclang.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libclang.dylib; path = "../../../../../../usr/lib/clang+llvm-3.2-x86_64-apple-darwin11/lib/libclang.dylib"; sourceTree = "<group>"; };
 		386B491B173E81C2004174C9 /* DFClassParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFClassParser.h; sourceTree = "<group>"; };
 		386B491C173E81C2004174C9 /* DFClassParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DFClassParser.m; sourceTree = "<group>"; };
 		38E59CCA17400460005404B3 /* DFClassParserDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFClassParserDelegate.h; sourceTree = "<group>"; };
@@ -54,7 +54,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				386B490C173E734F004174C9 /* Foundation.framework in Frameworks */,
-				386B491A173E80C9004174C9 /* libclang.dylib in Frameworks */,
+				383BB8A217464FD8007CFE77 /* libclang.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -81,7 +81,7 @@
 		386B490A173E734F004174C9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				386B4919173E80C9004174C9 /* libclang.dylib */,
+				383BB8A117464FD8007CFE77 /* libclang.dylib */,
 				386B490B173E734F004174C9 /* Foundation.framework */,
 			);
 			name = Frameworks;
@@ -236,10 +236,11 @@
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ObjC2yUML/ObjC2yUML-Prefix.pch";
-				HEADER_SEARCH_PATHS = /Users/samtaylor/llvm/tools/clang/include;
+				HEADER_SEARCH_PATHS = /Users/samtaylor/BTSync/llvm/tools/clang/include;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"/usr/lib/clang+llvm-3.2-x86_64-apple-darwin11/lib\"",
+					"\"$(SRCROOT)/../BTSync/llvm/Release+Asserts/lib\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -250,10 +251,11 @@
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ObjC2yUML/ObjC2yUML-Prefix.pch";
-				HEADER_SEARCH_PATHS = /Users/samtaylor/llvm/tools/clang/include;
+				HEADER_SEARCH_PATHS = /Users/samtaylor/BTSync/llvm/tools/clang/include;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"/usr/lib/clang+llvm-3.2-x86_64-apple-darwin11/lib\"",
+					"\"$(SRCROOT)/../BTSync/llvm/Release+Asserts/lib\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
