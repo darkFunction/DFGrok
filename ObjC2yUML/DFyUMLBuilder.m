@@ -28,6 +28,10 @@
 }
 
 - (NSString*)buildyUML {
+    
+    // Hmm. Think it might be possible to do this all in one go by getting translation unit associated with an
+    // implementation cursor and querying it for superclass etc... TODO: investigate
+    
     DFImplementationFinder* implementationFinder = [[DFImplementationFinder alloc] initWithFilenames:self.fileNames];
     self.classDefinitions = [implementationFinder createClassDefinitions];
     
@@ -40,6 +44,8 @@
             }];
         }
     }];
+    
+    self.classDefinitions = nil;
     
     return nil;
 }
@@ -86,11 +92,10 @@
             if (self.currentClass) {
                 const CXIdxObjCPropertyDeclInfo *propertyDeclaration = clang_index_getObjCPropertyDeclInfo(declaration);
                 
-                NSString* className = nil; // class of the property?
+                NSString* typeEncoding = [NSString stringWithUTF8String:clang_getCString(clang_getDeclObjCTypeEncoding(propertyDeclaration->declInfo->cursor))];
+                NSString* className = nil;
                 
-                if (propertyDeclaration) {
-                    //CXObjCPropertyAttrKind propertyAttributes = clang_Cursor_getObjCPropertyAttributes(propertyDeclaration->declInfo->cursor, 0);
-                    
+                if (propertyDeclaration) {                    
                     // Only interested in properties of the same type as the implementations we found
                     DFClassDefinition* classDefinition = [[self classDefinitions] objectForKey:className];
                     if (classDefinition) {
