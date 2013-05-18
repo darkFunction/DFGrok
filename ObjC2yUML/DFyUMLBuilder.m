@@ -10,6 +10,7 @@
 #import "DFClassParser.h"
 #import "DFClassDefinition.h"
 #import "DFImplementationFinder.h"
+#import "DFPropertyDefinition.h"
 
 @interface DFyUMLBuilder ( /* Private */ )
 @property (nonatomic) NSArray* fileNames;
@@ -76,7 +77,7 @@
                             const char* name = superClassInfo->base->name;
                             if (name) {
                                 DFClassDefinition* superClassDefintion = [[DFClassDefinition alloc] initWithName:[NSString stringWithUTF8String:name]];
-                                classDefinition.superClass = superClassDefintion;
+                                classDefinition.superclassDef = superClassDefintion;
                             }
                             name = NULL;
                         }
@@ -90,21 +91,14 @@
         case CXIdxEntity_ObjCProperty:
         {
             if (self.currentClass) {
-                const CXIdxObjCPropertyDeclInfo *propertyDeclaration = clang_index_getObjCPropertyDeclInfo(declaration);
-                
-                NSString* typeEncoding = [NSString stringWithUTF8String:clang_getCString(clang_getDeclObjCTypeEncoding(propertyDeclaration->declInfo->cursor))];
-                NSString* className = nil;
-                
-                if (propertyDeclaration) {                    
-                    // Only interested in properties of the same type as the implementations we found
-                    DFClassDefinition* classDefinition = [[self classDefinitions] objectForKey:className];
-                    if (classDefinition) {
-                        if (![self.currentClass.children objectForKey:declarationName]) {
-                            [self.currentClass.children setObject:classDefinition forKey:declarationName];
-                            NSLog(@"%@ . %@", self.currentClass.name, declarationName);
-                        }
+                const CXIdxObjCPropertyDeclInfo *propertyDeclaration = clang_index_getObjCPropertyDeclInfo(declaration);                
+                if (propertyDeclaration) {
+                    NSString* typeEncoding = [NSString stringWithUTF8String:clang_getCString(clang_getDeclObjCTypeEncoding(propertyDeclaration->declInfo->cursor))];
+                    DFPropertyDefinition* propertyDef = [[DFPropertyDefinition alloc] initWithClangEncoding:typeEncoding];
+
+                    if (![self.currentClass.propertyDefs objectForKey:propertyDef]) {
+                        [self.currentClass.propertyDefs setObject:propertyDef forKey:declarationName];
                     }
-                    // TODO: clang_Cursor_getObjCPropertyAttributes will be in latest clang release for weak/strong references. (r.
                 }
             }
             break;

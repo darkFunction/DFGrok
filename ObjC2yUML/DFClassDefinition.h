@@ -10,8 +10,8 @@
 
 @interface DFClassDefinition : NSObject
 @property (nonatomic, readonly) NSString* name;
-@property (nonatomic) DFClassDefinition* superClass;
-@property (nonatomic) NSMutableDictionary* children;
+@property (nonatomic) DFClassDefinition* superclassDef;
+@property (nonatomic) NSMutableDictionary* propertyDefs;
 
 - (id)initWithName:(NSString*)name;
 @end

@@ -14,6 +14,7 @@
     self = [super init];
     if (self) {
         _name = name;
+        _propertyDefs = [[NSMutableDictionary alloc] init];
     }
     return self;
 }
