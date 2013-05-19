@@ -9,5 +9,6 @@
 #import "DFDataModel.h"
 
 @implementation DFDataModel
+@synthesize delegate;
 
 @end

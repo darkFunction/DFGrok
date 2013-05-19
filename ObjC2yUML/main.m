@@ -20,6 +20,7 @@ int main(int argc, const char * argv[])
                               @"/Users/samtaylor/Projects/ObjC2yUML/UMLTestProject/UMLTestProject/Classes/DFDemoDataModelOne.m",
                               @"/Users/samtaylor/Projects/ObjC2yUML/UMLTestProject/UMLTestProject/Classes/DFDemoDataModelTwo.m",
                               nil];
+        
         DFyUMLBuilder* builder = [[DFyUMLBuilder alloc] initWithFilenames:filenames];
         
         NSString* yUML = [builder buildyUML];

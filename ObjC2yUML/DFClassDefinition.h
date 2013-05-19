@@ -12,6 +12,7 @@
 @property (nonatomic) NSString* name;
 @property (nonatomic) DFClassDefinition* superclassDef;
 @property (nonatomic) NSMutableDictionary* propertyDefs;
+@property (nonatomic) NSMutableArray* protocols;
 
 - (id)initWithName:(NSString*)name;
 @end

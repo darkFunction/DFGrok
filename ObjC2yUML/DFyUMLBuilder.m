@@ -50,9 +50,13 @@
     
     NSMutableString* yUML = [[NSMutableString alloc] init];
     [self.classDefinitions enumerateKeysAndObjectsUsingBlock:^(NSString* key, DFClassDefinition* classDef, BOOL *stop) {
-        [yUML appendFormat:@"[%@]^-[%@],", classDef.superclassDef.name, classDef.name];
+        if (classDef.superclassDef) {
+            [yUML appendFormat:@"[%@]^-[%@],\n", classDef.superclassDef.name, classDef.name];
+        } else {
+            [yUML appendFormat:@"[%@],\n", classDef.name];
+        }
         [classDef.propertyDefs enumerateKeysAndObjectsUsingBlock:^(NSString* key, DFPropertyDefinition* propertyDef, BOOL *stop) {
-            [yUML appendFormat:propertyDef.isWeak ? (@"[%@]+->[%@],") : (@"[%@]++->[%@],"), classDef.name, propertyDef.name];
+            [yUML appendFormat:propertyDef.isWeak ? (@"[%@]+->[%@],\n") : (@"[%@]++->[%@],\n"), classDef.name, propertyDef.name];
         }];
     }];
 
@@ -63,11 +67,11 @@
 }
 
 - (void)classParser:(id)parser foundDeclaration:(const CXIdxDeclInfo *)declaration {
-    const char * const name = declaration->entityInfo->name;
-    if (name == NULL)
+    const char * const cName = declaration->entityInfo->name;
+    if (cName == NULL)
         return;
 
-    NSString *declarationName = [NSString stringWithUTF8String:name];
+    NSString *declarationName = [NSString stringWithUTF8String:cName];
     
     switch (declaration->entityInfo->kind) {
         case CXIdxEntity_ObjCClass:
@@ -83,15 +87,27 @@
                     if (containerInfo && containerInfo->kind == CXIdxObjCContainer_Interface) {
                         
                         // Find superclass
-                        const CXIdxBaseClassInfo* superClassInfo = declarationInfo->superInfo;
-                        if (superClassInfo) {
-                            const char* name = superClassInfo->base->name;
-                            if (name) {
-                                DFClassDefinition* superClassDefintion = [[DFClassDefinition alloc] initWithName:[NSString stringWithUTF8String:name]];
-                                classDefinition.superclassDef = superClassDefintion;
+                        const CXIdxBaseClassInfo* superclassInfo = declarationInfo->superInfo;
+                        if (superclassInfo) {
+                            const char* cName = superclassInfo->base->name;
+                            if (cName) {
+                                NSString* name = [NSString stringWithUTF8String:cName];
+                                
+                                // Interested?
+                                if ([self.classDefinitions objectForKey:name]) {
+                                    DFClassDefinition* superclassDefinition = [[DFClassDefinition alloc] initWithName:name];
+                                    classDefinition.superclassDef = superclassDefinition;
+                                }
                             }
-                            name = NULL;
+                            cName = NULL;
                         }
+                        
+                        // Find protocols
+                        for (int i=0; i<declarationInfo->protocols->numProtocols; ++i) {
+                            NSString* protocolName = [NSString stringWithUTF8String:declarationInfo->protocols->protocols[i]->protocol->name];                            
+                            [classDefinition.protocols addObject:protocolName];
+                        }
+                        
                     }
                 }
             } else {
@@ -110,13 +126,18 @@
                     NSString* typeEncoding = [NSString stringWithUTF8String:clang_getCString(clang_getDeclObjCTypeEncoding(propertyDeclaration->declInfo->cursor))];
                     DFPropertyDefinition* propertyDef = [[DFPropertyDefinition alloc] initWithClangEncoding:typeEncoding];
                     
-                    // Don't care about properties which are not of the classes we found implementations for
+                    // Does it reference an instance of one of the classes we found an implementation for?
                     if ([self.classDefinitions objectForKey:propertyDef.name]) {
                         if (![self.currentClass.propertyDefs objectForKey:propertyDef]) {
-                            NSLog(@"Setting property type (%@) on class (%@)", propertyDef.name, self.currentClass.name);
                             [self.currentClass.propertyDefs setObject:propertyDef forKey:declarationName];
                         }
                     }
+                    
+                    // Does it reference a protocol? 
+                    NSLog(@"---> %@", propertyDef.name);
+                    
+                    // TODO: Hmm... Need to inspect properties in implemented protocols as well, clang doesn't seem to see them as
+                    // properties on the class. Use CXCursor_ObjCSynthesizeDecl ?
                 }
             }
             break;
