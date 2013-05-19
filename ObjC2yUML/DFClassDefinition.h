@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 @interface DFClassDefinition : NSObject
-@property (nonatomic, readonly) NSString* name;
+@property (nonatomic) NSString* name;
 @property (nonatomic) DFClassDefinition* superclassDef;
 @property (nonatomic) NSMutableDictionary* propertyDefs;
 

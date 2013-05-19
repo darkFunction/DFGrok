@@ -19,7 +19,7 @@ int main(int argc, const char * argv[])
         DFyUMLBuilder* builder = [[DFyUMLBuilder alloc] initWithFilenames:filenames];
         
         NSString* yUML = [builder buildyUML];
-        (void)yUML;
+        NSLog(@"%@", yUML);
         
     }
     return 0;
