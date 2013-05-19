@@ -9,7 +9,7 @@
 #import "DFDemoController.h"
 
 @interface DFDemoController ( /* Private */ )
-@property (nonatomic) DFDemoDataSource* demoDataModel;
+@property (nonatomic) DFDemoDataSource* demoDataSource;
 @end
 
 @implementation DFDemoController

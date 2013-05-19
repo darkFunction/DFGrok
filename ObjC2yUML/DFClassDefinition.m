@@ -14,7 +14,8 @@
     self = [super init];
     if (self) {
         _name = [name copy];
-        _propertyDefs = [[NSMutableDictionary alloc] init];
+        _propertyDefs = [NSMutableDictionary dictionary];
+        _protocols = [NSMutableArray array];
     }
     return self;
 }
