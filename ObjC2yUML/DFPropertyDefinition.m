@@ -10,7 +10,7 @@
 
 @interface DFPropertyDefinition ( /* Private */ )
 @property (nonatomic, readwrite) DFPropertyReferenceType referenceType;
-@property (nonatomic, readwrite) NSString* className;
+@property (nonatomic, readwrite) NSString* name;
 @end
 
 @implementation DFPropertyDefinition
@@ -25,7 +25,7 @@
 }
 
 - (void)setupFromEncoding:(NSString*)encoding {
-    self.className = [self classNameFromEncoding:encoding];
+    self.name = [self classNameFromEncoding:encoding];
     
     NSRange range = [encoding rangeOfString:@","];
     range.location++;

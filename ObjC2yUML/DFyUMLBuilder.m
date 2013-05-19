@@ -50,9 +50,9 @@
     
     NSMutableString* yUML = [[NSMutableString alloc] init];
     [self.classDefinitions enumerateKeysAndObjectsUsingBlock:^(NSString* key, DFClassDefinition* classDef, BOOL *stop) {
-        [yUML appendFormat:@"[%@]^-[%@],", classDef.name, classDef.superclassDef.name];
+        [yUML appendFormat:@"[%@]^-[%@],", classDef.superclassDef.name, classDef.name];
         [classDef.propertyDefs enumerateKeysAndObjectsUsingBlock:^(NSString* key, DFPropertyDefinition* propertyDef, BOOL *stop) {
-            [yUML appendFormat:propertyDef.isWeak ? (@"[%@]+->[%@],") : (@"[%@]++->[%@],"), classDef.name, propertyDef.className];
+            [yUML appendFormat:propertyDef.isWeak ? (@"[%@]+->[%@],") : (@"[%@]++->[%@],"), classDef.name, propertyDef.name];
         }];
     }];
 
@@ -99,6 +99,9 @@
             }
             break;
         }
+        case CXIdxEntity_ObjCCategory:
+            self.currentClass = nil;
+            break;
         case CXIdxEntity_ObjCProperty:
         {
             if (self.currentClass) {
@@ -106,10 +109,11 @@
                 if (propertyDeclaration) {
                     NSString* typeEncoding = [NSString stringWithUTF8String:clang_getCString(clang_getDeclObjCTypeEncoding(propertyDeclaration->declInfo->cursor))];
                     DFPropertyDefinition* propertyDef = [[DFPropertyDefinition alloc] initWithClangEncoding:typeEncoding];
-
+                    
                     // Don't care about properties which are not of the classes we found implementations for
-                    if ([self.classDefinitions objectForKey:propertyDef.className]) {
+                    if ([self.classDefinitions objectForKey:propertyDef.name]) {
                         if (![self.currentClass.propertyDefs objectForKey:propertyDef]) {
+                            NSLog(@"Setting property type (%@) on class (%@)", propertyDef.name, self.currentClass.name);
                             [self.currentClass.propertyDefs setObject:propertyDef forKey:declarationName];
                         }
                     }
