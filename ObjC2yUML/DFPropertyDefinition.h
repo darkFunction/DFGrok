@@ -18,4 +18,5 @@ typedef NS_ENUM(NSInteger, DFPropertyReferenceType) {
 @property (nonatomic, readonly) NSString* className;
 
 - (id)initWithClangEncoding:(NSString*)encoding;
+- (BOOL)isWeak;
 @end

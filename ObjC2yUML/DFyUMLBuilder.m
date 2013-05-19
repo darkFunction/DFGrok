@@ -46,9 +46,20 @@
         }
     }];
     
-    self.classDefinitions = nil;
+    // Now we have a model of the parts we are interested in
     
-    return nil;
+    NSMutableString* yUML = [[NSMutableString alloc] init];
+    [self.classDefinitions enumerateKeysAndObjectsUsingBlock:^(NSString* key, DFClassDefinition* classDef, BOOL *stop) {
+        [yUML appendFormat:@"[%@]^-[%@],", classDef.name, classDef.superclassDef.name];
+        [classDef.propertyDefs enumerateKeysAndObjectsUsingBlock:^(NSString* key, DFPropertyDefinition* propertyDef, BOOL *stop) {
+            [yUML appendFormat:propertyDef.isWeak ? (@"[%@]+->[%@],") : (@"[%@]++->[%@],"), classDef.name, propertyDef.className];
+        }];
+    }];
+
+    
+    self.classDefinitions = nil;
+
+    return yUML;
 }
 
 - (void)classParser:(id)parser foundDeclaration:(const CXIdxDeclInfo *)declaration {
@@ -96,8 +107,11 @@
                     NSString* typeEncoding = [NSString stringWithUTF8String:clang_getCString(clang_getDeclObjCTypeEncoding(propertyDeclaration->declInfo->cursor))];
                     DFPropertyDefinition* propertyDef = [[DFPropertyDefinition alloc] initWithClangEncoding:typeEncoding];
 
-                    if (![self.currentClass.propertyDefs objectForKey:propertyDef]) {
-                        [self.currentClass.propertyDefs setObject:propertyDef forKey:declarationName];
+                    // Don't care about properties which are not of the classes we found implementations for
+                    if ([self.classDefinitions objectForKey:propertyDef.className]) {
+                        if (![self.currentClass.propertyDefs objectForKey:propertyDef]) {
+                            [self.currentClass.propertyDefs setObject:propertyDef forKey:declarationName];
+                        }
                     }
                 }
             }

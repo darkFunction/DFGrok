@@ -50,4 +50,7 @@
     return nil;
 }
 
+- (BOOL)isWeak {
+    return self.referenceType == DFPropertyReferenceTypeWeak;
+}
 @end
