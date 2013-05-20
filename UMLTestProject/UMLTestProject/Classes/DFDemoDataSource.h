@@ -8,6 +8,6 @@
 
 #import "DFDataModel.h"
 
-@interface DFDemoDataSource : NSObject
+@interface DFDemoDataSource : NSObject <DFDataModelDelegate>
 
 @end
