@@ -13,7 +13,8 @@ int main(int argc, const char * argv[])
 {
     @autoreleasepool {
         
-        NSArray* filenames = [NSArray arrayWithObjects: @"/Users/samtaylor/Projects/ObjC2yUML/UMLTestProject/UMLTestProject/Classes/DFDemoController.m",
+        NSArray* filenames = [NSArray arrayWithObjects:
+                              @"/Users/samtaylor/ObjC2yUML/UMLTestProject/UMLTestProject/Classes/DFDemoController.m",
                               @"/Users/samtaylor/ObjC2yUML/UMLTestProject/UMLTestProject/Classes/DFDataModelContainer.m",
                               @"/Users/samtaylor/ObjC2yUML/UMLTestProject/UMLTestProject/Classes/DFDataModel.m",
                               @"/Users/samtaylor/ObjC2yUML/UMLTestProject/UMLTestProject/Classes/DFDemoDataSource.m",
