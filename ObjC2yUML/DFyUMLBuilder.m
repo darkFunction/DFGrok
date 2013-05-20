@@ -11,11 +11,13 @@
 #import "DFClassDefinition.h"
 #import "DFImplementationFinder.h"
 #import "DFPropertyDefinition.h"
+#import "DFProtocolDefinition.h"
 
 @interface DFyUMLBuilder ( /* Private */ )
 @property (nonatomic) NSArray* fileNames;
 @property (nonatomic) NSDictionary* classDefinitions;
-@property (nonatomic) DFClassDefinition* currentClass;
+@property (nonatomic) NSDictionary* protocolDefinitions;
+@property (nonatomic) id currentDefintion;
 @end
 
 @implementation DFyUMLBuilder
@@ -35,6 +37,7 @@
     
     DFImplementationFinder* implementationFinder = [[DFImplementationFinder alloc] initWithFilenames:self.fileNames];
     self.classDefinitions = [implementationFinder createClassDefinitions];
+    self.protocolDefinitions = [NSMutableDictionary dictionary];
     
     [self.fileNames enumerateObjectsUsingBlock:^(NSString* obj, NSUInteger idx, BOOL *stop) {
         @autoreleasepool {
@@ -62,6 +65,7 @@
 
     
     self.classDefinitions = nil;
+    self.protocolDefinitions = nil;
 
     return yUML;
 }
@@ -75,11 +79,11 @@
     
     switch (declaration->entityInfo->kind) {
         case CXIdxEntity_ObjCClass:
-        {
+        {            
             // Is it an implementation we have previously found?
             DFClassDefinition* classDefinition = [self.classDefinitions objectForKey:declarationName];
             if (classDefinition) {
-                self.currentClass = classDefinition;
+                self.currentDefintion = classDefinition;
                 
                 const CXIdxObjCInterfaceDeclInfo* declarationInfo = clang_index_getObjCInterfaceDeclInfo(declaration);
                 if (declarationInfo) {
@@ -104,40 +108,47 @@
                         
                         // Find protocols
                         for (int i=0; i<declarationInfo->protocols->numProtocols; ++i) {
-                            NSString* protocolName = [NSString stringWithUTF8String:declarationInfo->protocols->protocols[i]->protocol->name];                            
-                            [classDefinition.protocols addObject:protocolName];
-                        }
-                        
+                            const CXIdxObjCProtocolRefInfo* protocolRefInfo = declarationInfo->protocols->protocols[i];
+                            NSString* protocolName = [NSString stringWithUTF8String:protocolRefInfo->protocol->name];
+                            
+                            DFProtocolDefinition* protocolDefinition = [self.protocolDefinitions objectForKey:protocolName];
+                            [classDefinition.protocols addObject:protocolDefinition];
+                        }                        
                     }
                 }
             } else {
-                self.currentClass = nil;
+                self.currentDefintion = nil;
             }
             break;
         }
         case CXIdxEntity_ObjCCategory:
-            self.currentClass = nil;
+            self.currentDefintion = nil;
             break;
+        case CXIdxEntity_ObjCProtocol:
+        {
+            DFProtocolDefinition* protocolDefinition = [[DFProtocolDefinition alloc] initWithName:declarationName];
+            [self.protocolDefinitions setValue:protocolDefinition forKey:declarationName];
+            self.currentDefintion = protocolDefinition;
+                        
+            break;
+        }
         case CXIdxEntity_ObjCProperty:
         {
-            if (self.currentClass) {
-                const CXIdxObjCPropertyDeclInfo *propertyDeclaration = clang_index_getObjCPropertyDeclInfo(declaration);                
+            // Properties in classes we are interested in
+            if ([self.currentDefintion isKindOfClass:[DFClassDefinition class]]) {
+                DFClassDefinition* classDefintion = (DFClassDefinition*)self.currentDefintion;
+                
+                const CXIdxObjCPropertyDeclInfo *propertyDeclaration = clang_index_getObjCPropertyDeclInfo(declaration);
                 if (propertyDeclaration) {
                     NSString* typeEncoding = [NSString stringWithUTF8String:clang_getCString(clang_getDeclObjCTypeEncoding(propertyDeclaration->declInfo->cursor))];
                     DFPropertyDefinition* propertyDef = [[DFPropertyDefinition alloc] initWithClangEncoding:typeEncoding];
                     
                     // Does it reference an instance of one of the classes we found an implementation for?
                     if ([self.classDefinitions objectForKey:propertyDef.name]) {
-                        if (![self.currentClass.propertyDefs objectForKey:propertyDef]) {
-                            [self.currentClass.propertyDefs setObject:propertyDef forKey:declarationName];
+                        if (![classDefintion.propertyDefs objectForKey:propertyDef]) {
+                            [classDefintion.propertyDefs setObject:propertyDef forKey:declarationName];
                         }
                     }
-                    
-                    // Does it reference a protocol? 
-                    NSLog(@"---> %@", propertyDef.name);
-                    
-                    // TODO: Hmm... Need to inspect properties in implemented protocols as well, clang doesn't seem to see them as
-                    // properties on the class. Use CXCursor_ObjCSynthesizeDecl ?
                 }
             }
             break;
