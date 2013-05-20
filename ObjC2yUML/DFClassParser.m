@@ -47,12 +47,13 @@ static IndexerCallbacks indexerCallbacks = {
     }
 
     // TODO: accept compiler flags from command line, force ARC for now
-    char * command_line_args[1];
+    const char * command_line_args[2];
     command_line_args[0] = "-fobjc-arc";
+    command_line_args[1] = "-F/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.1.sdk/System/Library/Frameworks";
     
     CXTranslationUnit translationUnit = clang_parseTranslationUnit(index,
                                                                    [self.fileName fileSystemRepresentation],
-                                                                   command_line_args, 1,
+                                                                   command_line_args, 2,
                                                                    NULL, 0,
                                                                    // CXTranslationUnit_DetailedPreprocessingRecord enables ppIncludedFile callback
                                                                    CXTranslationUnit_SkipFunctionBodies /* | CXTranslationUnit_DetailedPreprocessingRecord */);

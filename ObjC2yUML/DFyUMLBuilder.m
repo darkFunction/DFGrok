@@ -103,7 +103,8 @@
                                 NSString* name = [NSString stringWithUTF8String:cName];
                                 
                                 // Interested?
-                                if ([self.classDefinitions objectForKey:name]) {
+                                //if ([self.classDefinitions objectForKey:name])
+                                {
                                     DFClassDefinition* superclassDefinition = [[DFClassDefinition alloc] initWithName:name];
                                     classDefinition.superclassDef = superclassDefinition;
                                 }
