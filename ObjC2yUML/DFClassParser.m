@@ -45,10 +45,15 @@ static IndexerCallbacks indexerCallbacks = {
         }
         return;
     }
+
+    // TODO: accept compiler flags from command line, force ARC for now
+    char * command_line_args[1];
+    command_line_args[0] = "-fobjc-arc";
     
     CXTranslationUnit translationUnit = clang_parseTranslationUnit(index,
                                                                    [self.fileName fileSystemRepresentation],
-                                                                   NULL, 0, NULL, 0,
+                                                                   command_line_args, 1,
+                                                                   NULL, 0,
                                                                    // CXTranslationUnit_DetailedPreprocessingRecord enables ppIncludedFile callback
                                                                    CXTranslationUnit_SkipFunctionBodies /* | CXTranslationUnit_DetailedPreprocessingRecord */);
     if (!translationUnit) {
