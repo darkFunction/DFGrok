@@ -51,6 +51,7 @@
     
     // Now we have a model of the parts we are interested in
     
+    // Classes
     NSMutableString* yUML = [[NSMutableString alloc] init];
     [self.classDefinitions enumerateKeysAndObjectsUsingBlock:^(NSString* key, DFClassDefinition* classDef, BOOL *stop) {
         if (classDef.superclassDef) {
@@ -61,8 +62,12 @@
         [classDef.propertyDefs enumerateKeysAndObjectsUsingBlock:^(NSString* key, DFPropertyDefinition* propertyDef, BOOL *stop) {
             [yUML appendFormat:propertyDef.isWeak ? (@"[%@]+->[%@],\n") : (@"[%@]++->[%@],\n"), classDef.name, propertyDef.name];
         }];
+    
+        [classDef.protocols enumerateObjectsUsingBlock:^(DFProtocolDefinition* protoDef, NSUInteger idx, BOOL *stop) {
+            [yUML appendFormat:@"[%@]^-.-[%@],\n", protoDef.name, classDef.name];
+        }];
+        
     }];
-
     
     self.classDefinitions = nil;
     self.protocolDefinitions = nil;
@@ -112,8 +117,10 @@
                             NSString* protocolName = [NSString stringWithUTF8String:protocolRefInfo->protocol->name];
                             
                             DFProtocolDefinition* protocolDefinition = [self.protocolDefinitions objectForKey:protocolName];
-                            [classDefinition.protocols addObject:protocolDefinition];
-                        }                        
+                            if (![classDefinition.protocols containsObject:protocolDefinition]) {
+                                [classDefinition.protocols addObject:protocolDefinition];
+                            }
+                        }
                     }
                 }
             } else {
@@ -126,16 +133,17 @@
             break;
         case CXIdxEntity_ObjCProtocol:
         {
-            DFProtocolDefinition* protocolDefinition = [[DFProtocolDefinition alloc] initWithName:declarationName];
-            [self.protocolDefinitions setValue:protocolDefinition forKey:declarationName];
-            self.currentDefintion = protocolDefinition;
-                        
+            if (![self.protocolDefinitions objectForKey:declarationName]) {
+                DFProtocolDefinition* protocolDefinition = [[DFProtocolDefinition alloc] initWithName:declarationName];
+                [self.protocolDefinitions setValue:protocolDefinition forKey:declarationName];
+                self.currentDefintion = protocolDefinition;
+            }
             break;
         }
         case CXIdxEntity_ObjCProperty:
         {
             // Properties in classes we are interested in
-            if ([self.currentDefintion isKindOfClass:[DFClassDefinition class]]) {
+            if (self.currentDefintion) {
                 DFClassDefinition* classDefintion = (DFClassDefinition*)self.currentDefintion;
                 
                 const CXIdxObjCPropertyDeclInfo *propertyDeclaration = clang_index_getObjCPropertyDeclInfo(declaration);
@@ -144,7 +152,7 @@
                     DFPropertyDefinition* propertyDef = [[DFPropertyDefinition alloc] initWithClangEncoding:typeEncoding];
                     
                     // Does it reference an instance of one of the classes we found an implementation for?
-                    if ([self.classDefinitions objectForKey:propertyDef.name]) {
+                    if ([self isKeyElement:propertyDef.name]) {
                         if (![classDefintion.propertyDefs objectForKey:propertyDef]) {
                             [classDefintion.propertyDefs setObject:propertyDef forKey:declarationName];
                         }
@@ -158,5 +166,8 @@
     }
 }
 
+- (BOOL)isKeyElement:(NSString*)name {
+    return ( [self.classDefinitions objectForKey:name] || [self.protocolDefinitions objectForKey:name] );
+}
 
 @end
