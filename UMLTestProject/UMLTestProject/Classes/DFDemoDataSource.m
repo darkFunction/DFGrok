@@ -11,7 +11,7 @@
 #import "DFDemoDataModelOne.h"
 #import "DFDemoDataModelTwo.h"
 
-@interface DFDemoDataSource ( /* Private */ )
+@interface DFDemoDataSource ( /* Private */ ) 
 @property (nonatomic) DFDataModelContainer* dataModelContainer;
 @end
 
@@ -21,6 +21,7 @@
     self = [super init];
     if (self) {
         self.dataModelContainer = [[DFDataModelContainer alloc] init];
+        self.dataModelContainer.delegate = self;
         
         [self populateDataModelContainer:self.dataModelContainer];
     }

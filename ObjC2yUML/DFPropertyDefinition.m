@@ -28,14 +28,16 @@
     self.name = [self classNameFromEncoding:encoding];
     
     NSRange range = [encoding rangeOfString:@","];
-    range.location++;
-    range.length = encoding.length - range.location;
-    NSString* properties = [encoding substringWithRange:range];
-    
-    if ([properties rangeOfString:@"W"].location != NSNotFound) {
-        self.referenceType = DFPropertyReferenceTypeWeak;
-    } else {
-        self.referenceType = DFPropertyReferenceTypeStrong;
+    if (range.location != NSNotFound) {
+        range.location++;
+        range.length = encoding.length - range.location;
+        NSString* properties = [encoding substringWithRange:range];
+        
+        if ([properties rangeOfString:@"W"].location != NSNotFound) {
+            self.referenceType = DFPropertyReferenceTypeWeak;
+        } else {
+            self.referenceType = DFPropertyReferenceTypeStrong;
+        }
     }
 }
 
@@ -45,7 +47,16 @@
         // Remove quotes
         range.length -= 2;
         range.location++;
-        return [encoding substringWithRange:range];
+    
+        NSString* name = [encoding substringWithRange:range];
+        
+        // Remove <> from protocol name
+        if ([name rangeOfString:@"<"].location == 0 && [name rangeOfString:@">"].location == name.length-1) {
+            range.length = [name length] - 2;
+            range.location = 1;
+            name = [name substringWithRange:range];
+        }
+        return name;
     }
     return nil;
 }
