@@ -10,6 +10,8 @@
 		383BB8A017455544007CFE77 /* DFImplementationFinder.m in Sources */ = {isa = PBXBuildFile; fileRef = 383BB89F17455544007CFE77 /* DFImplementationFinder.m */; };
 		383BB8A217464FD8007CFE77 /* libclang.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 383BB8A117464FD8007CFE77 /* libclang.dylib */; };
 		383BB8B2174A4FB6007CFE77 /* DFProtocolDefinition.m in Sources */ = {isa = PBXBuildFile; fileRef = 383BB8B1174A4FB6007CFE77 /* DFProtocolDefinition.m */; };
+		3866800D174B9AF20070EDDC /* DFDefinition.m in Sources */ = {isa = PBXBuildFile; fileRef = 3866800C174B9AF20070EDDC /* DFDefinition.m */; };
+		38668011174B9B750070EDDC /* DFContainerDefinition.m in Sources */ = {isa = PBXBuildFile; fileRef = 38668010174B9B750070EDDC /* DFContainerDefinition.m */; };
 		386B490C173E734F004174C9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 386B490B173E734F004174C9 /* Foundation.framework */; };
 		386B490F173E734F004174C9 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 386B490E173E734F004174C9 /* main.m */; };
 		386B4913173E734F004174C9 /* ObjC2yUML.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 386B4912173E734F004174C9 /* ObjC2yUML.1 */; };
@@ -49,6 +51,10 @@
 		383BB8AA174A49F9007CFE77 /* UMLTestProject.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = UMLTestProject.xcodeproj; path = UMLTestProject/UMLTestProject.xcodeproj; sourceTree = "<group>"; };
 		383BB8B0174A4FB6007CFE77 /* DFProtocolDefinition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFProtocolDefinition.h; sourceTree = "<group>"; };
 		383BB8B1174A4FB6007CFE77 /* DFProtocolDefinition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DFProtocolDefinition.m; sourceTree = "<group>"; };
+		3866800B174B9AF20070EDDC /* DFDefinition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFDefinition.h; sourceTree = "<group>"; };
+		3866800C174B9AF20070EDDC /* DFDefinition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DFDefinition.m; sourceTree = "<group>"; };
+		3866800F174B9B750070EDDC /* DFContainerDefinition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFContainerDefinition.h; sourceTree = "<group>"; };
+		38668010174B9B750070EDDC /* DFContainerDefinition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DFContainerDefinition.m; sourceTree = "<group>"; };
 		386B4907173E734F004174C9 /* ObjC2yUML */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ObjC2yUML; sourceTree = BUILT_PRODUCTS_DIR; };
 		386B490B173E734F004174C9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		386B490E173E734F004174C9 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -148,6 +154,10 @@
 				38A58A5A17475E3F007D0646 /* DFPropertyDefinition.m */,
 				383BB8B0174A4FB6007CFE77 /* DFProtocolDefinition.h */,
 				383BB8B1174A4FB6007CFE77 /* DFProtocolDefinition.m */,
+				3866800B174B9AF20070EDDC /* DFDefinition.h */,
+				3866800C174B9AF20070EDDC /* DFDefinition.m */,
+				3866800F174B9B750070EDDC /* DFContainerDefinition.h */,
+				38668010174B9B750070EDDC /* DFContainerDefinition.m */,
 			);
 			name = Definitions;
 			sourceTree = "<group>";
@@ -226,6 +236,8 @@
 				383BB8A017455544007CFE77 /* DFImplementationFinder.m in Sources */,
 				38A58A5B17475E3F007D0646 /* DFPropertyDefinition.m in Sources */,
 				383BB8B2174A4FB6007CFE77 /* DFProtocolDefinition.m in Sources */,
+				3866800D174B9AF20070EDDC /* DFDefinition.m in Sources */,
+				38668011174B9B750070EDDC /* DFContainerDefinition.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

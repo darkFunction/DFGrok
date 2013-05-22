@@ -10,13 +10,14 @@
 
 @interface DFPropertyDefinition ( /* Private */ )
 @property (nonatomic, readwrite) DFPropertyReferenceType referenceType;
-@property (nonatomic, readwrite) NSString* name;
+@property (nonatomic, copy, readwrite) NSString* name;
 @end
 
 @implementation DFPropertyDefinition
 
 - (id)initWithClangEncoding:(NSString*)encoding {
-    self = [super init];
+    self = [super initWithName:nil];
+    
     if (self) {
         [self setupFromEncoding:encoding];
     }

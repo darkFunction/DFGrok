@@ -7,16 +7,17 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "DFDefinition.h"
 
 typedef NS_ENUM(NSInteger, DFPropertyReferenceType) {
     DFPropertyReferenceTypeStrong,
     DFPropertyReferenceTypeWeak
 };
 
-@interface DFPropertyDefinition : NSObject
+@interface DFPropertyDefinition : DFDefinition
 @property (nonatomic, readonly) DFPropertyReferenceType referenceType;
-@property (nonatomic, readonly) NSString* name;
 
 - (id)initWithClangEncoding:(NSString*)encoding;
 - (BOOL)isWeak;
+
 @end

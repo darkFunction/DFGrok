@@ -61,15 +61,15 @@
         } else {
             [yUML appendFormat:@"[%@],\n", classDef.name];
         }
-        [classDef.propertyDefs enumerateKeysAndObjectsUsingBlock:^(NSString* key, DFPropertyDefinition* propertyDef, BOOL *stop) {
+        [classDef.childDefinitions enumerateKeysAndObjectsUsingBlock:^(NSString* key, DFPropertyDefinition* propertyDef, BOOL *stop) {
             [yUML appendFormat:propertyDef.isWeak ? (@"[%@]+->[%@],\n") : (@"[%@]++->[%@],\n"), classDef.name, propertyDef.name];
         }];
     
-        [classDef.protocols enumerateObjectsUsingBlock:^(DFProtocolDefinition* protoDef, NSUInteger idx, BOOL *stop) {
+        [classDef.implementsProtocols enumerateObjectsUsingBlock:^(DFProtocolDefinition* protoDef, NSUInteger idx, BOOL *stop) {
             [yUML appendFormat:@"[%@]^-.-[%@],\n", protoDef.name, classDef.name];
             
             // Get protocols from property
-            [protoDef.propertyDefs enumerateKeysAndObjectsUsingBlock:^(NSString* key, DFPropertyDefinition* propertyDef, BOOL *stop) {
+            [protoDef.childDefinitions enumerateKeysAndObjectsUsingBlock:^(NSString* key, DFPropertyDefinition* propertyDef, BOOL *stop) {
                 [yUML appendFormat:propertyDef.isWeak ? (@"[%@]+->[%@],\n") : (@"[%@]++->[%@],\n"), protoDef.name, propertyDef.name];
             }];
             
@@ -126,8 +126,8 @@
                             NSString* protocolName = [NSString stringWithUTF8String:protocolRefInfo->protocol->name];
                             
                             DFProtocolDefinition* protocolDefinition = [self.protocolDefinitions objectForKey:protocolName];
-                            if (![classDefinition.protocols containsObject:protocolDefinition]) {
-                                [classDefinition.protocols addObject:protocolDefinition];
+                            if (![classDefinition.implementsProtocols containsObject:protocolDefinition]) {
+                                [classDefinition.implementsProtocols addObject:protocolDefinition];
                             }
                         }
                     }
@@ -172,16 +172,16 @@
                         // Properties in *classes* we are interested in
                         if ([self.currentDefintion isKindOfClass:[DFClassDefinition class]]) {
                             DFClassDefinition* classDefintion = (DFClassDefinition*)self.currentDefintion;
-                            if (![classDefintion.propertyDefs objectForKey:declarationName]) {
-                                [classDefintion.propertyDefs setObject:propertyDef forKey:declarationName];
+                            if (![classDefintion.childDefinitions objectForKey:declarationName]) {
+                                [classDefintion.childDefinitions setObject:propertyDef forKey:declarationName];
                             }
                         }
                         
                         // Properties in *protocols* we are interested in
                         if ([self.currentDefintion isKindOfClass:[DFProtocolDefinition class]]) {
                             DFProtocolDefinition* protoDef = (DFProtocolDefinition*)self.currentDefintion;
-                            if (![protoDef.propertyDefs objectForKey:declarationName]) {                           
-                                [protoDef.propertyDefs setObject:propertyDef forKey:declarationName];
+                            if (![protoDef.childDefinitions objectForKey:declarationName]) {                           
+                                [protoDef.childDefinitions setObject:propertyDef forKey:declarationName];
                             }
                         }
                     }
