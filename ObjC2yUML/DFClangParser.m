@@ -1,13 +1,13 @@
 //
-//  DFClassParser.m
+//  DFClangParser.m
 //  ObjC2yUML
 //
 //  Created by Sam Taylor on 11/05/2013.
 //  Copyright (c) 2013 darkFunction Software. All rights reserved.
 //
 
-#import "DFClassParser.h"
-#import "DFClassParserDelegate.h"
+#import "DFClangParser.h"
+#import "DFClangParserDelegate.h"
 
 // Supported indexer callback functions
 void indexDeclaration(CXClientData client_data, const CXIdxDeclInfo* declaration);
@@ -18,11 +18,11 @@ static IndexerCallbacks indexerCallbacks = {
     .ppIncludedFile = ppIncludedFile,
 };
 
-@interface DFClassParser ( /* Private */ )
+@interface DFClangParser ( /* Private */ )
 @property (nonatomic) NSString* fileName;
 @end
 
-@implementation DFClassParser
+@implementation DFClangParser
 
 - (id)initWithFileName:(NSString*)fileName {
     if(![[NSFileManager defaultManager] fileExistsAtPath:fileName]) {
@@ -87,7 +87,7 @@ static IndexerCallbacks indexerCallbacks = {
 
 void indexDeclaration(CXClientData client_data, const CXIdxDeclInfo* declaration) {
     @autoreleasepool {        
-        DFClassParser* parser = (__bridge DFClassParser*)client_data;
+        DFClangParser* parser = (__bridge DFClangParser*)client_data;
         if ([parser.delegate respondsToSelector:@selector(classParser:foundDeclaration:)]) {
             [parser.delegate classParser:parser foundDeclaration:declaration];
         }
@@ -96,7 +96,7 @@ void indexDeclaration(CXClientData client_data, const CXIdxDeclInfo* declaration
 
 CXIdxClientFile ppIncludedFile(CXClientData client_data, const CXIdxIncludedFileInfo* included_file) {
     @autoreleasepool {
-        DFClassParser* parser = (__bridge DFClassParser*)client_data;
+        DFClangParser* parser = (__bridge DFClangParser*)client_data;
         if ([parser.delegate respondsToSelector: @selector(classParser:includedFile:)]) {
             return [parser.delegate classParser:parser includedFile:included_file];
         }

@@ -7,9 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "DFClassParserDelegate.h"
+#import "DFClangParserDelegate.h"
 
-@interface DFyUMLBuilder : NSObject <DFClassParserDelegate>
+@interface DFyUMLBuilder : NSObject <DFClangParserDelegate>
 - (id)initWithFilenames:(NSArray*)fileNames;
 - (NSString*)buildyUML;
 @end

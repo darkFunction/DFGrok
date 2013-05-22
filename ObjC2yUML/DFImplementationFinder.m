@@ -7,7 +7,7 @@
 //
 
 #import "DFImplementationFinder.h"
-#import "DFClassParser.h"
+#import "DFClangParser.h"
 #import "DFClassDefinition.h"
 
 @interface DFImplementationFinder (/* Private */)
@@ -30,7 +30,7 @@
     
     [self.fileNames enumerateObjectsUsingBlock:^(NSString* filename, NSUInteger idx, BOOL *stop) {
         @autoreleasepool {
-            DFClassParser* parser = [[DFClassParser alloc] initWithFileName:filename];
+            DFClangParser* parser = [[DFClangParser alloc] initWithFileName:filename];
             parser.delegate = self;
             [parser parseWithCompletion:^(NSError* error){
                 // TODO

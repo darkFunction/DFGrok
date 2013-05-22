@@ -12,10 +12,11 @@
 		383BB8B2174A4FB6007CFE77 /* DFProtocolDefinition.m in Sources */ = {isa = PBXBuildFile; fileRef = 383BB8B1174A4FB6007CFE77 /* DFProtocolDefinition.m */; };
 		3866800D174B9AF20070EDDC /* DFDefinition.m in Sources */ = {isa = PBXBuildFile; fileRef = 3866800C174B9AF20070EDDC /* DFDefinition.m */; };
 		38668011174B9B750070EDDC /* DFContainerDefinition.m in Sources */ = {isa = PBXBuildFile; fileRef = 38668010174B9B750070EDDC /* DFContainerDefinition.m */; };
+		38668030174CEF580070EDDC /* DFModelBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = 3866802F174CEF580070EDDC /* DFModelBuilder.m */; };
 		386B490C173E734F004174C9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 386B490B173E734F004174C9 /* Foundation.framework */; };
 		386B490F173E734F004174C9 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 386B490E173E734F004174C9 /* main.m */; };
 		386B4913173E734F004174C9 /* ObjC2yUML.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 386B4912173E734F004174C9 /* ObjC2yUML.1 */; };
-		386B491D173E81C2004174C9 /* DFClassParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 386B491C173E81C2004174C9 /* DFClassParser.m */; };
+		386B491D173E81C2004174C9 /* DFClangParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 386B491C173E81C2004174C9 /* DFClangParser.m */; };
 		38A58A5B17475E3F007D0646 /* DFPropertyDefinition.m in Sources */ = {isa = PBXBuildFile; fileRef = 38A58A5A17475E3F007D0646 /* DFPropertyDefinition.m */; };
 		38E59CCD1740078C005404B3 /* DFClassDefinition.m in Sources */ = {isa = PBXBuildFile; fileRef = 38E59CCC1740078C005404B3 /* DFClassDefinition.m */; };
 		38E59CD01740179F005404B3 /* DFyUMLBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = 38E59CCF1740179F005404B3 /* DFyUMLBuilder.m */; };
@@ -55,16 +56,18 @@
 		3866800C174B9AF20070EDDC /* DFDefinition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DFDefinition.m; sourceTree = "<group>"; };
 		3866800F174B9B750070EDDC /* DFContainerDefinition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFContainerDefinition.h; sourceTree = "<group>"; };
 		38668010174B9B750070EDDC /* DFContainerDefinition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DFContainerDefinition.m; sourceTree = "<group>"; };
+		3866802E174CEF570070EDDC /* DFModelBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFModelBuilder.h; sourceTree = "<group>"; };
+		3866802F174CEF580070EDDC /* DFModelBuilder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DFModelBuilder.m; sourceTree = "<group>"; };
 		386B4907173E734F004174C9 /* ObjC2yUML */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ObjC2yUML; sourceTree = BUILT_PRODUCTS_DIR; };
 		386B490B173E734F004174C9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		386B490E173E734F004174C9 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		386B4911173E734F004174C9 /* ObjC2yUML-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ObjC2yUML-Prefix.pch"; sourceTree = "<group>"; };
 		386B4912173E734F004174C9 /* ObjC2yUML.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = ObjC2yUML.1; sourceTree = "<group>"; };
-		386B491B173E81C2004174C9 /* DFClassParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFClassParser.h; sourceTree = "<group>"; };
-		386B491C173E81C2004174C9 /* DFClassParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DFClassParser.m; sourceTree = "<group>"; };
+		386B491B173E81C2004174C9 /* DFClangParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFClangParser.h; sourceTree = "<group>"; };
+		386B491C173E81C2004174C9 /* DFClangParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DFClangParser.m; sourceTree = "<group>"; };
 		38A58A5917475E3F007D0646 /* DFPropertyDefinition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFPropertyDefinition.h; sourceTree = "<group>"; };
 		38A58A5A17475E3F007D0646 /* DFPropertyDefinition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DFPropertyDefinition.m; sourceTree = "<group>"; };
-		38E59CCA17400460005404B3 /* DFClassParserDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFClassParserDelegate.h; sourceTree = "<group>"; };
+		38E59CCA17400460005404B3 /* DFClangParserDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFClangParserDelegate.h; sourceTree = "<group>"; };
 		38E59CCB1740078C005404B3 /* DFClassDefinition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFClassDefinition.h; sourceTree = "<group>"; };
 		38E59CCC1740078C005404B3 /* DFClassDefinition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DFClassDefinition.m; sourceTree = "<group>"; };
 		38E59CCE1740179F005404B3 /* DFyUMLBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFyUMLBuilder.h; sourceTree = "<group>"; };
@@ -125,14 +128,16 @@
 				38A58A5C1747604F007D0646 /* Definitions */,
 				386B4910173E734F004174C9 /* Supporting Files */,
 				386B490E173E734F004174C9 /* main.m */,
-				386B491B173E81C2004174C9 /* DFClassParser.h */,
-				386B491C173E81C2004174C9 /* DFClassParser.m */,
-				38E59CCA17400460005404B3 /* DFClassParserDelegate.h */,
+				386B491B173E81C2004174C9 /* DFClangParser.h */,
+				386B491C173E81C2004174C9 /* DFClangParser.m */,
+				38E59CCA17400460005404B3 /* DFClangParserDelegate.h */,
 				38E59CCE1740179F005404B3 /* DFyUMLBuilder.h */,
 				38E59CCF1740179F005404B3 /* DFyUMLBuilder.m */,
 				386B4912173E734F004174C9 /* ObjC2yUML.1 */,
 				383BB89E17455544007CFE77 /* DFImplementationFinder.h */,
 				383BB89F17455544007CFE77 /* DFImplementationFinder.m */,
+				3866802E174CEF570070EDDC /* DFModelBuilder.h */,
+				3866802F174CEF580070EDDC /* DFModelBuilder.m */,
 			);
 			path = ObjC2yUML;
 			sourceTree = "<group>";
@@ -230,7 +235,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				386B490F173E734F004174C9 /* main.m in Sources */,
-				386B491D173E81C2004174C9 /* DFClassParser.m in Sources */,
+				386B491D173E81C2004174C9 /* DFClangParser.m in Sources */,
 				38E59CCD1740078C005404B3 /* DFClassDefinition.m in Sources */,
 				38E59CD01740179F005404B3 /* DFyUMLBuilder.m in Sources */,
 				383BB8A017455544007CFE77 /* DFImplementationFinder.m in Sources */,
@@ -238,6 +243,7 @@
 				383BB8B2174A4FB6007CFE77 /* DFProtocolDefinition.m in Sources */,
 				3866800D174B9AF20070EDDC /* DFDefinition.m in Sources */,
 				38668011174B9B750070EDDC /* DFContainerDefinition.m in Sources */,
+				38668030174CEF580070EDDC /* DFModelBuilder.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
