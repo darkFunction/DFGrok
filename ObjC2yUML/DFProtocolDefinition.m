@@ -10,12 +10,4 @@
 
 @implementation DFProtocolDefinition
 
-- (id)initWithName:(NSString*)name {
-    self = [super init];
-    if (self) {
-        _name = [name copy];
-        _propertyDefs = [NSMutableDictionary dictionary];
-    }
-    return self;
-}
 @end
