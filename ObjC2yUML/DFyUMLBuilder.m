@@ -7,7 +7,7 @@
 //
 
 #import "DFyUMLBuilder.h"
-#import "DFClassParser.h"
+#import "DFClangParser.h"
 #import "DFClassDefinition.h"
 #import "DFImplementationFinder.h"
 #import "DFPropertyDefinition.h"
@@ -43,7 +43,7 @@
     
     [self.fileNames enumerateObjectsUsingBlock:^(NSString* obj, NSUInteger idx, BOOL *stop) {
         @autoreleasepool {
-            DFClassParser* parser = [[DFClassParser alloc] initWithFileName:obj];
+            DFClangParser* parser = [[DFClangParser alloc] initWithFileName:obj];
             parser.delegate = self;
             [parser parseWithCompletion:^(NSError* error){
                 
