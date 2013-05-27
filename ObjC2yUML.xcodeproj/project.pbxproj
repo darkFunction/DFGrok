@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		383BB8A017455544007CFE77 /* DFImplementationFinder.m in Sources */ = {isa = PBXBuildFile; fileRef = 383BB89F17455544007CFE77 /* DFImplementationFinder.m */; };
 		383BB8A217464FD8007CFE77 /* libclang.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 383BB8A117464FD8007CFE77 /* libclang.dylib */; };
 		383BB8B2174A4FB6007CFE77 /* DFProtocolDefinition.m in Sources */ = {isa = PBXBuildFile; fileRef = 383BB8B1174A4FB6007CFE77 /* DFProtocolDefinition.m */; };
 		3866800D174B9AF20070EDDC /* DFDefinition.m in Sources */ = {isa = PBXBuildFile; fileRef = 3866800C174B9AF20070EDDC /* DFDefinition.m */; };
@@ -19,18 +18,7 @@
 		386B491D173E81C2004174C9 /* DFClangParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 386B491C173E81C2004174C9 /* DFClangParser.m */; };
 		38A58A5B17475E3F007D0646 /* DFPropertyDefinition.m in Sources */ = {isa = PBXBuildFile; fileRef = 38A58A5A17475E3F007D0646 /* DFPropertyDefinition.m */; };
 		38E59CCD1740078C005404B3 /* DFClassDefinition.m in Sources */ = {isa = PBXBuildFile; fileRef = 38E59CCC1740078C005404B3 /* DFClassDefinition.m */; };
-		38E59CD01740179F005404B3 /* DFyUMLBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = 38E59CCF1740179F005404B3 /* DFyUMLBuilder.m */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		383BB8AE174A49FA007CFE77 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 383BB8AA174A49F9007CFE77 /* UMLTestProject.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 38A58A661748F9CD007D0646;
-			remoteInfo = UMLTestProject;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		386B4905173E734F004174C9 /* CopyFiles */ = {
@@ -46,10 +34,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		383BB89E17455544007CFE77 /* DFImplementationFinder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFImplementationFinder.h; sourceTree = "<group>"; };
-		383BB89F17455544007CFE77 /* DFImplementationFinder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DFImplementationFinder.m; sourceTree = "<group>"; };
 		383BB8A117464FD8007CFE77 /* libclang.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libclang.dylib; path = "../BTSync/llvm/Release+Asserts/lib/libclang.dylib"; sourceTree = "<group>"; };
-		383BB8AA174A49F9007CFE77 /* UMLTestProject.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = UMLTestProject.xcodeproj; path = UMLTestProject/UMLTestProject.xcodeproj; sourceTree = "<group>"; };
 		383BB8B0174A4FB6007CFE77 /* DFProtocolDefinition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFProtocolDefinition.h; sourceTree = "<group>"; };
 		383BB8B1174A4FB6007CFE77 /* DFProtocolDefinition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DFProtocolDefinition.m; sourceTree = "<group>"; };
 		3866800B174B9AF20070EDDC /* DFDefinition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFDefinition.h; sourceTree = "<group>"; };
@@ -70,8 +55,6 @@
 		38E59CCA17400460005404B3 /* DFClangParserDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFClangParserDelegate.h; sourceTree = "<group>"; };
 		38E59CCB1740078C005404B3 /* DFClassDefinition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFClassDefinition.h; sourceTree = "<group>"; };
 		38E59CCC1740078C005404B3 /* DFClassDefinition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DFClassDefinition.m; sourceTree = "<group>"; };
-		38E59CCE1740179F005404B3 /* DFyUMLBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFyUMLBuilder.h; sourceTree = "<group>"; };
-		38E59CCF1740179F005404B3 /* DFyUMLBuilder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DFyUMLBuilder.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,21 +70,12 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		383BB8AB174A49F9007CFE77 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				383BB8AF174A49FA007CFE77 /* UMLTestProject.app */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		386B48FC173E734F004174C9 = {
 			isa = PBXGroup;
 			children = (
 				386B490D173E734F004174C9 /* ObjC2yUML */,
 				386B490A173E734F004174C9 /* Frameworks */,
 				386B4908173E734F004174C9 /* Products */,
-				383BB8AA174A49F9007CFE77 /* UMLTestProject.xcodeproj */,
 			);
 			sourceTree = "<group>";
 		};
@@ -131,11 +105,7 @@
 				386B491B173E81C2004174C9 /* DFClangParser.h */,
 				386B491C173E81C2004174C9 /* DFClangParser.m */,
 				38E59CCA17400460005404B3 /* DFClangParserDelegate.h */,
-				38E59CCE1740179F005404B3 /* DFyUMLBuilder.h */,
-				38E59CCF1740179F005404B3 /* DFyUMLBuilder.m */,
 				386B4912173E734F004174C9 /* ObjC2yUML.1 */,
-				383BB89E17455544007CFE77 /* DFImplementationFinder.h */,
-				383BB89F17455544007CFE77 /* DFImplementationFinder.m */,
 				3866802E174CEF570070EDDC /* DFModelBuilder.h */,
 				3866802F174CEF580070EDDC /* DFModelBuilder.m */,
 			);
@@ -206,28 +176,12 @@
 			mainGroup = 386B48FC173E734F004174C9;
 			productRefGroup = 386B4908173E734F004174C9 /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 383BB8AB174A49F9007CFE77 /* Products */;
-					ProjectRef = 383BB8AA174A49F9007CFE77 /* UMLTestProject.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				386B4906173E734F004174C9 /* ObjC2yUML */,
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		383BB8AF174A49FA007CFE77 /* UMLTestProject.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = UMLTestProject.app;
-			remoteRef = 383BB8AE174A49FA007CFE77 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXSourcesBuildPhase section */
 		386B4903173E734F004174C9 /* Sources */ = {
@@ -237,8 +191,6 @@
 				386B490F173E734F004174C9 /* main.m in Sources */,
 				386B491D173E81C2004174C9 /* DFClangParser.m in Sources */,
 				38E59CCD1740078C005404B3 /* DFClassDefinition.m in Sources */,
-				38E59CD01740179F005404B3 /* DFyUMLBuilder.m in Sources */,
-				383BB8A017455544007CFE77 /* DFImplementationFinder.m in Sources */,
 				38A58A5B17475E3F007D0646 /* DFPropertyDefinition.m in Sources */,
 				383BB8B2174A4FB6007CFE77 /* DFProtocolDefinition.m in Sources */,
 				3866800D174B9AF20070EDDC /* DFDefinition.m in Sources */,

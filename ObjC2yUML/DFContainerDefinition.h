@@ -10,5 +10,5 @@
 
 @interface DFContainerDefinition : DFDefinition
 @property (nonatomic, readonly) NSMutableDictionary* childDefinitions;
-@property (nonatomic, readonly) NSMutableArray* implementsProtocols;
+@property (nonatomic, readonly) NSMutableDictionary* protocols;
 @end
