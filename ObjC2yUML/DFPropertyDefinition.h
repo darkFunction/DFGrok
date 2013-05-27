@@ -8,16 +8,23 @@
 
 #import <Foundation/Foundation.h>
 #import "DFDefinition.h"
+#import "DFClassDefinition.h"
 
 typedef NS_ENUM(NSInteger, DFPropertyReferenceType) {
+    DFPropertyReferenceTypeUnknown,
     DFPropertyReferenceTypeStrong,
     DFPropertyReferenceTypeWeak
 };
 
 @interface DFPropertyDefinition : DFDefinition
-@property (nonatomic, readonly) DFPropertyReferenceType referenceType;
 
-- (id)initWithClangEncoding:(NSString*)encoding;
+// Static
++ (NSString*)classNameFromEncoding:(NSString*)encoding;
++ (DFPropertyReferenceType)referenceTypeFromEncoding:(NSString*)encoding;
+
+// Instance
+@property (nonatomic) DFPropertyReferenceType referenceType;
+@property (nonatomic) DFClassDefinition* classDefinition;
 - (BOOL)isWeak;
 
 @end

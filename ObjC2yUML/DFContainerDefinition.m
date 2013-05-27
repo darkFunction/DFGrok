@@ -9,7 +9,7 @@
 #import "DFContainerDefinition.h"
 @interface DFContainerDefinition ( /* Private */ )
 @property (nonatomic, readwrite) NSMutableDictionary* childDefinitions;
-@property (nonatomic, readwrite) NSMutableArray* implementsProtocols;
+@property (nonatomic, readwrite) NSMutableDictionary* protocols;
 @end
 
 @implementation DFContainerDefinition
@@ -17,7 +17,7 @@
 - (id)initWithName:(NSString *)name {
     self = [super initWithName:name];
     if (self) {
-        self.implementsProtocols = [NSMutableArray array];
+        self.protocols = [NSMutableDictionary dictionary];
         self.childDefinitions = [NSMutableDictionary dictionary];
     }
     return self;
