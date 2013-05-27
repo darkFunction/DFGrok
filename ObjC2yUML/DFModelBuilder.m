@@ -17,7 +17,7 @@
 @interface DFModelBuilder ( /* Private */ )
 @property (nonatomic) NSMutableDictionary* definitions;
 @property (nonatomic) NSMutableArray* implementationNames;
-@property (nonatomic) DFContainerDefinition* currentContainer;
+@property (nonatomic) DFContainerDefinition* currentContainerDef;
 @end
 
 @implementation DFModelBuilder
@@ -49,6 +49,7 @@
 #pragma mark DFClangParserDelegate
 
 - (void)classParser:(id)parser foundDeclaration:(const CXIdxDeclInfo *)declaration {
+    
     const char * const cName = declaration->entityInfo->name;
     if (cName == NULL)
         return;
@@ -59,7 +60,7 @@
         case CXIdxEntity_ObjCClass:
         {
             DFClassDefinition* classDef = (DFClassDefinition*)[self getDefinitionWithName:declarationName andType:[DFClassDefinition class]];
-            self.currentContainer = classDef;
+            self.currentContainerDef = classDef;
             
             const CXIdxObjCInterfaceDeclInfo* declarationInfo = clang_index_getObjCInterfaceDeclInfo(declaration);
             if (declarationInfo) {
@@ -97,40 +98,32 @@
             }        
             break;
         }
-        case CXIdxEntity_ObjCCategory:
-        {
-            // Just extend the original class, discard the fact that we are in a category
-            DFClassDefinition* classDef = (DFClassDefinition*)[self getDefinitionWithName:declarationName andType:[DFClassDefinition class]];
-            self.currentContainer = classDef;
-            
-            NSLog(@"%@", declarationName);
-            break;
-        }
         case CXIdxEntity_ObjCProtocol:
         {
             DFProtocolDefinition* protocolDef = (DFProtocolDefinition*)[self getDefinitionWithName:declarationName andType:[DFProtocolDefinition class]];
-            self.currentContainer = protocolDef;
+            self.currentContainerDef = protocolDef;
             break;
         }
         case CXIdxEntity_ObjCProperty:
         {
-            const CXIdxObjCPropertyDeclInfo *propertyDeclaration = clang_index_getObjCPropertyDeclInfo(declaration);
-            if (propertyDeclaration) {
-                // Parse property info from type encoding
-                NSString* typeEncoding = [NSString stringWithUTF8String:clang_getCString(clang_getDeclObjCTypeEncoding(propertyDeclaration->declInfo->cursor))];
-                NSString* propertyClassDefName = [DFPropertyDefinition classNameFromEncoding:typeEncoding];
-                // TODO
-                //NSArray* propertyProtocolDefNames = [DFPropertyDefinition protocolNamesFromEncoding:typeEncoding];
-                DFPropertyReferenceType propertyRefType = [DFPropertyDefinition referenceTypeFromEncoding:typeEncoding];
-                
-                if ([propertyClassDefName length]) {
-                    DFPropertyDefinition* propertyDef = [[DFPropertyDefinition alloc] initWithName:declarationName];
-                    propertyDef.referenceType = propertyRefType;
-                    propertyDef.classDefinition = (DFClassDefinition*)[self getDefinitionWithName:propertyClassDefName andType:[DFClassDefinition class]];
-                    [self.currentContainer.childDefinitions setObject:propertyDef forKey:declarationName];
+            if (self.currentContainerDef && ![self.currentContainerDef.childDefinitions objectForKey:declarationName]) {
+                const CXIdxObjCPropertyDeclInfo *propertyDeclaration = clang_index_getObjCPropertyDeclInfo(declaration);
+                if (propertyDeclaration) {
+                    // Parse property info from type encoding
+                    NSString* typeEncoding = [NSString stringWithUTF8String:clang_getCString(clang_getDeclObjCTypeEncoding(propertyDeclaration->declInfo->cursor))];
+                    NSString* propertyClassDefName = [DFPropertyDefinition classNameFromEncoding:typeEncoding];
+                    // TODO
+                    //NSArray* propertyProtocolDefNames = [DFPropertyDefinition protocolNamesFromEncoding:typeEncoding];
+                    DFPropertyReferenceType propertyRefType = [DFPropertyDefinition referenceTypeFromEncoding:typeEncoding];
+                    
+                    if ([propertyClassDefName length]) {
+                        DFPropertyDefinition* propertyDef = [[DFPropertyDefinition alloc] initWithName:declarationName];
+                        propertyDef.referenceType = propertyRefType;
+                        propertyDef.classDefinition = (DFClassDefinition*)[self getDefinitionWithName:propertyClassDefName andType:[DFClassDefinition class]];
+                        [self.currentContainerDef.childDefinitions setObject:propertyDef forKey:declarationName];
+                    }
                 }
-            }
-
+            }            
             break;
         }
         default:
@@ -141,7 +134,7 @@
 #pragma mark - Utility methods
 
 - (DFDefinition*)getDefinitionWithName:(NSString*)name andType:(Class)classType {
-    if (![classType isKindOfClass:[DFDefinition class]]) {
+    if (![classType isSubclassOfClass:[DFDefinition class]]) {
         return nil;
     }
     
