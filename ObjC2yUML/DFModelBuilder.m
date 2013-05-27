@@ -7,9 +7,9 @@
 //
 
 #import "DFModelBuilder.h"
-#import "DFDefinition.h"
 #import "DFClangParser.h"
 // Definitions
+#import "DFDefinition.h"
 #import "DFClassDefinition.h"
 #import "DFProtocolDefinition.h"
 #import "DFPropertyDefinition.h"
@@ -46,88 +46,96 @@
     }];
 }
 
-#pragma mark DFClangParserDelegate
+#pragma mark - DFClangParserDelegate
 
 - (void)classParser:(id)parser foundDeclaration:(const CXIdxDeclInfo *)declaration {
-    
     const char * const cName = declaration->entityInfo->name;
     if (cName == NULL)
         return;
     
-    NSString *declarationName = [NSString stringWithUTF8String:cName];
-    
     switch (declaration->entityInfo->kind) {
         case CXIdxEntity_ObjCClass:
-        {
-            DFClassDefinition* classDef = (DFClassDefinition*)[self getDefinitionWithName:declarationName andType:[DFClassDefinition class]];
-            self.currentContainerDef = classDef;
+            self.currentContainerDef = [self processClassDeclaration:declaration];
+            break;
             
-            const CXIdxObjCInterfaceDeclInfo* declarationInfo = clang_index_getObjCInterfaceDeclInfo(declaration);
-            if (declarationInfo) {
-                const CXIdxObjCContainerDeclInfo* containerInfo = clang_index_getObjCContainerDeclInfo(declaration);
-                
-                if (containerInfo) {
-                    if (containerInfo->kind == CXIdxObjCContainer_Implementation) {
-                        // Found an implementation
-                        [self.implementationNames addObject:declarationName];
-                    } else if (containerInfo->kind == CXIdxObjCContainer_Interface) {
-                        
-                        // Find superclass
-                        const CXIdxBaseClassInfo* superclassInfo = declarationInfo->superInfo;
-                        if (superclassInfo) {
-                            const char* cName = superclassInfo->base->name;
-                            if (cName) {
-                                NSString* superclassName = [NSString stringWithUTF8String:cName];
-                                classDef.superclassDef = (DFClassDefinition*)[self getDefinitionWithName:superclassName andType:[DFClassDefinition class]];
-                                cName = NULL;
-                            }
-                        }
-                        
-                        // Find protocols
-                        for (int i=0; i<declarationInfo->protocols->numProtocols; ++i) {
-                            const CXIdxObjCProtocolRefInfo* protocolRefInfo = declarationInfo->protocols->protocols[i];
-                            NSString* protocolName = [NSString stringWithUTF8String:protocolRefInfo->protocol->name];
-                            
-                            DFProtocolDefinition* protocolDef = (DFProtocolDefinition*)[self getDefinitionWithName:protocolName andType:[DFProtocolDefinition class]];
-                            if (![classDef.protocols objectForKey:protocolName]) {
-                                [classDef.protocols setObject:protocolDef forKey:protocolName];
-                            }
-                        }
-                    }
-                }
-            }        
-            break;
-        }
         case CXIdxEntity_ObjCProtocol:
-        {
-            DFProtocolDefinition* protocolDef = (DFProtocolDefinition*)[self getDefinitionWithName:declarationName andType:[DFProtocolDefinition class]];
-            self.currentContainerDef = protocolDef;
+            self.currentContainerDef = (DFProtocolDefinition*)[self getDefinitionWithName:[NSString stringWithUTF8String:cName] andType:[DFProtocolDefinition class]];
             break;
-        }
+        
         case CXIdxEntity_ObjCProperty:
-        {
-            if (self.currentContainerDef && ![self.currentContainerDef.childDefinitions objectForKey:declarationName]) {
-                const CXIdxObjCPropertyDeclInfo *propertyDeclaration = clang_index_getObjCPropertyDeclInfo(declaration);
-                if (propertyDeclaration) {
-                    // Parse property info from type encoding
-                    NSString* typeEncoding = [NSString stringWithUTF8String:clang_getCString(clang_getDeclObjCTypeEncoding(propertyDeclaration->declInfo->cursor))];
-                    NSString* propertyClassDefName = [DFPropertyDefinition classNameFromEncoding:typeEncoding];
-                    // TODO
-                    //NSArray* propertyProtocolDefNames = [DFPropertyDefinition protocolNamesFromEncoding:typeEncoding];
-                    DFPropertyReferenceType propertyRefType = [DFPropertyDefinition referenceTypeFromEncoding:typeEncoding];
-                    
-                    if ([propertyClassDefName length]) {
-                        DFPropertyDefinition* propertyDef = [[DFPropertyDefinition alloc] initWithName:declarationName];
-                        propertyDef.referenceType = propertyRefType;
-                        propertyDef.classDefinition = (DFClassDefinition*)[self getDefinitionWithName:propertyClassDefName andType:[DFClassDefinition class]];
-                        [self.currentContainerDef.childDefinitions setObject:propertyDef forKey:declarationName];
-                    }
-                }
-            }            
+            [self processPropertyDeclaration:declaration];
             break;
-        }
+            
         default:
             break;
+    }
+}
+
+#pragma mark - Declaration processors
+
+- (DFClassDefinition*)processClassDeclaration:(const CXIdxDeclInfo *)declaration {
+    NSString* name = [NSString stringWithUTF8String:declaration->entityInfo->name];
+    
+    DFClassDefinition* classDef = (DFClassDefinition*)[self getDefinitionWithName:name andType:[DFClassDefinition class]];
+    
+    const CXIdxObjCInterfaceDeclInfo* declarationInfo = clang_index_getObjCInterfaceDeclInfo(declaration);
+    if (declarationInfo) {
+        const CXIdxObjCContainerDeclInfo* containerInfo = clang_index_getObjCContainerDeclInfo(declaration);
+        
+        if (containerInfo) {
+            if (containerInfo->kind == CXIdxObjCContainer_Implementation) {
+                // Found an implementation
+                [self.implementationNames addObject:name];
+            } else if (containerInfo->kind == CXIdxObjCContainer_Interface) {
+                
+                // Find superclass
+                const CXIdxBaseClassInfo* superclassInfo = declarationInfo->superInfo;
+                if (superclassInfo) {
+                    const char* cName = superclassInfo->base->name;
+                    if (cName) {
+                        NSString* superclassName = [NSString stringWithUTF8String:cName];
+                        classDef.superclassDef = (DFClassDefinition*)[self getDefinitionWithName:superclassName andType:[DFClassDefinition class]];
+                        cName = NULL;
+                    }
+                }
+                
+                // Find protocols
+                for (int i=0; i<declarationInfo->protocols->numProtocols; ++i) {
+                    const CXIdxObjCProtocolRefInfo* protocolRefInfo = declarationInfo->protocols->protocols[i];
+                    NSString* protocolName = [NSString stringWithUTF8String:protocolRefInfo->protocol->name];
+                    
+                    DFProtocolDefinition* protocolDef = (DFProtocolDefinition*)[self getDefinitionWithName:protocolName andType:[DFProtocolDefinition class]];
+                    if (![classDef.protocols objectForKey:protocolName]) {
+                        [classDef.protocols setObject:protocolDef forKey:protocolName];
+                    }
+                }
+            }
+        }
+    }
+    
+    return classDef;
+}
+
+- (void)processPropertyDeclaration:(const CXIdxDeclInfo *)declaration {
+    NSString* name = [NSString stringWithUTF8String:declaration->entityInfo->name];
+    
+    if (self.currentContainerDef && ![self.currentContainerDef.childDefinitions objectForKey:name]) {
+        const CXIdxObjCPropertyDeclInfo *propertyDeclaration = clang_index_getObjCPropertyDeclInfo(declaration);
+        if (propertyDeclaration) {
+            // Parse property info from type encoding
+            NSString* typeEncoding = [NSString stringWithUTF8String:clang_getCString(clang_getDeclObjCTypeEncoding(propertyDeclaration->declInfo->cursor))];
+            NSString* propertyClassDefName = [DFPropertyDefinition classNameFromEncoding:typeEncoding];
+            // TODO
+            //NSArray* propertyProtocolDefNames = [DFPropertyDefinition protocolNamesFromEncoding:typeEncoding];
+            DFPropertyReferenceType propertyRefType = [DFPropertyDefinition referenceTypeFromEncoding:typeEncoding];
+            
+            if ([propertyClassDefName length]) {
+                DFPropertyDefinition* propertyDef = [[DFPropertyDefinition alloc] initWithName:name];
+                propertyDef.referenceType = propertyRefType;
+                propertyDef.classDefinition = (DFClassDefinition*)[self getDefinitionWithName:propertyClassDefName andType:[DFClassDefinition class]];
+                [self.currentContainerDef.childDefinitions setObject:propertyDef forKey:name];
+            }
+        }
     }
 }
 
