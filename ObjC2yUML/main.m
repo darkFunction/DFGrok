@@ -23,7 +23,7 @@ int main(int argc, const char * argv[])
                               @"/Users/samtaylor/Projects/ObjC2yUML/UMLTestProject/UMLTestProject/Classes/DFDemoDataModelTwo.m",
                               nil];
 
-        __block DFModelBuilder* modelBuilder = [[DFModelBuilder alloc] initWithFilenames:filenames];
+        DFModelBuilder* modelBuilder = [[DFModelBuilder alloc] initWithFilenames:filenames];
         [modelBuilder buildModelWithCompletion:^(NSError *error) {
             if (!error) {
                 NSDictionary* keyClassDefs = [modelBuilder keyClassDefinitions];
