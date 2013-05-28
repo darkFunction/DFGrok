@@ -44,6 +44,19 @@
             }];
         }
     }];
+    
+    [self.delegate modelCompleted:self];
+}
+
+- (NSMutableDictionary*)keyClasses {
+    NSMutableDictionary* keyClasses = [NSMutableDictionary dictionaryWithCapacity:[self.implementationNames count]];
+    
+    [self.implementationNames enumerateObjectsUsingBlock:^(NSString* obj, NSUInteger idx, BOOL *stop) {
+        DFClassDefinition* classDef = [self.definitions objectForKey:obj];
+        [keyClasses setObject:classDef forKey:obj];
+    }];
+    
+    return keyClasses;
 }
 
 #pragma mark - DFClangParserDelegate
