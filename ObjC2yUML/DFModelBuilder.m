@@ -17,7 +17,9 @@
 @interface DFModelBuilder ( /* Private */ )
 @property (nonatomic) NSMutableDictionary* definitions;
 @property (nonatomic) NSMutableArray* implementationNames;
+@property (nonatomic) NSArray* fileNames;
 @property (nonatomic) DFContainerDefinition* currentContainerDef;
+@property (nonatomic, copy) CompletionBlock completion;
 @end
 
 @implementation DFModelBuilder
@@ -28,27 +30,31 @@
         
         self.definitions = [NSMutableDictionary dictionary];
         self.implementationNames = [NSMutableArray array];
-        
-        [self buildModel:fileNames];
+        self.fileNames = fileNames;
     }
     return self;
 }
 
-- (void)buildModel:(NSArray*)fileNames {
-    [fileNames enumerateObjectsUsingBlock:^(NSString* fileName, NSUInteger idx, BOOL *stop) {
+- (void)buildModelWithCompletion:(CompletionBlock)completion {
+    [self.fileNames enumerateObjectsUsingBlock:^(NSString* fileName, NSUInteger idx, BOOL *stop) {
         @autoreleasepool {
             DFClangParser* parser = [[DFClangParser alloc] initWithFileName:fileName];
             parser.delegate = self;
             [parser parseWithCompletion:^(NSError* error){
-                
+                if (error && completion) {
+                    completion(error);
+                    return;
+                }
             }];
         }
     }];
     
-    [self.delegate modelCompleted:self];
+    if (completion) {
+        completion(nil);
+    }
 }
 
-- (NSMutableDictionary*)keyClasses {
+- (NSMutableDictionary*)keyClassDefinitions {
     NSMutableDictionary* keyClasses = [NSMutableDictionary dictionaryWithCapacity:[self.implementationNames count]];
     
     [self.implementationNames enumerateObjectsUsingBlock:^(NSString* obj, NSUInteger idx, BOOL *stop) {
@@ -91,35 +97,36 @@
     
     DFClassDefinition* classDef = (DFClassDefinition*)[self getDefinitionWithName:name andType:[DFClassDefinition class]];
     
-    const CXIdxObjCInterfaceDeclInfo* declarationInfo = clang_index_getObjCInterfaceDeclInfo(declaration);
-    if (declarationInfo) {
+    if (declaration->isContainer) {
         const CXIdxObjCContainerDeclInfo* containerInfo = clang_index_getObjCContainerDeclInfo(declaration);
-        
         if (containerInfo) {
             if (containerInfo->kind == CXIdxObjCContainer_Implementation) {
                 // Found an implementation
                 [self.implementationNames addObject:name];
             } else if (containerInfo->kind == CXIdxObjCContainer_Interface) {
-                
-                // Find superclass
-                const CXIdxBaseClassInfo* superclassInfo = declarationInfo->superInfo;
-                if (superclassInfo) {
-                    const char* cName = superclassInfo->base->name;
-                    if (cName) {
-                        NSString* superclassName = [NSString stringWithUTF8String:cName];
-                        classDef.superclassDef = (DFClassDefinition*)[self getDefinitionWithName:superclassName andType:[DFClassDefinition class]];
-                        cName = NULL;
-                    }
-                }
-                
-                // Find protocols
-                for (int i=0; i<declarationInfo->protocols->numProtocols; ++i) {
-                    const CXIdxObjCProtocolRefInfo* protocolRefInfo = declarationInfo->protocols->protocols[i];
-                    NSString* protocolName = [NSString stringWithUTF8String:protocolRefInfo->protocol->name];
+                const CXIdxObjCInterfaceDeclInfo* declarationInfo = clang_index_getObjCInterfaceDeclInfo(declaration);
+                if (declarationInfo) {
                     
-                    DFProtocolDefinition* protocolDef = (DFProtocolDefinition*)[self getDefinitionWithName:protocolName andType:[DFProtocolDefinition class]];
-                    if (![classDef.protocols objectForKey:protocolName]) {
-                        [classDef.protocols setObject:protocolDef forKey:protocolName];
+                    // Find superclass
+                    const CXIdxBaseClassInfo* superclassInfo = declarationInfo->superInfo;
+                    if (superclassInfo) {
+                        const char* cName = superclassInfo->base->name;
+                        if (cName) {
+                            NSString* superclassName = [NSString stringWithUTF8String:cName];
+                            classDef.superclassDef = (DFClassDefinition*)[self getDefinitionWithName:superclassName andType:[DFClassDefinition class]];
+                            cName = NULL;
+                        }
+                    }
+                    
+                    // Find protocols
+                    for (int i=0; i<declarationInfo->protocols->numProtocols; ++i) {
+                        const CXIdxObjCProtocolRefInfo* protocolRefInfo = declarationInfo->protocols->protocols[i];
+                        NSString* protocolName = [NSString stringWithUTF8String:protocolRefInfo->protocol->name];
+                        
+                        DFProtocolDefinition* protocolDef = (DFProtocolDefinition*)[self getDefinitionWithName:protocolName andType:[DFProtocolDefinition class]];
+                        if (![classDef.protocols objectForKey:protocolName]) {
+                            [classDef.protocols setObject:protocolDef forKey:protocolName];
+                        }
                     }
                 }
             }

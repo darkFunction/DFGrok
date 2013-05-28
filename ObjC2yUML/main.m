@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "DFModelBuilder.h"
+#import "DFyUMLBuilder.h"
 
 int main(int argc, const char * argv[])
 {
@@ -21,11 +22,19 @@ int main(int argc, const char * argv[])
                               @"/Users/samtaylor/Projects/ObjC2yUML/UMLTestProject/UMLTestProject/Classes/DFDemoDataModelOne.m",
                               @"/Users/samtaylor/Projects/ObjC2yUML/UMLTestProject/UMLTestProject/Classes/DFDemoDataModelTwo.m",
                               nil];
-        
-        DFModelBuilder* builder = [[DFModelBuilder alloc] initWithFilenames:filenames];
-        
-//        NSString* yUML = [builder buildyUML];
-//        NSLog(@"%@", yUML);
+
+        __block DFModelBuilder* modelBuilder = [[DFModelBuilder alloc] initWithFilenames:filenames];
+        [modelBuilder buildModelWithCompletion:^(NSError *error) {
+            if (!error) {
+                NSDictionary* keyClassDefs = [modelBuilder keyClassDefinitions];
+                DFyUMLBuilder* yUMLBuilder = [[DFyUMLBuilder alloc] initWithDefinitions:keyClassDefs];
+                
+                NSString* yUML = [yUMLBuilder generate_yUML];
+                NSLog(@"%@", yUML);
+            }
+        }];
+
+  
         
     }
     return 0;

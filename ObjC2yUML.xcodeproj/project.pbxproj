@@ -18,6 +18,7 @@
 		386B491D173E81C2004174C9 /* DFClangParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 386B491C173E81C2004174C9 /* DFClangParser.m */; };
 		38A58A5B17475E3F007D0646 /* DFPropertyDefinition.m in Sources */ = {isa = PBXBuildFile; fileRef = 38A58A5A17475E3F007D0646 /* DFPropertyDefinition.m */; };
 		38E59CCD1740078C005404B3 /* DFClassDefinition.m in Sources */ = {isa = PBXBuildFile; fileRef = 38E59CCC1740078C005404B3 /* DFClassDefinition.m */; };
+		38FC866F1754D911001BA8AB /* DFyUMLBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = 38FC866E1754D911001BA8AB /* DFyUMLBuilder.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -55,6 +56,8 @@
 		38E59CCA17400460005404B3 /* DFClangParserDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFClangParserDelegate.h; sourceTree = "<group>"; };
 		38E59CCB1740078C005404B3 /* DFClassDefinition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFClassDefinition.h; sourceTree = "<group>"; };
 		38E59CCC1740078C005404B3 /* DFClassDefinition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DFClassDefinition.m; sourceTree = "<group>"; };
+		38FC866D1754D910001BA8AB /* DFyUMLBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFyUMLBuilder.h; sourceTree = "<group>"; };
+		38FC866E1754D911001BA8AB /* DFyUMLBuilder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DFyUMLBuilder.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -108,6 +111,8 @@
 				386B4912173E734F004174C9 /* ObjC2yUML.1 */,
 				3866802E174CEF570070EDDC /* DFModelBuilder.h */,
 				3866802F174CEF580070EDDC /* DFModelBuilder.m */,
+				38FC866D1754D910001BA8AB /* DFyUMLBuilder.h */,
+				38FC866E1754D911001BA8AB /* DFyUMLBuilder.m */,
 			);
 			path = ObjC2yUML;
 			sourceTree = "<group>";
@@ -196,6 +201,7 @@
 				3866800D174B9AF20070EDDC /* DFDefinition.m in Sources */,
 				38668011174B9B750070EDDC /* DFContainerDefinition.m in Sources */,
 				38668030174CEF580070EDDC /* DFModelBuilder.m in Sources */,
+				38FC866F1754D911001BA8AB /* DFyUMLBuilder.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
