@@ -9,16 +9,11 @@
 #import <Foundation/Foundation.h>
 #import "DFClangParserDelegate.h"
 
-@protocol DFModelBuilderDelegate;
+typedef void(^CompletionBlock)(NSError*);
 
 @interface DFModelBuilder : NSObject <DFClangParserDelegate>
-@property (nonatomic, weak) id<DFModelBuilderDelegate> delegate;
 - (id)initWithFilenames:(NSArray*)fileNames;
-
+- (void)buildModelWithCompletion:(CompletionBlock)completion;
 // Return classes for which we have found an @implementation
-- (NSMutableDictionary*)keyClasses;
-@end
-
-@protocol DFModelBuilderDelegate <NSObject>
-- (void)modelCompleted:(DFModelBuilder*)modelBuilder;
+- (NSMutableDictionary*)keyClassDefinitions;
 @end
