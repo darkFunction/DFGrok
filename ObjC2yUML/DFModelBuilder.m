@@ -43,7 +43,7 @@
             [parser parseWithCompletion:^(NSError* error){
                 if (error && completion) {
                     completion(error);
-                    return;
+                    *stop = YES;
                 }
             }];
         }
@@ -72,6 +72,8 @@
     if (cName == NULL)
         return;
     
+    //NSLog(@"%d -> %s", declaration->entityInfo->kind, cName);
+    
     switch (declaration->entityInfo->kind) {
         case CXIdxEntity_ObjCClass:
             self.currentContainerDef = [self processClassDeclaration:declaration];
@@ -83,6 +85,10 @@
         
         case CXIdxEntity_ObjCProperty:
             [self processPropertyDeclaration:declaration];
+            break;
+            
+        case CXIdxEntity_ObjCCategory:
+            self.currentContainerDef = nil; //
             break;
             
         default:
