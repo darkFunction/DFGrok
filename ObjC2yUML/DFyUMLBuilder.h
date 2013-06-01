@@ -2,14 +2,14 @@
 //  DFyUMLBuilder.h
 //  ObjC2yUML
 //
-//  Created by Sam Taylor on 12/05/2013.
+//  Created by Sam Taylor on 28/05/2013.
 //  Copyright (c) 2013 darkFunction Software. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
-#import "DFClassParserDelegate.h"
+#import "DFModelBuilder.h"
 
-@interface DFyUMLBuilder : NSObject <DFClassParserDelegate>
-- (id)initWithFilenames:(NSArray*)fileNames;
-- (NSString*)buildyUML;
+@interface DFyUMLBuilder : NSObject
+- (id)initWithDefinitions:(NSDictionary*)definitions;
+- (NSString*)generate_yUML;
 @end

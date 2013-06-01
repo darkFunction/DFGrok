@@ -1,5 +1,5 @@
 //
-//  DFClassParser.h
+//  DFClangParser.h
 //  ObjC2yUML
 //
 //  Created by Sam Taylor on 11/05/2013.
@@ -7,11 +7,14 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <clang-c/Index.h>
 
-@protocol DFClassParserDelegate;
+@protocol DFClangParserDelegate;
 
-@interface DFClassParser : NSObject
-@property (nonatomic, weak) id<DFClassParserDelegate>delegate;
+@interface DFClangParser : NSObject
+@property (nonatomic, weak) id<DFClangParserDelegate>delegate;
+@property (nonatomic, readonly) CXTranslationUnit translationUnit;
+
 - (id)initWithFileName:(NSString*)fileName;
 - (void)parseWithCompletion:(void(^)(NSError*))completion;
 @end
