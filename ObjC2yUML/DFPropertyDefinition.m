@@ -138,8 +138,4 @@
     [self.protocolNames addObject:protocolName];
 }
 
-- (BOOL)isWeak {
-    return NO;
-}
-
 @end
