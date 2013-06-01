@@ -15,6 +15,7 @@
 
 @interface DFyUMLBuilder ()
 @property (nonatomic) NSDictionary* definitions;
+@property (nonatomic) NSMutableArray* doneProtocols; // track which protocols have already been mapped
 @end
 
 @implementation DFyUMLBuilder
@@ -23,6 +24,7 @@
     self = [super init];
     if (self) {
         self.definitions = definitions;
+        self.doneProtocols = [NSMutableArray array];
     }
     return self;
 }
@@ -44,28 +46,31 @@
             
             // Implements protocols
             [classDef.protocols enumerateKeysAndObjectsUsingBlock:^(NSString* protocolKey, DFProtocolDefinition* protocolDef, BOOL *stop) {
-                [code appendFormat:@"[<%@>]^-.-[%@],\n", protocolDef.name, classDef.name];
+                if (![[self doneProtocols] containsObject:protocolDef]) {
+                    [self.doneProtocols addObject:protocolDef];
+                    [code appendFormat:@"[%@{bg:orchid}]^-.-[%@],\n", protocolDef.name, classDef.name];
+                    [code appendString:[self generateChildrenOfContainer:protocolDef]];
+                }
             }];
             
-            // Properties
-            [classDef.childDefinitions enumerateKeysAndObjectsUsingBlock:^(NSString* key, DFPropertyDefinition* propertyDef, BOOL *stop) {
-                // Only map properties that corresspond to key classes, or protocols which key classes implement
-                __block BOOL map = NO;
-                if ([self.definitions objectForKey:propertyDef.className]) {
-                    map = YES;
-                }
-                
-                if (map) {
-                    if (propertyDef.isWeak) {
-                        [code appendFormat:@"[%@]+->[%@],\n", classDef.name, propertyDef.className];
-                    } else {
-                        [code appendFormat:@"[%@]++->[%@],\n", classDef.name, propertyDef.className];
-                    }
-                }
-            }];
+            [code appendString:[self generateChildrenOfContainer:classDef]];
         }
     }];
     
+    return code;
+}
+
+- (NSString*)generateChildrenOfContainer:(DFContainerDefinition*)containerDef {
+    NSMutableString* code = [NSMutableString string];
+    
+    // Properties // TODO: typecheck
+    [containerDef.childDefinitions enumerateKeysAndObjectsUsingBlock:^(NSString* key, DFPropertyDefinition* propertyDef, BOOL *stop) {
+        if (propertyDef.isWeak) {
+            [code appendFormat:@"[%@]+->[%@],\n", containerDef.name, propertyDef.className];
+        } else {
+            [code appendFormat:@"[%@]++->[%@],\n", containerDef.name, propertyDef.className];
+        }
+    }];
     return code;
 }
 
