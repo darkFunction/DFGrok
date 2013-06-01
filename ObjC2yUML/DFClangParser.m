@@ -20,6 +20,7 @@ static IndexerCallbacks indexerCallbacks = {
 
 @interface DFClangParser ( /* Private */ )
 @property (nonatomic) NSString* fileName;
+@property (nonatomic, readwrite) CXTranslationUnit translationUnit;
 @end
 
 @implementation DFClangParser
@@ -51,13 +52,13 @@ static IndexerCallbacks indexerCallbacks = {
     command_line_args[0] = "-fobjc-arc";
     command_line_args[1] = "-F/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.1.sdk/System/Library/Frameworks";
     
-    CXTranslationUnit translationUnit = clang_parseTranslationUnit(index,
-                                                                   [self.fileName fileSystemRepresentation],
-                                                                   command_line_args, 2,
-                                                                   NULL, 0,
-                                                                   // CXTranslationUnit_DetailedPreprocessingRecord enables ppIncludedFile callback
-                                                                   CXTranslationUnit_SkipFunctionBodies /* | CXTranslationUnit_DetailedPreprocessingRecord */);
-    if (!translationUnit) {
+    self.translationUnit = clang_parseTranslationUnit(index,
+                                                      [self.fileName fileSystemRepresentation],
+                                                      command_line_args, 2,
+                                                      NULL, 0,
+                                                      // CXTranslationUnit_DetailedPreprocessingRecord enables ppIncludedFile callback
+                                                      CXTranslationUnit_SkipFunctionBodies /* | CXTranslationUnit_DetailedPreprocessingRecord */);
+    if (!self.translationUnit) {
         if (completion) {
             completion([[NSError alloc] initWithDomain:@"ClangParseErrorDomain" code:DFClangParseErrorCompilation userInfo:nil]);
         }
@@ -71,13 +72,15 @@ static IndexerCallbacks indexerCallbacks = {
                                                  &indexerCallbacks,
                                                  sizeof(indexerCallbacks),
                                                  CXIndexOpt_SuppressWarnings,
-                                                 translationUnit);
+                                                 self.translationUnit);
     if (completion) {
         completion(nil);
     }
     
+    // Cleanup
     clang_IndexAction_dispose(action);
-    clang_disposeTranslationUnit(translationUnit);
+    clang_disposeTranslationUnit(self.translationUnit);
+    self.translationUnit = nil;
     clang_disposeIndex(index);
     (void) indexResult;
     

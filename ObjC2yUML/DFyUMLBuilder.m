@@ -51,25 +51,15 @@
             [classDef.childDefinitions enumerateKeysAndObjectsUsingBlock:^(NSString* key, DFPropertyDefinition* propertyDef, BOOL *stop) {
                 // Only map properties that corresspond to key classes, or protocols which key classes implement
                 __block BOOL map = NO;
-                if ([self.definitions objectForKey:propertyDef.classDefinition.name]) {
+                if ([self.definitions objectForKey:propertyDef.className]) {
                     map = YES;
                 }
-                NSLog(@"%@", propertyDef.classDefinition.name);
-//                [self.definitions enumerateKeysAndObjectsUsingBlock:^(NSString* key, DFDefinition* definition, BOOL *stop) {
-//                    if ([definition isKindOfClass:[DFClassDefinition class]]) {
-//                        DFClassDefinition* classDef = (DFClassDefinition*)definition;
-//                        if ([classDef.protocols objectForKey:propertyDef.classDefinition.name]) {
-//                            map = YES;
-//                            *stop = YES;
-//                        }
-//                    }
-//                }];
                 
                 if (map) {
                     if (propertyDef.isWeak) {
-                        [code appendFormat:@"[%@]+->[%@],\n", classDef.name, propertyDef.classDefinition.name];
+                        [code appendFormat:@"[%@]+->[%@],\n", classDef.name, propertyDef.className];
                     } else {
-                        [code appendFormat:@"[%@]++->[%@],\n", classDef.name, propertyDef.classDefinition.name];
+                        [code appendFormat:@"[%@]++->[%@],\n", classDef.name, propertyDef.className];
                     }
                 }
             }];

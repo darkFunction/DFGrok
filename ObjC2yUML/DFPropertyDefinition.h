@@ -7,24 +7,14 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <clang-c/Index.h>
 #import "DFDefinition.h"
-#import "DFClassDefinition.h"
-
-typedef NS_ENUM(NSInteger, DFPropertyReferenceType) {
-    DFPropertyReferenceTypeUnknown,
-    DFPropertyReferenceTypeStrong,
-    DFPropertyReferenceTypeWeak
-};
 
 @interface DFPropertyDefinition : DFDefinition
+@property (nonatomic, readonly, getter = isWeak) BOOL weak;
+@property (nonatomic, readonly) NSString* className;
+@property (nonatomic, readonly) NSMutableArray* protocolNames;
 
-// Static
-+ (NSString*)classNameFromEncoding:(NSString*)encoding;
-+ (DFPropertyReferenceType)referenceTypeFromEncoding:(NSString*)encoding;
-
-// Instance
-@property (nonatomic) DFPropertyReferenceType referenceType;
-@property (nonatomic) DFClassDefinition* classDefinition;
-- (BOOL)isWeak;
+- (id)initWithDeclaration:(const CXIdxObjCPropertyDeclInfo*)declaration andTranslationUnit:(CXTranslationUnit)translationUnit;
 
 @end
