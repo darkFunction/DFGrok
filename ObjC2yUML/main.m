@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "DFModelBuilder.h"
 #import "DFyUMLBuilder.h"
 
 int main(int argc, const char * argv[])
@@ -14,18 +15,26 @@ int main(int argc, const char * argv[])
     @autoreleasepool {
         
         NSArray* filenames = [NSArray arrayWithObjects:
-                              @"/Users/samtaylor/ObjC2yUML/UMLTestProject/UMLTestProject/Classes/DFDemoController.m",
-                              @"/Users/samtaylor/ObjC2yUML/UMLTestProject/UMLTestProject/Classes/DFDataModelContainer.m",
-                              @"/Users/samtaylor/ObjC2yUML/UMLTestProject/UMLTestProject/Classes/DFDataModel.m",
-                              @"/Users/samtaylor/ObjC2yUML/UMLTestProject/UMLTestProject/Classes/DFDemoDataSource.m",
-                              @"/Users/samtaylor/ObjC2yUML/UMLTestProject/UMLTestProject/Classes/DFDemoDataModelOne.m",
-                              @"/Users/samtaylor/ObjC2yUML/UMLTestProject/UMLTestProject/Classes/DFDemoDataModelTwo.m",
+                              @"/Users/samtaylor/Projects/ObjC2yUML/UMLTestProject/UMLTestProject/Classes/DFDemoController.m",
+                              @"/Users/samtaylor/Projects/ObjC2yUML/UMLTestProject/UMLTestProject/Classes/DFDataModelContainer.m",
+                              @"/Users/samtaylor/Projects/ObjC2yUML/UMLTestProject/UMLTestProject/Classes/DFDataModel.m",
+                              @"/Users/samtaylor/Projects/ObjC2yUML/UMLTestProject/UMLTestProject/Classes/DFDemoDataSource.m",
+                              @"/Users/samtaylor/Projects/ObjC2yUML/UMLTestProject/UMLTestProject/Classes/DFDemoDataModelOne.m",
+                              @"/Users/samtaylor/Projects/ObjC2yUML/UMLTestProject/UMLTestProject/Classes/DFDemoDataModelTwo.m",
                               nil];
-        
-        DFyUMLBuilder* builder = [[DFyUMLBuilder alloc] initWithFilenames:filenames];
-        
-        NSString* yUML = [builder buildyUML];
-        NSLog(@"%@", yUML);
+
+        DFModelBuilder* modelBuilder = [[DFModelBuilder alloc] initWithFilenames:filenames];
+        [modelBuilder buildModelWithCompletion:^(NSError *error) {
+            if (!error) {
+                NSDictionary* keyClassDefs = [modelBuilder keyClassDefinitions];
+                DFyUMLBuilder* yUMLBuilder = [[DFyUMLBuilder alloc] initWithDefinitions:keyClassDefs];
+                
+                NSString* yUML = [yUMLBuilder generate_yUML];
+                NSLog(@"%@", yUML);
+            }
+        }];
+
+  
         
     }
     return 0;

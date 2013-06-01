@@ -2,200 +2,71 @@
 //  DFyUMLBuilder.m
 //  ObjC2yUML
 //
-//  Created by Sam Taylor on 12/05/2013.
+//  Created by Sam Taylor on 28/05/2013.
 //  Copyright (c) 2013 darkFunction Software. All rights reserved.
 //
 
 #import "DFyUMLBuilder.h"
-#import "DFClassParser.h"
+// Definitions
+#import "DFDefinition.h"
 #import "DFClassDefinition.h"
-#import "DFImplementationFinder.h"
-#import "DFPropertyDefinition.h"
 #import "DFProtocolDefinition.h"
+#import "DFPropertyDefinition.h"
 
-@interface DFyUMLBuilder ( /* Private */ )
-@property (nonatomic) NSArray* fileNames;
-@property (nonatomic) NSDictionary* classDefinitions;
-@property (nonatomic) NSDictionary* protocolDefinitions;
-@property (nonatomic) NSDictionary* propertyDefinitions;
-@property (nonatomic) id currentDefintion;
+@interface DFyUMLBuilder ()
+@property (nonatomic) NSDictionary* definitions;
 @end
 
 @implementation DFyUMLBuilder
 
-- (id)initWithFilenames:(NSArray*)fileNames {
-    self  = [super init];
+- (id)initWithDefinitions:(NSDictionary*)definitions {
+    self = [super init];
     if (self) {
-        _fileNames = fileNames;
+        self.definitions = definitions;
     }
     return self;
 }
 
-- (NSString*)buildyUML {
+- (NSString*)generate_yUML {
+    NSMutableString* code = [NSMutableString string];
     
-    // Hmm. Think it might be possible to do this all in one go by getting translation unit associated with an
-    // implementation cursor and querying it for superclass etc... TODO: investigate
-    
-    DFImplementationFinder* implementationFinder = [[DFImplementationFinder alloc] initWithFilenames:self.fileNames];
-    self.classDefinitions = [implementationFinder createClassDefinitions];
-    self.protocolDefinitions = [NSMutableDictionary dictionary];
-    self.propertyDefinitions = [NSMutableDictionary dictionary];
-    
-    [self.fileNames enumerateObjectsUsingBlock:^(NSString* obj, NSUInteger idx, BOOL *stop) {
-        @autoreleasepool {
-            DFClassParser* parser = [[DFClassParser alloc] initWithFileName:obj];
-            parser.delegate = self;
-            [parser parseWithCompletion:^(NSError* error){
-                
-            }];
-        }
-    }];
-    
-    // Now we have a model of the parts we are interested in
-        
-    // Classes
-    NSMutableString* yUML = [[NSMutableString alloc] init];
-    [self.classDefinitions enumerateKeysAndObjectsUsingBlock:^(NSString* key, DFClassDefinition* classDef, BOOL *stop) {
-        if (classDef.superclassDef) {
-            [yUML appendFormat:@"[%@]^-[%@],\n", classDef.superclassDef.name, classDef.name];
-        } else {
-            [yUML appendFormat:@"[%@],\n", classDef.name];
-        }
-        [classDef.propertyDefs enumerateKeysAndObjectsUsingBlock:^(NSString* key, DFPropertyDefinition* propertyDef, BOOL *stop) {
-            [yUML appendFormat:propertyDef.isWeak ? (@"[%@]+->[%@],\n") : (@"[%@]++->[%@],\n"), classDef.name, propertyDef.name];
-        }];
-    
-        [classDef.protocols enumerateObjectsUsingBlock:^(DFProtocolDefinition* protoDef, NSUInteger idx, BOOL *stop) {
-            [yUML appendFormat:@"[%@]^-.-[%@],\n", protoDef.name, classDef.name];
+    // Test
+    [self.definitions enumerateKeysAndObjectsUsingBlock:^(NSString* key, DFDefinition* definition, BOOL *stop) {
+        if ([definition isKindOfClass:[DFClassDefinition class]]) {
+            DFClassDefinition* classDef = (DFClassDefinition*)definition;
             
-            // Get protocols from property
-            [protoDef.propertyDefs enumerateKeysAndObjectsUsingBlock:^(NSString* key, DFPropertyDefinition* propertyDef, BOOL *stop) {
-                [yUML appendFormat:propertyDef.isWeak ? (@"[%@]+->[%@],\n") : (@"[%@]++->[%@],\n"), protoDef.name, propertyDef.name];
-            }];
-            
-        }];        
-    }];
-    
-    self.classDefinitions = nil;
-    self.protocolDefinitions = nil;
-    self.propertyDefinitions = nil;
-
-    return yUML;
-}
-
-- (void)classParser:(id)parser foundDeclaration:(const CXIdxDeclInfo *)declaration {
-    const char * const cName = declaration->entityInfo->name;
-    if (cName == NULL)
-        return;
-
-    NSString *declarationName = [NSString stringWithUTF8String:cName];
-    
-    switch (declaration->entityInfo->kind) {
-        case CXIdxEntity_ObjCClass:
-        {            
-            // Is it an implementation we have previously found?
-            DFClassDefinition* classDefinition = [self.classDefinitions objectForKey:declarationName];
-            if (classDefinition) {
-                self.currentDefintion = classDefinition;
-                
-                const CXIdxObjCInterfaceDeclInfo* declarationInfo = clang_index_getObjCInterfaceDeclInfo(declaration);
-                if (declarationInfo) {
-                    const CXIdxObjCContainerDeclInfo* containerInfo = clang_index_getObjCContainerDeclInfo(declaration);
-                    if (containerInfo && containerInfo->kind == CXIdxObjCContainer_Interface) {
-                        
-                        // Find superclass
-                        const CXIdxBaseClassInfo* superclassInfo = declarationInfo->superInfo;
-                        if (superclassInfo) {
-                            const char* cName = superclassInfo->base->name;
-                            if (cName) {
-                                NSString* name = [NSString stringWithUTF8String:cName];
-                                
-                                // Interested?
-                                if ([self.classDefinitions objectForKey:name]) {
-                                    DFClassDefinition* superclassDefinition = [[DFClassDefinition alloc] initWithName:name];
-                                    classDefinition.superclassDef = superclassDefinition;
-                                }
-                            }
-                            cName = NULL;
-                        }
-                        
-                        // Find protocols
-                        // TODO: doesn't find privately declared protocols
-                        for (int i=0; i<declarationInfo->protocols->numProtocols; ++i) {
-                            const CXIdxObjCProtocolRefInfo* protocolRefInfo = declarationInfo->protocols->protocols[i];
-                            NSString* protocolName = [NSString stringWithUTF8String:protocolRefInfo->protocol->name];
-                            
-                            DFProtocolDefinition* protocolDefinition = [self.protocolDefinitions objectForKey:protocolName];
-                            if (![classDefinition.protocols containsObject:protocolDefinition]) {
-                                [classDefinition.protocols addObject:protocolDefinition];
-                            }
-                        }
-                    }
-                }
+            // Superclass relationship. Only include superclasses which are also key classes
+            if ([classDef.superclassDef.name length] && [self.definitions objectForKey:classDef.superclassDef.name]) {
+                [code appendFormat:@"[%@]^-[%@],\n", classDef.superclassDef.name, classDef.name];
             } else {
-                self.currentDefintion = nil;
+                [code appendFormat:@"[%@],\n", classDef.name];
             }
-            break;
-        }
-        case CXIdxEntity_ObjCCategory:
-            self.currentDefintion = nil;
-            break;
-        case CXIdxEntity_ObjCProtocol:
-        {
-            // TODO: Need to only add protocols which are declared in the files we are interested in
             
-            if (![self.protocolDefinitions objectForKey:declarationName]) {
-                DFProtocolDefinition* protocolDefinition = [[DFProtocolDefinition alloc] initWithName:declarationName];
-                [self.protocolDefinitions setValue:protocolDefinition forKey:declarationName];
-                self.currentDefintion = protocolDefinition;
-            }
-            break;
-        }
-        case CXIdxEntity_ObjCProperty:
-        {
-            const CXIdxObjCPropertyDeclInfo *propertyDeclaration = clang_index_getObjCPropertyDeclInfo(declaration);
-            if (propertyDeclaration) {
-                NSString* typeEncoding = [NSString stringWithUTF8String:clang_getCString(clang_getDeclObjCTypeEncoding(propertyDeclaration->declInfo->cursor))];
-
-                DFPropertyDefinition* propertyDef = [[DFPropertyDefinition alloc] initWithClangEncoding:typeEncoding];
-                if ([propertyDef.name length]) {
-                    DFPropertyDefinition* existing = [[self propertyDefinitions] objectForKey:propertyDef.name];
-                    if (existing) {
-                        propertyDef = existing;
+            // Implements protocols
+            [classDef.protocols enumerateKeysAndObjectsUsingBlock:^(NSString* protocolKey, DFProtocolDefinition* protocolDef, BOOL *stop) {
+                [code appendFormat:@"[<%@>]^-.-[%@],\n", protocolDef.name, classDef.name];
+            }];
+            
+            // Properties
+            [classDef.childDefinitions enumerateKeysAndObjectsUsingBlock:^(NSString* key, DFPropertyDefinition* propertyDef, BOOL *stop) {
+                // Only map properties that corresspond to key classes, or protocols which key classes implement
+                __block BOOL map = NO;
+                if ([self.definitions objectForKey:propertyDef.className]) {
+                    map = YES;
+                }
+                
+                if (map) {
+                    if (propertyDef.isWeak) {
+                        [code appendFormat:@"[%@]+->[%@],\n", classDef.name, propertyDef.className];
                     } else {
-                        [self.propertyDefinitions setValue:propertyDef forKey:propertyDef.name];
-                    }
-                    
-                    // Does it reference an instance of one of the classes/protocols we found an implementation for?
-                    if ([self isKeyElement:propertyDef.name]) {
-                        
-                        // Properties in *classes* we are interested in
-                        if ([self.currentDefintion isKindOfClass:[DFClassDefinition class]]) {
-                            DFClassDefinition* classDefintion = (DFClassDefinition*)self.currentDefintion;
-                            if (![classDefintion.propertyDefs objectForKey:declarationName]) {
-                                [classDefintion.propertyDefs setObject:propertyDef forKey:declarationName];
-                            }
-                        }
-                        
-                        // Properties in *protocols* we are interested in
-                        if ([self.currentDefintion isKindOfClass:[DFProtocolDefinition class]]) {
-                            DFProtocolDefinition* protoDef = (DFProtocolDefinition*)self.currentDefintion;
-                            if (![protoDef.propertyDefs objectForKey:declarationName]) {                           
-                                [protoDef.propertyDefs setObject:propertyDef forKey:declarationName];
-                            }
-                        }
+                        [code appendFormat:@"[%@]++->[%@],\n", classDef.name, propertyDef.className];
                     }
                 }
-            }
-            break;
+            }];
         }
-        default:
-            break;
-    }
-}
-
-- (BOOL)isKeyElement:(NSString*)name {
-    return !!( [self.classDefinitions objectForKey:name] || [self.protocolDefinitions objectForKey:name] );
+    }];
+    
+    return code;
 }
 
 @end
