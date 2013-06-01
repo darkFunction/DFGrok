@@ -9,6 +9,6 @@
 #import <UIKit/UIKit.h>
 #import "DFDemoDataSource.h"
 
-@interface DFDemoController : UIViewController <DFDataModelDelegate>
+@interface DFDemoController : UIViewController 
 
 @end

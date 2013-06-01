@@ -10,14 +10,5 @@
 
 @implementation DFClassDefinition
 
-- (id)initWithName:(NSString*)name {
-    self = [super init];
-    if (self) {
-        _name = [name copy];
-        _propertyDefs = [NSMutableDictionary dictionary];
-        _protocols = [NSMutableArray array];
-    }
-    return self;
-}
 
 @end

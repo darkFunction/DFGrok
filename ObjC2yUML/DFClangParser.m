@@ -1,13 +1,13 @@
 //
-//  DFClassParser.m
+//  DFClangParser.m
 //  ObjC2yUML
 //
 //  Created by Sam Taylor on 11/05/2013.
 //  Copyright (c) 2013 darkFunction Software. All rights reserved.
 //
 
-#import "DFClassParser.h"
-#import "DFClassParserDelegate.h"
+#import "DFClangParser.h"
+#import "DFClangParserDelegate.h"
 
 // Supported indexer callback functions
 void indexDeclaration(CXClientData client_data, const CXIdxDeclInfo* declaration);
@@ -18,11 +18,12 @@ static IndexerCallbacks indexerCallbacks = {
     .ppIncludedFile = ppIncludedFile,
 };
 
-@interface DFClassParser ( /* Private */ )
+@interface DFClangParser ( /* Private */ )
 @property (nonatomic) NSString* fileName;
+@property (nonatomic, readwrite) CXTranslationUnit translationUnit;
 @end
 
-@implementation DFClassParser
+@implementation DFClangParser
 
 - (id)initWithFileName:(NSString*)fileName {
     if(![[NSFileManager defaultManager] fileExistsAtPath:fileName]) {
@@ -51,13 +52,13 @@ static IndexerCallbacks indexerCallbacks = {
     command_line_args[0] = "-fobjc-arc";
     command_line_args[1] = "-F/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.1.sdk/System/Library/Frameworks";
     
-    CXTranslationUnit translationUnit = clang_parseTranslationUnit(index,
-                                                                   [self.fileName fileSystemRepresentation],
-                                                                   command_line_args, 2,
-                                                                   NULL, 0,
-                                                                   // CXTranslationUnit_DetailedPreprocessingRecord enables ppIncludedFile callback
-                                                                   CXTranslationUnit_SkipFunctionBodies /* | CXTranslationUnit_DetailedPreprocessingRecord */);
-    if (!translationUnit) {
+    self.translationUnit = clang_parseTranslationUnit(index,
+                                                      [self.fileName fileSystemRepresentation],
+                                                      command_line_args, 2,
+                                                      NULL, 0,
+                                                      // CXTranslationUnit_DetailedPreprocessingRecord enables ppIncludedFile callback
+                                                      CXTranslationUnit_SkipFunctionBodies /* | CXTranslationUnit_DetailedPreprocessingRecord */);
+    if (!self.translationUnit) {
         if (completion) {
             completion([[NSError alloc] initWithDomain:@"ClangParseErrorDomain" code:DFClangParseErrorCompilation userInfo:nil]);
         }
@@ -71,13 +72,15 @@ static IndexerCallbacks indexerCallbacks = {
                                                  &indexerCallbacks,
                                                  sizeof(indexerCallbacks),
                                                  CXIndexOpt_SuppressWarnings,
-                                                 translationUnit);
+                                                 self.translationUnit);
     if (completion) {
         completion(nil);
     }
     
+    // Cleanup
     clang_IndexAction_dispose(action);
-    clang_disposeTranslationUnit(translationUnit);
+    clang_disposeTranslationUnit(self.translationUnit);
+    self.translationUnit = nil;
     clang_disposeIndex(index);
     (void) indexResult;
     
@@ -87,7 +90,7 @@ static IndexerCallbacks indexerCallbacks = {
 
 void indexDeclaration(CXClientData client_data, const CXIdxDeclInfo* declaration) {
     @autoreleasepool {        
-        DFClassParser* parser = (__bridge DFClassParser*)client_data;
+        DFClangParser* parser = (__bridge DFClangParser*)client_data;
         if ([parser.delegate respondsToSelector:@selector(classParser:foundDeclaration:)]) {
             [parser.delegate classParser:parser foundDeclaration:declaration];
         }
@@ -96,7 +99,7 @@ void indexDeclaration(CXClientData client_data, const CXIdxDeclInfo* declaration
 
 CXIdxClientFile ppIncludedFile(CXClientData client_data, const CXIdxIncludedFileInfo* included_file) {
     @autoreleasepool {
-        DFClassParser* parser = (__bridge DFClassParser*)client_data;
+        DFClangParser* parser = (__bridge DFClangParser*)client_data;
         if ([parser.delegate respondsToSelector: @selector(classParser:includedFile:)]) {
             return [parser.delegate classParser:parser includedFile:included_file];
         }

@@ -7,12 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "DFContainerDefinition.h"
 
-@interface DFClassDefinition : NSObject
-@property (nonatomic) NSString* name;
+@interface DFClassDefinition : DFContainerDefinition
 @property (nonatomic) DFClassDefinition* superclassDef;
-@property (nonatomic) NSMutableDictionary* propertyDefs;
-@property (nonatomic) NSMutableArray* protocols;
-
-- (id)initWithName:(NSString*)name;
 @end
