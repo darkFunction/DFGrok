@@ -7,11 +7,14 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <clang-c/Index.h>
 
 @protocol DFClangParserDelegate;
 
 @interface DFClangParser : NSObject
 @property (nonatomic, weak) id<DFClangParserDelegate>delegate;
+@property (nonatomic, readonly) CXTranslationUnit translationUnit;
+
 - (id)initWithFileName:(NSString*)fileName;
 - (void)parseWithCompletion:(void(^)(NSError*))completion;
 @end
