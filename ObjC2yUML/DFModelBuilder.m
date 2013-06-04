@@ -16,7 +16,7 @@
 #import "DFPropertyDefinition.h"
 
 @interface DFModelBuilder ( /* Private */ )
-@property (nonatomic) NSMutableDictionary* definitions;
+@property (nonatomic, readwrite) NSMutableDictionary* definitions;
 @property (nonatomic) NSMutableArray* implementationNames;
 @property (nonatomic) NSArray* fileNames;
 @property (nonatomic) DFContainerDefinition* currentContainerDef;
