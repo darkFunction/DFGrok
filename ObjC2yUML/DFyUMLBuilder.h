@@ -10,6 +10,8 @@
 #import "DFModelBuilder.h"
 
 @interface DFyUMLBuilder : NSObject
-- (id)initWithDefinitions:(NSDictionary*)definitions;
+- (id)initWithDefinitions:(NSDictionary*)definitions
+            keyDefintions:(NSDictionary*)keyDefinitions
+           andColourPairs:(NSDictionary*)colourPairs;
 - (NSString*)generate_yUML;
 @end

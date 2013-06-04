@@ -26,8 +26,16 @@ int main(int argc, const char * argv[])
         DFModelBuilder* modelBuilder = [[DFModelBuilder alloc] initWithFilenames:filenames];
         [modelBuilder buildModelWithCompletion:^(NSError *error) {
             if (!error) {
-                NSDictionary* keyClassDefs = [modelBuilder keyClassDefinitions];
-                DFyUMLBuilder* yUMLBuilder = [[DFyUMLBuilder alloc] initWithDefinitions:keyClassDefs];
+                
+                NSDictionary* colours = [NSDictionary dictionaryWithObjectsAndKeys:
+                                             @"green", @"UIViewController",
+                                             @"orchid", @"UIView",
+                                             @"orange", @"BMAModel",
+                                             nil];
+                
+                DFyUMLBuilder* yUMLBuilder = [[DFyUMLBuilder alloc] initWithDefinitions:modelBuilder.definitions
+                                                                          keyDefintions:[modelBuilder keyClassDefinitions]
+                                                                         andColourPairs:colours];
                 
                 NSString* yUML = [yUMLBuilder generate_yUML];
                 NSLog(@"%@", yUML);
