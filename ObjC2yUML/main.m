@@ -18,15 +18,13 @@ int main(int argc, char * argv[]) {
         { "colours",    optional_argument,  NULL,   'c' },
         { NULL,         0,                  NULL,   0 },
     };
-
-    puts("dfdsfds");
+    
+    static const char *optstring = "v";
     int ch;
-    while ((ch = getopt_long(argc, argv, NULL, longopts, NULL)) != -1) {
-        puts("dxzdsfasdf");
+    while ((ch = getopt_long(argc, argv, optstring, longopts, NULL)) != -1) {        
         switch(ch) {
             case 'f':
                 printf("File name is: %s", optarg);
-                puts("filename");
                 break;
                 
             case 'c':
