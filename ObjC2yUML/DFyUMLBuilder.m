@@ -16,12 +16,12 @@
 // Note, in yUML, the first in a relationship pait is placed ABOVE the second in the pair. So it is better to use
 // SUPERCLASS_OF and IMPLEMENTED_BY.
 
-#define OWNS_WEAK   @"+->"
-#define OWNS_STRONG @"++->"
-#define IMPLEMENTS @"-.-^"
-#define SUBCLASSES @"-^"
-#define SUPERCLASS_OF @"^-"
-#define IMPLEMENTED_BY @"^-.-"
+#define OWNS_WEAK       @"+->"
+#define OWNS_STRONG     @"++->"
+#define IMPLEMENTS      @"-.-^"
+#define SUBCLASSES      @"-^"
+#define SUPERCLASS_OF   @"^-"
+#define IMPLEMENTED_BY  @"^-.-"
 
 @interface DFyUMLBuilder ()
 @property (nonatomic) NSDictionary* definitions;
