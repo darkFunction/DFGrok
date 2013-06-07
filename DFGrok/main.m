@@ -50,17 +50,27 @@ int main(int argc, char * argv[]) {
         
         NSArray* filenames = [NSArray arrayWithObjects:
 //                              @"/Users/samtaylor/Work/Badoo/Classes/Comms/Badoo.pb.m",
-                              @"/Users/samtaylor/Work/Badoo/Classes/BMAMessagesController.m",
-                              @"/Users/samtaylor/Work/Badoo/Classes/BMAMessagesDataProvider.m",
-                              @"/Users/samtaylor/Work/Badoo/Classes/BMAMessagesUserData.m",
-                              @"/Users/samtaylor/Work/Badoo/Classes/BMAMessagesUserListModel.m",
-                              @"/Users/samtaylor/Work/Badoo/Classes/BMAMessagesFilterView.m",
-                              @"/Users/samtaylor/Work/Badoo/Classes/BMAMessagesUserCell.m",
-                              @"/Users/samtaylor/Work/Badoo/Classes/BMAModelContainer.m",
-                              @"/Users/samtaylor/Work/Badoo/Classes/BMAChatMessageModel.m",
-                              @"/Users/samtaylor/Work/Badoo/Classes/BMAMessagesUserListModel.m",
-                              @"/Users/samtaylor/Work/Badoo/Classes/BMAPersonStatusModel.m",
-                              @"/Users/samtaylor/Work/Badoo/Classes/BMAPersonModel.m",
+                              
+//                              @"/Users/samtaylor/Work/Badoo/Classes/BMAMessagesController.m",
+//                              @"/Users/samtaylor/Work/Badoo/Classes/BMAMessagesDataProvider.m",
+//                              @"/Users/samtaylor/Work/Badoo/Classes/BMAMessagesUserData.m",
+//                              @"/Users/samtaylor/Work/Badoo/Classes/BMAMessagesUserListModel.m",
+//                              @"/Users/samtaylor/Work/Badoo/Classes/BMAMessagesFilterView.m",
+//                              @"/Users/samtaylor/Work/Badoo/Classes/BMAMessagesUserCell.m",
+//                              @"/Users/samtaylor/Work/Badoo/Classes/BMAModelContainer.m",
+//                              @"/Users/samtaylor/Work/Badoo/Classes/BMAChatMessageModel.m",
+//                              @"/Users/samtaylor/Work/Badoo/Classes/BMAMessagesUserListModel.m",
+//                              @"/Users/samtaylor/Work/Badoo/Classes/BMAPersonStatusModel.m",
+//                              @"/Users/samtaylor/Work/Badoo/Classes/BMAPersonModel.m",
+                              
+                              @"/Users/samtaylor/Work/Badoo/Classes/BMAEncountersController.m",
+                              @"/Users/samtaylor/Work/Badoo/Classes/BMAEncountersDataProvider.m",
+                              @"/Users/samtaylor/Work/Badoo/Classes/BMAEncountersModel_v2.m",
+                              @"/Users/samtaylor/Work/Badoo/Classes/BMAClientPictureModel.m",
+                              @"/Users/samtaylor/Work/Badoo/Classes/BMAClientVoteResponseModel.m",
+                              
+                              
+
                               nil];
 
         DFModelBuilder* modelBuilder = [[DFModelBuilder alloc] initWithFilenames:filenames];

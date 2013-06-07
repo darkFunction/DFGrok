@@ -53,18 +53,21 @@
         if ([definition isKindOfClass:[DFClassDefinition class]]) {
             DFClassDefinition* classDef = (DFClassDefinition*)definition;
             
+            // Create the object with colours, methods or whatever
+            [code appendString:[self printInitialDefinition:definition]];
+            
             // Superclass relationship. Only include superclasses which are also key definitions
-            if ([classDef.superclassDef.name length] && [self.keyDefinitions objectForKey:classDef.superclassDef.name]) {
-                [code appendFormat:@"%@%@%@\n", [self printDefinition:classDef.superclassDef], SUPERCLASS_OF, [self printDefinition:classDef]];
+            if ([classDef.superclassDef.name length]) {// && [self.keyDefinitions objectForKey:classDef.superclassDef.name]) {
+                [code appendFormat:@"[%@]%@[%@]\n", classDef.superclassDef.name, SUPERCLASS_OF, classDef.name];
             } else {
-                [code appendFormat:@"%@,\n", [self printDefinition:classDef]];
+                [code appendFormat:@"[%@],\n", classDef.name];
             }
             
             // Implements protocols
             [classDef.protocols enumerateKeysAndObjectsUsingBlock:^(NSString* protocolKey, DFProtocolDefinition* protocolDef, BOOL *stop) {
                 if (![[self doneProtocols] containsObject:protocolDef]) {
                     [self.doneProtocols addObject:protocolDef];
-                    [code appendFormat:@"%@%@%@,\n", [self printDefinition:protocolDef], IMPLEMENTED_BY, [self printDefinition:classDef]];
+                    [code appendFormat:@"[%@]%@[%@],\n", protocolDef.name, IMPLEMENTED_BY,classDef.name];
                     [code appendString:[self generateChildrenOfContainer:protocolDef]];
                 }
             }];
@@ -82,19 +85,39 @@
     // Properties // TODO: typecheck
     [containerDef.childDefinitions enumerateKeysAndObjectsUsingBlock:^(NSString* key, DFPropertyDefinition* propertyDef, BOOL *stop) {
         if ([self.keyDefinitions objectForKey:propertyDef.className]) {
-            [code appendFormat:@"%@%@%@,\n", [self printDefinition:containerDef], (propertyDef.isWeak ? OWNS_WEAK : OWNS_STRONG), [self printDefinition:[self.definitions objectForKey:propertyDef.className]]];
+            [code appendFormat:@"[%@]%@[%@],\n", containerDef.name, (propertyDef.isWeak ? OWNS_WEAK : OWNS_STRONG), ((DFDefinition*)[self.definitions objectForKey:propertyDef.className]).name];
         }
     }];
     return code;
 }
 
-- (NSString*)printDefinition:(DFDefinition*)definition {
-    // TODO: search superclasses
+- (NSString*)printInitialDefinition:(DFDefinition*)definition {
     NSString* colour = [self.colourPairs objectForKey:definition.name];
+    
+    if (!colour) {
+        if ([definition isKindOfClass:[DFClassDefinition class]]) {
+            colour = [self colourForClassDefinition:(DFClassDefinition*)definition];
+        }
+    }
+    
     if ([colour length]) {
         return [NSString stringWithFormat:@"[%@{bg:%@}]", definition.name, colour];
     }
     return [NSString stringWithFormat:@"[%@]", definition.name];
+}
+
+- (NSString*)colourForClassDefinition:(DFClassDefinition*)classDef {
+    DFClassDefinition* superDef = nil;
+    NSString* colour = nil;
+    
+    // classDef.superclassDef is a protocol def wtf
+    while ((superDef = classDef.superclassDef) && classDef.superclassDef != nil) {
+        if ((colour = [self.colourPairs objectForKey:superDef])) {
+            break;
+        }
+    }
+    
+    return colour;
 }
 
 @end

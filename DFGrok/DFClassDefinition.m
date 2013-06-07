@@ -10,5 +10,16 @@
 
 @implementation DFClassDefinition
 
+- (BOOL)isSubclassOf:(DFClassDefinition*)parent {
+    DFClassDefinition* def = self;
+    
+    while ((def = def.superclassDef)) {
+        if (def == parent) {
+            return YES;
+        }
+    }
+    return NO;
+}
+
 
 @end
