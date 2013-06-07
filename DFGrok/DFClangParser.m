@@ -57,7 +57,8 @@ static IndexerCallbacks indexerCallbacks = {
                                                       command_line_args, 2,
                                                       NULL, 0,
                                                       // CXTranslationUnit_DetailedPreprocessingRecord enables ppIncludedFile callback
-                                                      CXTranslationUnit_SkipFunctionBodies /* | CXTranslationUnit_DetailedPreprocessingRecord */);
+                                                      CXTranslationUnit_SkipFunctionBodies | CXTranslationUnit_Incomplete/* | CXTranslationUnit_DetailedPreprocessingRecord */);
+    
     if (!self.translationUnit) {
         if (completion) {
             completion([[NSError alloc] initWithDomain:@"ClangParseErrorDomain" code:DFClangParseErrorCompilation userInfo:nil]);
@@ -71,7 +72,7 @@ static IndexerCallbacks indexerCallbacks = {
                                                  (__bridge CXClientData)self,
                                                  &indexerCallbacks,
                                                  sizeof(indexerCallbacks),
-                                                 CXIndexOpt_SuppressWarnings,
+                                                 CXIndexOpt_SuppressWarnings | CXIndexOpt_SuppressRedundantRefs,
                                                  self.translationUnit);
     if (completion) {
         completion(nil);

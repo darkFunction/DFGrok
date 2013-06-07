@@ -11,4 +11,6 @@
 
 @interface DFClassDefinition : DFContainerDefinition
 @property (nonatomic) DFClassDefinition* superclassDef;
+
+- (BOOL)isSubclassOf:(DFClassDefinition*)parent;
 @end
