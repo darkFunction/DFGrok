@@ -10,6 +10,8 @@
 #import "DFModelBuilder.h"
 #import "DFyUMLBuilder.h"
 
+void NSPrint(NSString* str);
+
 int main(int argc, char * argv[]) {
     
     // Process command line options
@@ -40,6 +42,9 @@ int main(int argc, char * argv[]) {
                 break;
         }
     }
+    
+    // Redirect clang errors to the void
+    freopen("/dev/null", "w", stderr);
     
     @autoreleasepool {
         
@@ -73,7 +78,9 @@ int main(int argc, char * argv[]) {
                                                                          andColourPairs:colours];
                 
                 NSString* yUML = [yUMLBuilder generate_yUML];
-                NSLog(@"%@", yUML);
+                
+                // print to stdout 
+                NSPrint(yUML);
             }
         }];
 
@@ -83,3 +90,9 @@ int main(int argc, char * argv[]) {
 
     return EXIT_SUCCESS;
 }
+
+void NSPrint(NSString* str)
+{
+    [str writeToFile:@"/dev/stdout" atomically:NO encoding:NSUTF8StringEncoding error:nil];
+}
+
