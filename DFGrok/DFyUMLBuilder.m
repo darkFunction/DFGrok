@@ -110,12 +110,12 @@
     DFClassDefinition* superDef = nil;
     NSString* colour = nil;
     
-    // classDef.superclassDef is a protocol def wtf
-    while ((superDef = classDef.superclassDef) && classDef.superclassDef != nil) {
-        if ((colour = [self.colourPairs objectForKey:superDef])) {
+    do {
+        DFClassDefinition* superDef = classDef.superclassDef;
+        colour = [self.colourPairs objectForKey:superDef];
+        if (colour)
             break;
-        }
-    }
+    } while (superDef);
     
     return colour;
 }

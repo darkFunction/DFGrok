@@ -82,7 +82,7 @@
             break;
             
         case CXIdxEntity_ObjCProtocol:
-            self.currentContainerDef = (DFProtocolDefinition*)[self getDefinitionWithName:[NSString stringWithUTF8String:cName] andType:[DFProtocolDefinition class]];
+            self.currentContainerDef = [self processProtocolDeclaration:declaration];
             break;
         
         case CXIdxEntity_ObjCProperty:
@@ -142,6 +142,12 @@
     }
     
     return classDef;
+}
+
+- (DFProtocolDefinition*)processProtocolDeclaration:(const CXIdxDeclInfo *)declaration {
+    NSString* name = [NSString stringWithUTF8String:declaration->entityInfo->name];
+    name = [NSString stringWithFormat:@"<%@>", name];
+    return (DFProtocolDefinition*)[self getDefinitionWithName:name andType:[DFProtocolDefinition class]];
 }
 
 - (void)processPropertyDeclaration:(const CXIdxDeclInfo *)declaration {
