@@ -58,6 +58,7 @@
             
             // Superclass relationship. Only include superclasses which are also key definitions
             if ([classDef.superclassDef.name length]) {// && [self.keyDefinitions objectForKey:classDef.superclassDef.name]) {
+                [code appendString:[self printInitialDefinition:classDef.superclassDef]];
                 [code appendFormat:@"[%@]%@[%@]\n", classDef.superclassDef.name, SUPERCLASS_OF, classDef.name];
             } else {
                 [code appendFormat:@"[%@],\n", classDef.name];
@@ -101,21 +102,22 @@
     }
     
     if ([colour length]) {
-        return [NSString stringWithFormat:@"[%@{bg:%@}]", definition.name, colour];
+        return [NSString stringWithFormat:@"[%@{bg:%@}],\n", definition.name, colour];
     }
-    return [NSString stringWithFormat:@"[%@]", definition.name];
+    return [NSString stringWithFormat:@"[%@],\n", definition.name];
 }
 
 - (NSString*)colourForClassDefinition:(DFClassDefinition*)classDef {
-    DFClassDefinition* superDef = nil;
     NSString* colour = nil;
+    DFClassDefinition* def = classDef;
     
-    do {
-        DFClassDefinition* superDef = classDef.superclassDef;
-        colour = [self.colourPairs objectForKey:superDef];
-        if (colour)
+    while (def) {
+        colour = [self.colourPairs objectForKey:def.name];
+        if (colour) {
             break;
-    } while (superDef);
+        }
+        def = def.superclassDef;
+    }
     
     return colour;
 }

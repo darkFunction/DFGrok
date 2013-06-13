@@ -129,7 +129,7 @@
                     // Find protocols
                     for (int i=0; i<declarationInfo->protocols->numProtocols; ++i) {
                         const CXIdxObjCProtocolRefInfo* protocolRefInfo = declarationInfo->protocols->protocols[i];
-                        NSString* protocolName = [NSString stringWithUTF8String:protocolRefInfo->protocol->name];
+                        NSString* protocolName = [NSString stringWithFormat:@"<%@>", [NSString stringWithUTF8String:protocolRefInfo->protocol->name]];
                         
                         DFProtocolDefinition* protocolDef = (DFProtocolDefinition*)[self getDefinitionWithName:protocolName andType:[DFProtocolDefinition class]];
                         if (![classDef.protocols objectForKey:protocolName]) {
