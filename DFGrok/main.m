@@ -65,6 +65,7 @@ int main(int argc, char * argv[]) {
                                              @"green", @"UIViewController",
                                              @"orchid", @"UIView",
                                              @"orange", @"BMAModel",
+                                             @"test", @"NSObject",
                                              nil];
                 
                 DFyUMLBuilder* yUMLBuilder = [[DFyUMLBuilder alloc] initWithDefinitions:modelBuilder.definitions
