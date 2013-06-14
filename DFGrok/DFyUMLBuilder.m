@@ -26,8 +26,8 @@
 @interface DFyUMLBuilder ()
 @property (nonatomic) NSDictionary* definitions;
 @property (nonatomic) NSDictionary* keyDefinitions;
-@property (nonatomic) NSMutableArray* doneProtocols; // track which protocols have already been mapped
 @property (nonatomic) NSDictionary* colourPairs;
+@property (nonatomic) NSMutableArray* printedDefs;
 @end
 
 @implementation DFyUMLBuilder
@@ -40,7 +40,7 @@
     if (self) {
         self.definitions = definitions;
         self.keyDefinitions = keyDefinitions;
-        self.doneProtocols = [NSMutableArray array];
+        self.printedDefs = [NSMutableArray array];
         self.colourPairs = colourPairs;
     }
     return self;
@@ -53,22 +53,17 @@
         if ([definition isKindOfClass:[DFClassDefinition class]]) {
             DFClassDefinition* classDef = (DFClassDefinition*)definition;
             
-            // Create the object with colours, methods or whatever
-            [code appendString:[self printInitialDefinition:definition]];
-            
             // Superclass relationship. Only include superclasses which are also key definitions
             if ([classDef.superclassDef.name length]) {// && [self.keyDefinitions objectForKey:classDef.superclassDef.name]) {
-                [code appendString:[self printInitialDefinition:classDef.superclassDef]];
-                [code appendFormat:@"[%@]%@[%@]\n", classDef.superclassDef.name, SUPERCLASS_OF, classDef.name];
+                [code appendFormat:@"%@%@%@\n", [self printDef:classDef.superclassDef], SUPERCLASS_OF, [self printDef:classDef]];
             } else {
-                [code appendFormat:@"[%@],\n", classDef.name];
+                [code appendFormat:@"%@,\n", [self printDef:classDef]];
             }
             
             // Implements protocols
             [classDef.protocols enumerateKeysAndObjectsUsingBlock:^(NSString* protocolKey, DFProtocolDefinition* protocolDef, BOOL *stop) {
-                if (![[self doneProtocols] containsObject:protocolDef]) {
-                    [self.doneProtocols addObject:protocolDef];
-                    [code appendFormat:@"[%@]%@[%@],\n", protocolDef.name, IMPLEMENTED_BY,classDef.name];
+                if (![[self printedDefs] containsObject:protocolDef]) {
+                    [code appendFormat:@"%@%@%@,\n", [self printDef:protocolDef], IMPLEMENTED_BY,[self printDef:classDef]];
                     [code appendString:[self generateChildrenOfContainer:protocolDef]];
                 }
             }];
@@ -86,10 +81,20 @@
     // Properties // TODO: typecheck
     [containerDef.childDefinitions enumerateKeysAndObjectsUsingBlock:^(NSString* key, DFPropertyDefinition* propertyDef, BOOL *stop) {
         if ([self.keyDefinitions objectForKey:propertyDef.className]) {
-            [code appendFormat:@"[%@]%@[%@],\n", containerDef.name, (propertyDef.isWeak ? OWNS_WEAK : OWNS_STRONG), ((DFDefinition*)[self.definitions objectForKey:propertyDef.className]).name];
+            [code appendFormat:@"%@%@%@,\n", [self printDef:containerDef], (propertyDef.isWeak ? OWNS_WEAK : OWNS_STRONG), [self printDef:((DFDefinition*)[self.definitions objectForKey:propertyDef.className])]];
         }
     }];
     return code;
+}
+
+- (NSString*)printDef:(DFDefinition*)definition {
+    if (![self.printedDefs containsObject:definition]) {
+        [self.printedDefs addObject:definition];
+        
+        return [self printInitialDefinition:definition];
+    }
+    
+    return [NSString stringWithFormat:@"[%@]", definition.name];
 }
 
 - (NSString*)printInitialDefinition:(DFDefinition*)definition {
@@ -102,9 +107,9 @@
     }
     
     if ([colour length]) {
-        return [NSString stringWithFormat:@"[%@{bg:%@}],\n", definition.name, colour];
+        return [NSString stringWithFormat:@"[%@{bg:%@}]", definition.name, colour];
     }
-    return [NSString stringWithFormat:@"[%@],\n", definition.name];
+    return [NSString stringWithFormat:@"[%@]", definition.name];
 }
 
 - (NSString*)colourForClassDefinition:(DFClassDefinition*)classDef {
