@@ -15,22 +15,12 @@ void NSPrint(NSString* str);
 int main(int argc, char * argv[]) {
     
     // Process command line options
-    static struct option longopts[] = {
-        { "if",         required_argument,  NULL,   'f' },
-        { "colours",    optional_argument,  NULL,   'c' },
-        { NULL,         0,                  NULL,   0 },
-    };
-    
-    static const char *optstring = "v";
+    static const char *optstring = "c:";
     int ch;
-    while ((ch = getopt_long(argc, argv, optstring, longopts, NULL)) != -1) {        
+    while ((ch = getopt_long(argc, argv, optstring, NULL, NULL)) != -1) {
         switch(ch) {
-            case 'f':
-                printf("File name is: %s", optarg);
-                break;
-                
             case 'c':
-                printf("Colour name is: %s", optarg);
+                printf("Colour is: %s", optarg);
                 break;
                 
             case ':':
@@ -42,6 +32,10 @@ int main(int argc, char * argv[]) {
                 break;
         }
     }
+    for (int i = optind; i < argc; i++) {
+        printf("\nFilename is %s", argv[i]);
+    }
+    return 0;
     
     // Redirect clang errors to the void
     freopen("/dev/null", "w", stderr);
