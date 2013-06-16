@@ -1,6 +1,6 @@
 //
 //  DFEntityDefinition.m
-//  ObjC2yUML
+//  DFGrok
 //
 //  Created by Sam Taylor on 21/05/2013.
 //  Copyright (c) 2013 darkFunction Software. All rights reserved.

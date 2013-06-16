@@ -1,6 +1,6 @@
 //
 //  DFClassDefinition.h
-//  ObjC2yUML
+//  DFGrok
 //
 //  Created by Sam Taylor on 12/05/2013.
 //  Copyright (c) 2013 darkFunction Software. All rights reserved.
@@ -11,4 +11,6 @@
 
 @interface DFClassDefinition : DFContainerDefinition
 @property (nonatomic) DFClassDefinition* superclassDef;
+
+- (BOOL)isSubclassOf:(DFClassDefinition*)parent;
 @end

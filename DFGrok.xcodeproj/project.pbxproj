@@ -1,0 +1,319 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		383BB8A217464FD8007CFE77 /* libclang.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 383BB8A117464FD8007CFE77 /* libclang.dylib */; };
+		386B490C173E734F004174C9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 386B490B173E734F004174C9 /* Foundation.framework */; };
+		38ABDE121760CF03009026E0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 38ABDDFF1760CF03009026E0 /* main.m */; };
+		38ABDE131760CF03009026E0 /* DFyUMLBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = 38ABDE001760CF03009026E0 /* DFyUMLBuilder.m */; };
+		38ABDE141760CF03009026E0 /* DFProtocolDefinition.m in Sources */ = {isa = PBXBuildFile; fileRef = 38ABDE021760CF03009026E0 /* DFProtocolDefinition.m */; };
+		38ABDE151760CF03009026E0 /* DFPropertyDefinition.m in Sources */ = {isa = PBXBuildFile; fileRef = 38ABDE041760CF03009026E0 /* DFPropertyDefinition.m */; };
+		38ABDE161760CF03009026E0 /* DFModelBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = 38ABDE061760CF03009026E0 /* DFModelBuilder.m */; };
+		38ABDE171760CF03009026E0 /* DFDefinition.m in Sources */ = {isa = PBXBuildFile; fileRef = 38ABDE091760CF03009026E0 /* DFDefinition.m */; };
+		38ABDE181760CF03009026E0 /* DFContainerDefinition.m in Sources */ = {isa = PBXBuildFile; fileRef = 38ABDE0B1760CF03009026E0 /* DFContainerDefinition.m */; };
+		38ABDE191760CF03009026E0 /* DFClassDefinition.m in Sources */ = {isa = PBXBuildFile; fileRef = 38ABDE0D1760CF03009026E0 /* DFClassDefinition.m */; };
+		38ABDE1A1760CF03009026E0 /* DFClangParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 38ABDE101760CF03009026E0 /* DFClangParser.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		386B4905173E734F004174C9 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		383BB8A117464FD8007CFE77 /* libclang.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libclang.dylib; path = "../BTSync/llvm/Release+Asserts/lib/libclang.dylib"; sourceTree = "<group>"; };
+		386B4907173E734F004174C9 /* DFGrok */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DFGrok; sourceTree = BUILT_PRODUCTS_DIR; };
+		386B490B173E734F004174C9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		38ABDDFE1760CF03009026E0 /* ObjC2yUML.1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.man; name = ObjC2yUML.1; path = DFGrok/ObjC2yUML.1; sourceTree = SOURCE_ROOT; };
+		38ABDDFF1760CF03009026E0 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = DFGrok/main.m; sourceTree = SOURCE_ROOT; };
+		38ABDE001760CF03009026E0 /* DFyUMLBuilder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DFyUMLBuilder.m; path = DFGrok/DFyUMLBuilder.m; sourceTree = SOURCE_ROOT; };
+		38ABDE011760CF03009026E0 /* DFyUMLBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFyUMLBuilder.h; path = DFGrok/DFyUMLBuilder.h; sourceTree = SOURCE_ROOT; };
+		38ABDE021760CF03009026E0 /* DFProtocolDefinition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DFProtocolDefinition.m; path = DFGrok/DFProtocolDefinition.m; sourceTree = SOURCE_ROOT; };
+		38ABDE031760CF03009026E0 /* DFProtocolDefinition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFProtocolDefinition.h; path = DFGrok/DFProtocolDefinition.h; sourceTree = SOURCE_ROOT; };
+		38ABDE041760CF03009026E0 /* DFPropertyDefinition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DFPropertyDefinition.m; path = DFGrok/DFPropertyDefinition.m; sourceTree = SOURCE_ROOT; };
+		38ABDE051760CF03009026E0 /* DFPropertyDefinition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFPropertyDefinition.h; path = DFGrok/DFPropertyDefinition.h; sourceTree = SOURCE_ROOT; };
+		38ABDE061760CF03009026E0 /* DFModelBuilder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DFModelBuilder.m; path = DFGrok/DFModelBuilder.m; sourceTree = SOURCE_ROOT; };
+		38ABDE071760CF03009026E0 /* DFModelBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFModelBuilder.h; path = DFGrok/DFModelBuilder.h; sourceTree = SOURCE_ROOT; };
+		38ABDE091760CF03009026E0 /* DFDefinition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DFDefinition.m; path = DFGrok/DFDefinition.m; sourceTree = SOURCE_ROOT; };
+		38ABDE0A1760CF03009026E0 /* DFDefinition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFDefinition.h; path = DFGrok/DFDefinition.h; sourceTree = SOURCE_ROOT; };
+		38ABDE0B1760CF03009026E0 /* DFContainerDefinition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DFContainerDefinition.m; path = DFGrok/DFContainerDefinition.m; sourceTree = SOURCE_ROOT; };
+		38ABDE0C1760CF03009026E0 /* DFContainerDefinition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFContainerDefinition.h; path = DFGrok/DFContainerDefinition.h; sourceTree = SOURCE_ROOT; };
+		38ABDE0D1760CF03009026E0 /* DFClassDefinition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DFClassDefinition.m; path = DFGrok/DFClassDefinition.m; sourceTree = SOURCE_ROOT; };
+		38ABDE0E1760CF03009026E0 /* DFClassDefinition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFClassDefinition.h; path = DFGrok/DFClassDefinition.h; sourceTree = SOURCE_ROOT; };
+		38ABDE0F1760CF03009026E0 /* DFClangParserDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFClangParserDelegate.h; path = DFGrok/DFClangParserDelegate.h; sourceTree = SOURCE_ROOT; };
+		38ABDE101760CF03009026E0 /* DFClangParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DFClangParser.m; path = DFGrok/DFClangParser.m; sourceTree = SOURCE_ROOT; };
+		38ABDE111760CF03009026E0 /* DFClangParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFClangParser.h; path = DFGrok/DFClangParser.h; sourceTree = SOURCE_ROOT; };
+		38ABDE1B1760CF2A009026E0 /* DFGrok-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "DFGrok-Prefix.pch"; path = "DFGrok/DFGrok-Prefix.pch"; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		386B4904173E734F004174C9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				386B490C173E734F004174C9 /* Foundation.framework in Frameworks */,
+				383BB8A217464FD8007CFE77 /* libclang.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		386B48FC173E734F004174C9 = {
+			isa = PBXGroup;
+			children = (
+				386B490D173E734F004174C9 /* DFGrok */,
+				386B490A173E734F004174C9 /* Frameworks */,
+				386B4908173E734F004174C9 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		386B4908173E734F004174C9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				386B4907173E734F004174C9 /* DFGrok */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		386B490A173E734F004174C9 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				383BB8A117464FD8007CFE77 /* libclang.dylib */,
+				386B490B173E734F004174C9 /* Foundation.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		386B490D173E734F004174C9 /* DFGrok */ = {
+			isa = PBXGroup;
+			children = (
+				38ABDDFF1760CF03009026E0 /* main.m */,
+				38ABDE001760CF03009026E0 /* DFyUMLBuilder.m */,
+				38ABDE011760CF03009026E0 /* DFyUMLBuilder.h */,
+				38ABDE061760CF03009026E0 /* DFModelBuilder.m */,
+				38ABDE071760CF03009026E0 /* DFModelBuilder.h */,
+				38ABDE0F1760CF03009026E0 /* DFClangParserDelegate.h */,
+				38ABDE101760CF03009026E0 /* DFClangParser.m */,
+				38ABDE111760CF03009026E0 /* DFClangParser.h */,
+				38A58A5C1747604F007D0646 /* Definitions */,
+				386B4910173E734F004174C9 /* Supporting Files */,
+			);
+			name = DFGrok;
+			path = ObjC2yUML;
+			sourceTree = "<group>";
+		};
+		386B4910173E734F004174C9 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				38ABDDFE1760CF03009026E0 /* ObjC2yUML.1 */,
+				38ABDE1B1760CF2A009026E0 /* DFGrok-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		38A58A5C1747604F007D0646 /* Definitions */ = {
+			isa = PBXGroup;
+			children = (
+				38ABDE021760CF03009026E0 /* DFProtocolDefinition.m */,
+				38ABDE031760CF03009026E0 /* DFProtocolDefinition.h */,
+				38ABDE041760CF03009026E0 /* DFPropertyDefinition.m */,
+				38ABDE051760CF03009026E0 /* DFPropertyDefinition.h */,
+				38ABDE091760CF03009026E0 /* DFDefinition.m */,
+				38ABDE0A1760CF03009026E0 /* DFDefinition.h */,
+				38ABDE0B1760CF03009026E0 /* DFContainerDefinition.m */,
+				38ABDE0C1760CF03009026E0 /* DFContainerDefinition.h */,
+				38ABDE0D1760CF03009026E0 /* DFClassDefinition.m */,
+				38ABDE0E1760CF03009026E0 /* DFClassDefinition.h */,
+			);
+			name = Definitions;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		386B4906173E734F004174C9 /* DFGrok */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 386B4916173E734F004174C9 /* Build configuration list for PBXNativeTarget "DFGrok" */;
+			buildPhases = (
+				386B4903173E734F004174C9 /* Sources */,
+				386B4904173E734F004174C9 /* Frameworks */,
+				386B4905173E734F004174C9 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DFGrok;
+			productName = ObjC2yUML;
+			productReference = 386B4907173E734F004174C9 /* DFGrok */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		386B48FE173E734F004174C9 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0460;
+				ORGANIZATIONNAME = "darkFunction Software";
+			};
+			buildConfigurationList = 386B4901173E734F004174C9 /* Build configuration list for PBXProject "DFGrok" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 386B48FC173E734F004174C9;
+			productRefGroup = 386B4908173E734F004174C9 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				386B4906173E734F004174C9 /* DFGrok */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		386B4903173E734F004174C9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				38ABDE121760CF03009026E0 /* main.m in Sources */,
+				38ABDE131760CF03009026E0 /* DFyUMLBuilder.m in Sources */,
+				38ABDE141760CF03009026E0 /* DFProtocolDefinition.m in Sources */,
+				38ABDE151760CF03009026E0 /* DFPropertyDefinition.m in Sources */,
+				38ABDE161760CF03009026E0 /* DFModelBuilder.m in Sources */,
+				38ABDE171760CF03009026E0 /* DFDefinition.m in Sources */,
+				38ABDE181760CF03009026E0 /* DFContainerDefinition.m in Sources */,
+				38ABDE191760CF03009026E0 /* DFClassDefinition.m in Sources */,
+				38ABDE1A1760CF03009026E0 /* DFClangParser.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		386B4914173E734F004174C9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		386B4915173E734F004174C9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		386B4917173E734F004174C9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "DFGrok/DFGrok-Prefix.pch";
+				HEADER_SEARCH_PATHS = /Users/samtaylor/BTSync/llvm/tools/clang/include;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"/usr/lib/clang+llvm-3.2-x86_64-apple-darwin11/lib\"",
+					"\"$(SRCROOT)/../BTSync/llvm/Release+Asserts/lib\"",
+				);
+				PRODUCT_NAME = DFGrok;
+			};
+			name = Debug;
+		};
+		386B4918173E734F004174C9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "DFGrok/DFGrok-Prefix.pch";
+				HEADER_SEARCH_PATHS = /Users/samtaylor/BTSync/llvm/tools/clang/include;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"/usr/lib/clang+llvm-3.2-x86_64-apple-darwin11/lib\"",
+					"\"$(SRCROOT)/../BTSync/llvm/Release+Asserts/lib\"",
+				);
+				PRODUCT_NAME = DFGrok;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		386B4901173E734F004174C9 /* Build configuration list for PBXProject "DFGrok" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				386B4914173E734F004174C9 /* Debug */,
+				386B4915173E734F004174C9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		386B4916173E734F004174C9 /* Build configuration list for PBXNativeTarget "DFGrok" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				386B4917173E734F004174C9 /* Debug */,
+				386B4918173E734F004174C9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 386B48FE173E734F004174C9 /* Project object */;
+}

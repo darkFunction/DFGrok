@@ -1,6 +1,6 @@
 //
 //  DFModelBuilder.m
-//  ObjC2yUML
+//  DFGrok
 //
 //  Created by Sam Taylor on 22/05/2013.
 //  Copyright (c) 2013 darkFunction Software. All rights reserved.
@@ -82,7 +82,7 @@
             break;
             
         case CXIdxEntity_ObjCProtocol:
-            self.currentContainerDef = (DFProtocolDefinition*)[self getDefinitionWithName:[NSString stringWithUTF8String:cName] andType:[DFProtocolDefinition class]];
+            self.currentContainerDef = [self processProtocolDeclaration:declaration];
             break;
         
         case CXIdxEntity_ObjCProperty:
@@ -129,7 +129,7 @@
                     // Find protocols
                     for (int i=0; i<declarationInfo->protocols->numProtocols; ++i) {
                         const CXIdxObjCProtocolRefInfo* protocolRefInfo = declarationInfo->protocols->protocols[i];
-                        NSString* protocolName = [NSString stringWithUTF8String:protocolRefInfo->protocol->name];
+                        NSString* protocolName = [NSString stringWithFormat:@"<%@>", [NSString stringWithUTF8String:protocolRefInfo->protocol->name]];
                         
                         DFProtocolDefinition* protocolDef = (DFProtocolDefinition*)[self getDefinitionWithName:protocolName andType:[DFProtocolDefinition class]];
                         if (![classDef.protocols objectForKey:protocolName]) {
@@ -142,6 +142,12 @@
     }
     
     return classDef;
+}
+
+- (DFProtocolDefinition*)processProtocolDeclaration:(const CXIdxDeclInfo *)declaration {
+    NSString* name = [NSString stringWithUTF8String:declaration->entityInfo->name];
+    name = [NSString stringWithFormat:@"<%@>", name];
+    return (DFProtocolDefinition*)[self getDefinitionWithName:name andType:[DFProtocolDefinition class]];
 }
 
 - (void)processPropertyDeclaration:(const CXIdxDeclInfo *)declaration {
