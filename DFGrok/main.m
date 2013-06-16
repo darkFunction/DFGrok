@@ -13,43 +13,45 @@
 void NSPrint(NSString* str);
 
 int main(int argc, char * argv[]) {
-    
-    // Process command line options
-    static const char *optstring = "c:";
-    int ch;
-    while ((ch = getopt_long(argc, argv, optstring, NULL, NULL)) != -1) {
-        switch(ch) {
-            case 'c':
-                printf("Colour is: %s", optarg);
-                break;
-                
-            case ':':
-                puts("Missing required argument");
-                break;
-            
-            case '?':
-                puts("Unknown option");
-                break;
-        }
-    }
-    for (int i = optind; i < argc; i++) {
-        printf("\nFilename is %s", argv[i]);
-    }
-    return 0;
-    
-    // Redirect clang errors to the void
-    freopen("/dev/null", "w", stderr);
-    
+
     @autoreleasepool {
         
-        NSArray* filenames = [NSArray arrayWithObjects:
-                              @"/Users/samtaylor/Projects/ObjC2yUML/UMLTestProject/UMLTestProject/Classes/DFDemoController.m",
-                              @"/Users/samtaylor/Projects/ObjC2yUML/UMLTestProject/UMLTestProject/Classes/DFDataModelContainer.m",
-                              @"/Users/samtaylor/Projects/ObjC2yUML/UMLTestProject/UMLTestProject/Classes/DFDataModel.m",
-                              @"/Users/samtaylor/Projects/ObjC2yUML/UMLTestProject/UMLTestProject/Classes/DFDemoDataSource.m",
-                              @"/Users/samtaylor/Projects/ObjC2yUML/UMLTestProject/UMLTestProject/Classes/DFDemoDataModelOne.m",
-                              @"/Users/samtaylor/Projects/ObjC2yUML/UMLTestProject/UMLTestProject/Classes/DFDemoDataModelTwo.m",
-                              nil];
+        // Process command line options
+        static const char *optstring = "c:";
+        int ch;
+        while ((ch = getopt_long(argc, argv, optstring, NULL, NULL)) != -1) {
+            switch(ch) {
+                case 'c':
+                    printf("Colour is: %s", optarg);
+                    break;
+                    
+                case ':':
+                    puts("Missing required argument");
+                    break;
+                
+                case '?':
+                    puts("Unknown option");
+                    break;
+            }
+        }
+        
+        NSMutableArray* filenames = [NSMutableArray arrayWithCapacity:(argc - optind)];
+
+        // Test files!
+        //          @"/Users/samtaylor/Projects/ObjC2yUML/UMLTestProject/UMLTestProject/Classes/DFDemoController.m",
+        //          @"/Users/samtaylor/Projects/ObjC2yUML/UMLTestProject/UMLTestProject/Classes/DFDataModelContainer.m",
+        //          @"/Users/samtaylor/Projects/ObjC2yUML/UMLTestProject/UMLTestProject/Classes/DFDataModel.m",
+        //          @"/Users/samtaylor/Projects/ObjC2yUML/UMLTestProject/UMLTestProject/Classes/DFDemoDataSource.m",
+        //          @"/Users/samtaylor/Projects/ObjC2yUML/UMLTestProject/UMLTestProject/Classes/DFDemoDataModelOne.m",
+        //          @"/Users/samtaylor/Projects/ObjC2yUML/UMLTestProject/UMLTestProject/Classes/DFDemoDataModelTwo.m",
+
+        for (int i = optind; i < argc; i++) {
+            [filenames addObject:[NSString stringWithUTF8String:argv[i]]];
+        }
+        
+        // Redirect clang errors to the void
+        freopen("/dev/null", "w", stderr);
+        
 
         DFModelBuilder* modelBuilder = [[DFModelBuilder alloc] initWithFilenames:filenames];
         [modelBuilder buildModelWithCompletion:^(NSError *error) {
