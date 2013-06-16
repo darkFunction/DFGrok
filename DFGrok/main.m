@@ -1,17 +1,45 @@
 //
 //  main.m
-//  ObjC2yUML
+//  DFGrok
 //
 //  Created by Sam Taylor on 11/05/2013.
 //  Copyright (c) 2013 darkFunction Software. All rights reserved.
 //
-
+#import <getopt.h>
 #import <Foundation/Foundation.h>
 #import "DFModelBuilder.h"
 #import "DFyUMLBuilder.h"
 
-int main(int argc, const char * argv[])
-{
+void NSPrint(NSString* str);
+
+int main(int argc, char * argv[]) {
+    
+    // Process command line options
+    static const char *optstring = "c:";
+    int ch;
+    while ((ch = getopt_long(argc, argv, optstring, NULL, NULL)) != -1) {
+        switch(ch) {
+            case 'c':
+                printf("Colour is: %s", optarg);
+                break;
+                
+            case ':':
+                puts("Missing required argument");
+                break;
+            
+            case '?':
+                puts("Unknown option");
+                break;
+        }
+    }
+    for (int i = optind; i < argc; i++) {
+        printf("\nFilename is %s", argv[i]);
+    }
+    return 0;
+    
+    // Redirect clang errors to the void
+    freopen("/dev/null", "w", stderr);
+    
     @autoreleasepool {
         
         NSArray* filenames = [NSArray arrayWithObjects:
@@ -30,7 +58,8 @@ int main(int argc, const char * argv[])
                 NSDictionary* colours = [NSDictionary dictionaryWithObjectsAndKeys:
                                              @"green", @"UIViewController",
                                              @"orchid", @"UIView",
-                                             @"orange", @"BMAModel",
+                                             @"orange", @"DFDataModel",
+                                             @"white", @"NSObject",
                                              nil];
                 
                 DFyUMLBuilder* yUMLBuilder = [[DFyUMLBuilder alloc] initWithDefinitions:modelBuilder.definitions
@@ -38,12 +67,21 @@ int main(int argc, const char * argv[])
                                                                          andColourPairs:colours];
                 
                 NSString* yUML = [yUMLBuilder generate_yUML];
-                NSLog(@"%@", yUML);
+                
+                // print to stdout 
+                NSPrint(yUML);
             }
         }];
 
   
         
     }
-    return 0;
+
+    return EXIT_SUCCESS;
 }
+
+void NSPrint(NSString* str)
+{
+    [str writeToFile:@"/dev/stdout" atomically:NO encoding:NSUTF8StringEncoding error:nil];
+}
+
