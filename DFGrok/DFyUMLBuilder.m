@@ -54,7 +54,7 @@
             DFClassDefinition* classDef = (DFClassDefinition*)definition;
             
             // Superclass relationship. Only include superclasses which are also key definitions
-            if ([classDef.superclassDef.name length]) {// && [self.keyDefinitions objectForKey:classDef.superclassDef.name]) {
+            if ([self shouldPrintSuperclassOf:classDef]) {
                 [code appendFormat:@"%@%@%@\n", [self printDef:classDef.superclassDef], SUPERCLASS_OF, [self printDef:classDef]];
             } else {
                 [code appendFormat:@"%@,\n", [self printDef:classDef]];
@@ -103,6 +103,8 @@
     if (!colour) {
         if ([definition isKindOfClass:[DFClassDefinition class]]) {
             colour = [self colourForClassDefinition:(DFClassDefinition*)definition];
+        } else if ([definition isKindOfClass:[DFProtocolDefinition class]]) {
+            colour = @"pink";
         }
     }
     
@@ -125,6 +127,16 @@
     }
     
     return colour;
+}
+
+#pragma mark - Utility methods
+
+- (BOOL)shouldPrintSuperclassOf:(DFClassDefinition*)classDef {
+    if ( [classDef.superclassDef.name length] ) {
+        BOOL replacedByColour = [self.colourPairs objectForKey:classDef.superclassDef.name] && ![self.keyDefinitions objectForKey:classDef.superclassDef.name];
+        return !replacedByColour;
+    }
+    return NO;
 }
 
 @end
