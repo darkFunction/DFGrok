@@ -64,8 +64,8 @@ int main(int argc, char * argv[]) {
                 NSDictionary* colours = [NSDictionary dictionaryWithObjectsAndKeys:
                                              @"green", @"UIViewController",
                                              @"orchid", @"UIView",
-                                             @"orange", @"BMAModel",
-                                             @"test", @"NSObject",
+                                             @"orange", @"DFDataModel",
+                                             @"white", @"NSObject",
                                              nil];
                 
                 DFyUMLBuilder* yUMLBuilder = [[DFyUMLBuilder alloc] initWithDefinitions:modelBuilder.definitions
