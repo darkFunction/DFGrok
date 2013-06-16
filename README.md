@@ -1,4 +1,9 @@
-ObjC2yUML
+DFGrok
 =========
 
-Doesn't work yet, still under development.
+Generates yUML ( http://yuml.me/ ) code from Objective-C++. 
+
+Still under development. 
+
+Usage- 
+DFGrok filename1 filename2 ...
