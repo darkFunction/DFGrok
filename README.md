@@ -6,7 +6,7 @@ Generates yUML ( http://yuml.me/ ) code from Objective-C++.
 Still under development. 
 
 Usage- 
-DFGrok filename1 filename2 ...
+`DFGrok class1.m class2.m ...`
 
 Example output (see contained UMLTestProject):
 
