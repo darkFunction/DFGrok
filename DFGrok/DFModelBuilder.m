@@ -131,10 +131,7 @@
                         const CXIdxObjCProtocolRefInfo* protocolRefInfo = declarationInfo->protocols->protocols[i];
                         NSString* protocolName = [NSString stringWithFormat:@"<%@>", [NSString stringWithUTF8String:protocolRefInfo->protocol->name]];
                         
-                        DFProtocolDefinition* protocolDef = (DFProtocolDefinition*)[self getDefinitionWithName:protocolName andType:[DFProtocolDefinition class]];
-                        if (![classDef.protocols objectForKey:protocolName]) {
-                            [classDef.protocols setObject:protocolDef forKey:protocolName];
-                        }
+                        [self setProtocolName:protocolName onContainer:classDef];
                     }
                 }
             }
@@ -144,10 +141,30 @@
     return classDef;
 }
 
+- (void)setProtocolName:(NSString*)protocolName onContainer:(DFContainerDefinition*)containerDef {
+    DFProtocolDefinition* protocolDef = (DFProtocolDefinition*)[self getDefinitionWithName:protocolName andType:[DFProtocolDefinition class]];
+    if (![containerDef.protocols objectForKey:protocolName]) {
+        [containerDef.protocols setObject:protocolDef forKey:protocolName];
+    }
+}
+
 - (DFProtocolDefinition*)processProtocolDeclaration:(const CXIdxDeclInfo *)declaration {
     NSString* name = [NSString stringWithUTF8String:declaration->entityInfo->name];
     name = [NSString stringWithFormat:@"<%@>", name];
-    return (DFProtocolDefinition*)[self getDefinitionWithName:name andType:[DFProtocolDefinition class]];
+    
+    DFProtocolDefinition* protoDef = (DFProtocolDefinition*)[self getDefinitionWithName:name andType:[DFProtocolDefinition class]];
+    
+    // Find super protocols
+    const CXIdxObjCProtocolRefListInfo* protocolRefListInfo = clang_index_getObjCProtocolRefListInfo(declaration);
+    if (protocolRefListInfo) {
+        for (int i=0; i<protocolRefListInfo->numProtocols; ++i) {
+            const CXIdxObjCProtocolRefInfo* protocolRefInfo = protocolRefListInfo->protocols[i];
+            NSString* protocolName = [NSString stringWithFormat:@"<%@>", [NSString stringWithUTF8String:protocolRefInfo->protocol->name]];
+            [self setProtocolName:protocolName onContainer:protoDef];
+        }
+    }
+    
+    return protoDef;
 }
 
 - (void)processPropertyDeclaration:(const CXIdxDeclInfo *)declaration {

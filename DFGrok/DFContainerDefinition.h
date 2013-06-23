@@ -8,7 +8,12 @@
 
 #import "DFDefinition.h"
 
+@class DFProtocolDefinition;
+
 @interface DFContainerDefinition : DFDefinition
 @property (nonatomic, readonly) NSMutableDictionary* childDefinitions;
 @property (nonatomic, readonly) NSMutableDictionary* protocols;
+
+- (BOOL)implementsProtocolDefinition:(DFProtocolDefinition*)protoDef;
+
 @end

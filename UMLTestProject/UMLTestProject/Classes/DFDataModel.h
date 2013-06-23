@@ -10,7 +10,11 @@
 
 @protocol DFDataModelDelegate;
 
-@protocol DFDataModelInterface <NSObject>
+@protocol DFDataModelSuperInterface <NSObject>
+
+@end
+
+@protocol DFDataModelInterface <DFDataModelSuperInterface>
 @property (nonatomic, weak) id<DFDataModelDelegate> delegate;
 @end
 

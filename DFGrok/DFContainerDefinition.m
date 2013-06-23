@@ -7,6 +7,8 @@
 //
 
 #import "DFContainerDefinition.h"
+#import "DFProtocolDefinition.h"
+
 @interface DFContainerDefinition ( /* Private */ )
 @property (nonatomic, readwrite) NSMutableDictionary* childDefinitions;
 @property (nonatomic, readwrite) NSMutableDictionary* protocols;
@@ -21,6 +23,23 @@
         self.childDefinitions = [NSMutableDictionary dictionary];
     }
     return self;
+}
+
+- (BOOL)implementsProtocolDefinition:(DFProtocolDefinition*)protoDef {
+    if ([self.protocols objectForKey:protoDef.name]) {
+        return YES;
+    }
+    
+    // Search protocols recursively
+    __block BOOL found = NO;
+    [self.protocols enumerateKeysAndObjectsUsingBlock:^(id key, DFProtocolDefinition* containerProtoDef, BOOL *stop) {
+        if ([containerProtoDef implementsProtocolDefinition:protoDef]) {
+            found = YES;
+            *stop = YES;
+        }
+    }];
+    
+    return found;
 }
 
 @end

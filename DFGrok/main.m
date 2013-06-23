@@ -60,7 +60,7 @@ int main(int argc, char * argv[]) {
         [modelBuilder buildModelWithCompletion:^(NSError *error) {
             if (!error) {
                 DFyUMLBuilder* yUMLBuilder = [[DFyUMLBuilder alloc] initWithDefinitions:modelBuilder.definitions
-                                                                          keyDefintions:[modelBuilder keyClassDefinitions]
+                                                                keyContainerDefinitions:[modelBuilder keyClassDefinitions]
                                                                          andColourPairs:colours];
                 
                 NSString* yUML = [yUMLBuilder generate_yUML];
