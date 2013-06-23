@@ -11,18 +11,21 @@
 #import "DFyUMLBuilder.h"
 
 void NSPrint(NSString* str);
-
+NSDictionary* parseColoursFromFile(NSString* fileName);
+    
 int main(int argc, char * argv[]) {
 
     @autoreleasepool {
         
         // Process command line options
         static const char *optstring = "c:";
+        char* configFileArg = optarg;
+        
         int ch;
         while ((ch = getopt_long(argc, argv, optstring, NULL, NULL)) != -1) {
             switch(ch) {
                 case 'c':
-                    printf("Colour is: %s", optarg);
+                    configFileArg =  optarg;
                     break;
                     
                 case ':':
@@ -36,34 +39,23 @@ int main(int argc, char * argv[]) {
         }
         
         NSMutableArray* filenames = [NSMutableArray arrayWithCapacity:(argc - optind)];
-
-        // Test files!
-        //          @"/Users/samtaylor/Projects/ObjC2yUML/UMLTestProject/UMLTestProject/Classes/DFDemoController.m",
-        //          @"/Users/samtaylor/Projects/ObjC2yUML/UMLTestProject/UMLTestProject/Classes/DFDataModelContainer.m",
-        //          @"/Users/samtaylor/Projects/ObjC2yUML/UMLTestProject/UMLTestProject/Classes/DFDataModel.m",
-        //          @"/Users/samtaylor/Projects/ObjC2yUML/UMLTestProject/UMLTestProject/Classes/DFDemoDataSource.m",
-        //          @"/Users/samtaylor/Projects/ObjC2yUML/UMLTestProject/UMLTestProject/Classes/DFDemoDataModelOne.m",
-        //          @"/Users/samtaylor/Projects/ObjC2yUML/UMLTestProject/UMLTestProject/Classes/DFDemoDataModelTwo.m",
-
-        for (int i = optind; i < argc; i++) {
+        
+        for (int i=optind; i<argc; ++i) {
             [filenames addObject:[NSString stringWithUTF8String:argv[i]]];
+        }
+
+        NSDictionary* colours = nil;
+        if (configFileArg) {
+            NSString* configFilePath = [NSString stringWithUTF8String:configFileArg];
+            colours = parseColoursFromFile(configFilePath);
         }
         
         // Redirect clang errors to the void
         freopen("/dev/null", "w", stderr);
-        
 
         DFModelBuilder* modelBuilder = [[DFModelBuilder alloc] initWithFilenames:filenames];
         [modelBuilder buildModelWithCompletion:^(NSError *error) {
             if (!error) {
-                
-                NSDictionary* colours = [NSDictionary dictionaryWithObjectsAndKeys:
-                                             @"green", @"UIViewController",
-                                             @"orchid", @"UIView",
-                                             @"orange", @"DFDataModel",
-                                             @"white", @"NSObject",
-                                             nil];
-                
                 DFyUMLBuilder* yUMLBuilder = [[DFyUMLBuilder alloc] initWithDefinitions:modelBuilder.definitions
                                                                           keyDefintions:[modelBuilder keyClassDefinitions]
                                                                          andColourPairs:colours];
@@ -74,16 +66,32 @@ int main(int argc, char * argv[]) {
                 NSPrint(yUML);
             }
         }];
-
-  
-        
     }
 
     return EXIT_SUCCESS;
 }
 
-void NSPrint(NSString* str)
-{
+void NSPrint(NSString* str){
     [str writeToFile:@"/dev/stdout" atomically:NO encoding:NSUTF8StringEncoding error:nil];
+}
+
+// TODO:
+NSDictionary* parseColoursFromFile(NSString* filePath) {
+    NSData *data = nil;
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    
+    if ([fileManager fileExistsAtPath:filePath]) {
+        data = [fileManager contentsAtPath:filePath];
+        
+        NSString* contents = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+        NSLog(@"%@", contents);
+    }
+
+    return [NSDictionary dictionaryWithObjectsAndKeys:
+            @"green", @"UIViewController",
+            @"orchid", @"UIView",
+            @"orange", @"DFDataModel",
+            @"white", @"NSObject",
+            nil];
 }
 
