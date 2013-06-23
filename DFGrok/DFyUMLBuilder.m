@@ -48,7 +48,7 @@
 
 - (NSString*)generate_yUML {
     NSMutableString* code = [NSMutableString string];
-    
+
     [self.keyDefinitions enumerateKeysAndObjectsUsingBlock:^(NSString* key, DFDefinition* definition, BOOL *stop) {
         if ([definition isKindOfClass:[DFClassDefinition class]]) {
             DFClassDefinition* classDef = (DFClassDefinition*)definition;
@@ -63,9 +63,10 @@
             // Implements protocols
             [classDef.protocols enumerateKeysAndObjectsUsingBlock:^(NSString* protocolKey, DFProtocolDefinition* protocolDef, BOOL *stop) {
                 if (![[self printedDefs] containsObject:protocolDef]) {
-                    [code appendFormat:@"%@%@%@,\n", [self printDef:protocolDef], IMPLEMENTED_BY,[self printDef:classDef]];
                     [code appendString:[self generateChildrenOfContainer:protocolDef]];
                 }
+                
+                [code appendFormat:@"%@%@%@,\n", [self printDef:protocolDef], IMPLEMENTED_BY,[self printDef:classDef]];
             }];
             
             [code appendString:[self generateChildrenOfContainer:classDef]];
@@ -80,14 +81,24 @@
     
     // Properties // TODO: typecheck
     [containerDef.childDefinitions enumerateKeysAndObjectsUsingBlock:^(NSString* key, DFPropertyDefinition* propertyDef, BOOL *stop) {
-        if ([self.keyDefinitions objectForKey:propertyDef.className]) {
+        
+        if ([self isKeyClass:[self.definitions objectForKey:propertyDef.className]]) {
             [code appendFormat:@"%@%@%@,\n", [self printDef:containerDef], (propertyDef.isWeak ? OWNS_WEAK : OWNS_STRONG), [self printDef:((DFDefinition*)[self.definitions objectForKey:propertyDef.className])]];
+        } else {
+            [propertyDef.protocolNames enumerateObjectsUsingBlock:^(NSString* protoName, NSUInteger idx, BOOL *stop) {
+                if ( [self isKeyProtocol:[self.definitions objectForKey:protoName]] ) {
+                    [code appendFormat:@"%@%@%@,\n", [self printDef:containerDef], (propertyDef.isWeak ? OWNS_WEAK : OWNS_STRONG), [self printDef:((DFDefinition*)[self.definitions objectForKey:protoName])]];
+                }
+            }];
         }
+        
     }];
     return code;
 }
 
 - (NSString*)printDef:(DFDefinition*)definition {
+    NSAssert(definition, @"Attempt to print nil definition");
+    
     if (![self.printedDefs containsObject:definition]) {
         [self.printedDefs addObject:definition];
         
@@ -137,6 +148,29 @@
         return !replacedByColour;
     }
     return NO;
+}
+
+- (BOOL)isKeyClass:(DFClassDefinition*)classDef {
+    if ([self.keyDefinitions objectForKey:classDef.name]) {
+        return YES;
+    }
+    return NO;
+}
+
+- (BOOL)isKeyProtocol:(DFProtocolDefinition*)protoDef {
+    __block BOOL isProtocolOfKeyClass = NO;
+    
+    [self.keyDefinitions enumerateKeysAndObjectsUsingBlock:^(id key, DFDefinition* keyDef, BOOL *stop) {
+        if ([keyDef isKindOfClass:[DFClassDefinition class]]) {
+            DFClassDefinition* classDef = (DFClassDefinition*)keyDef;
+            if ([classDef.protocols objectForKey:protoDef.name]) {
+                isProtocolOfKeyClass = YES;
+                *stop = YES;
+            }
+        }
+    }];
+    
+    return isProtocolOfKeyClass;
 }
 
 @end

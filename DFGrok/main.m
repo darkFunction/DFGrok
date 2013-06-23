@@ -12,6 +12,7 @@
 
 void NSPrint(NSString* str);
 NSDictionary* parseColoursFromFile(NSString* fileName);
+NSDictionary* defaultColours();
     
 int main(int argc, char * argv[]) {
 
@@ -48,6 +49,8 @@ int main(int argc, char * argv[]) {
         if (configFileArg) {
             NSString* configFilePath = [NSString stringWithUTF8String:configFileArg];
             colours = parseColoursFromFile(configFilePath);
+        } else {
+            colours = defaultColours();
         }
         
         // Redirect clang errors to the void
@@ -87,6 +90,10 @@ NSDictionary* parseColoursFromFile(NSString* filePath) {
         NSLog(@"%@", contents);
     }
 
+    return nil;
+}
+
+NSDictionary* defaultColours() {
     return [NSDictionary dictionaryWithObjectsAndKeys:
             @"green", @"UIViewController",
             @"orchid", @"UIView",

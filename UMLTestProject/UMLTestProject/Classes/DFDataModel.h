@@ -20,5 +20,4 @@
 @end
 
 @interface DFDataModel : NSObject <DFDataModelInterface>
-
 @end

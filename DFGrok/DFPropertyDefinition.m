@@ -135,7 +135,7 @@
 }
 
 - (void)protocolFound:(NSString*)protocolName {
-    [self.protocolNames addObject:protocolName];
+    [self.protocolNames addObject:[NSString stringWithFormat:@"<%@>", protocolName]];
 }
 
 @end
