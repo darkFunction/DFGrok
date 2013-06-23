@@ -72,17 +72,22 @@
 }
 
 - (NSString*)generateChildrenOfContainer:(DFContainerDefinition*)containerDef {
-    NSMutableString* code = [NSMutableString string];
+    __block NSMutableString* code = [NSMutableString string];
+
+    void(^printProperty)(DFContainerDefinition*, BOOL, DFContainerDefinition*, NSString*) = ^(DFContainerDefinition* owner, BOOL isWeak, DFContainerDefinition* child, NSString* name){
+    
+        [code appendFormat:@"%@%@%@%@,\n", [self printDef:owner], name, (isWeak ? OWNS_WEAK : OWNS_STRONG), [self printDef:child]];
+    };
     
     // Properties
     [containerDef.childDefinitions enumerateKeysAndObjectsUsingBlock:^(NSString* key, DFPropertyDefinition* propertyDef, BOOL *stop) {
         
         if ([self isKeyClass:[self.definitions objectForKey:propertyDef.className]]) {
-            [code appendFormat:@"%@%@%@,\n", [self printDef:containerDef], (propertyDef.isWeak ? OWNS_WEAK : OWNS_STRONG), [self printDef:((DFContainerDefinition*)[self.definitions objectForKey:propertyDef.className])]];
+            printProperty(containerDef, propertyDef.isWeak, [self.definitions objectForKey:propertyDef.className], propertyDef.name);
         } else {
             [propertyDef.protocolNames enumerateObjectsUsingBlock:^(NSString* protoName, NSUInteger idx, BOOL *stop) {
                 if ( [self isKeyProtocol:[self.definitions objectForKey:protoName]] ) {
-                    [code appendFormat:@"%@%@%@,\n", [self printDef:containerDef], (propertyDef.isWeak ? OWNS_WEAK : OWNS_STRONG), [self printDef:((DFContainerDefinition*)[self.definitions objectForKey:protoName])]];
+                    printProperty(containerDef, propertyDef.isWeak, [self.definitions objectForKey:protoName], propertyDef.name);
                 }
             }];
         }
