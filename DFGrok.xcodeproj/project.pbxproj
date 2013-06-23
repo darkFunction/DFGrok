@@ -34,7 +34,7 @@
 
 /* Begin PBXFileReference section */
 		383BB8A117464FD8007CFE77 /* libclang.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libclang.dylib; path = "../BTSync/llvm/Release+Asserts/lib/libclang.dylib"; sourceTree = "<group>"; };
-		386B4907173E734F004174C9 /* DFGrok */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DFGrok; sourceTree = BUILT_PRODUCTS_DIR; };
+		386B4907173E734F004174C9 /* dfgrok */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = dfgrok; sourceTree = BUILT_PRODUCTS_DIR; };
 		386B490B173E734F004174C9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		38ABDDFE1760CF03009026E0 /* ObjC2yUML.1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.man; name = ObjC2yUML.1; path = DFGrok/ObjC2yUML.1; sourceTree = SOURCE_ROOT; };
 		38ABDDFF1760CF03009026E0 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = DFGrok/main.m; sourceTree = SOURCE_ROOT; };
@@ -83,7 +83,7 @@
 		386B4908173E734F004174C9 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				386B4907173E734F004174C9 /* DFGrok */,
+				386B4907173E734F004174C9 /* dfgrok */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -158,7 +158,7 @@
 			);
 			name = DFGrok;
 			productName = ObjC2yUML;
-			productReference = 386B4907173E734F004174C9 /* DFGrok */;
+			productReference = 386B4907173E734F004174C9 /* dfgrok */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -273,7 +273,7 @@
 					"\"/usr/lib/clang+llvm-3.2-x86_64-apple-darwin11/lib\"",
 					"\"$(SRCROOT)/../BTSync/llvm/Release+Asserts/lib\"",
 				);
-				PRODUCT_NAME = DFGrok;
+				PRODUCT_NAME = dfgrok;
 			};
 			name = Debug;
 		};
@@ -288,7 +288,7 @@
 					"\"/usr/lib/clang+llvm-3.2-x86_64-apple-darwin11/lib\"",
 					"\"$(SRCROOT)/../BTSync/llvm/Release+Asserts/lib\"",
 				);
-				PRODUCT_NAME = DFGrok;
+				PRODUCT_NAME = dfgrok;
 			};
 			name = Release;
 		};
