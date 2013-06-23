@@ -54,7 +54,7 @@
             DFClassDefinition* classDef = (DFClassDefinition*)definition;
             
             // Superclass relationship. Only include superclasses which are also key definitions
-            if ([self shouldPrintSuperclassOf:classDef]) {
+            if ([self shouldPrintContainer:classDef.superclassDef]) {
                 [code appendFormat:@"%@%@%@\n", [self printDef:classDef.superclassDef], SUPERCLASS_OF, [self printDef:classDef]];
             } else {
                 [code appendFormat:@"%@,\n", [self printDef:classDef]];
@@ -78,11 +78,11 @@
     [containerDef.childDefinitions enumerateKeysAndObjectsUsingBlock:^(NSString* key, DFPropertyDefinition* propertyDef, BOOL *stop) {
         
         if ([self isKeyClass:[self.definitions objectForKey:propertyDef.className]]) {
-            [code appendFormat:@"%@%@%@,\n", [self printDef:containerDef], (propertyDef.isWeak ? OWNS_WEAK : OWNS_STRONG), [self printDef:((DFDefinition*)[self.definitions objectForKey:propertyDef.className])]];
+            [code appendFormat:@"%@%@%@,\n", [self printDef:containerDef], (propertyDef.isWeak ? OWNS_WEAK : OWNS_STRONG), [self printDef:((DFContainerDefinition*)[self.definitions objectForKey:propertyDef.className])]];
         } else {
             [propertyDef.protocolNames enumerateObjectsUsingBlock:^(NSString* protoName, NSUInteger idx, BOOL *stop) {
                 if ( [self isKeyProtocol:[self.definitions objectForKey:protoName]] ) {
-                    [code appendFormat:@"%@%@%@,\n", [self printDef:containerDef], (propertyDef.isWeak ? OWNS_WEAK : OWNS_STRONG), [self printDef:((DFDefinition*)[self.definitions objectForKey:protoName])]];
+                    [code appendFormat:@"%@%@%@,\n", [self printDef:containerDef], (propertyDef.isWeak ? OWNS_WEAK : OWNS_STRONG), [self printDef:((DFContainerDefinition*)[self.definitions objectForKey:protoName])]];
                 }
             }];
         }
@@ -92,20 +92,24 @@
 }
 
 - (NSString*)generateProtocolsOfContainer:(DFContainerDefinition*)containerDef {
+    
     NSMutableString* code = [NSMutableString string];
     [containerDef.protocols enumerateKeysAndObjectsUsingBlock:^(NSString* protocolKey, DFProtocolDefinition* protocolDef, BOOL *stop) {
-        if (![[self printedDefs] containsObject:protocolDef]) {
-            [code appendString:[self generateChildrenOfContainer:protocolDef]];
-            [code appendString:[self generateProtocolsOfContainer:protocolDef]];
+        if ([self shouldPrintContainer:protocolDef]) {
+            
+            if (![[self printedDefs] containsObject:protocolDef]) {
+                [code appendString:[self generateChildrenOfContainer:protocolDef]];
+                [code appendString:[self generateProtocolsOfContainer:protocolDef]];
+            }
+            
+            [code appendFormat:@"%@%@%@,\n", [self printDef:protocolDef], IMPLEMENTED_BY,[self printDef:containerDef]];
         }
-        
-        [code appendFormat:@"%@%@%@,\n", [self printDef:protocolDef], IMPLEMENTED_BY,[self printDef:containerDef]];
         
     }];
     return code;
 }
 
-- (NSString*)printDef:(DFDefinition*)definition {
+- (NSString*)printDef:(DFContainerDefinition*)definition {
     NSAssert(definition, @"Attempt to print nil definition");
     
     if (![self.printedDefs containsObject:definition]) {
@@ -117,15 +121,11 @@
     return [NSString stringWithFormat:@"[%@]", definition.name];
 }
 
-- (NSString*)printInitialDefinition:(DFDefinition*)definition {
-    NSString* colour = [self.colourPairs objectForKey:definition.name];
+- (NSString*)printInitialDefinition:(DFContainerDefinition*)definition {
+    NSString* colour = nil;
     
     if (!colour) {
-        if ([definition isKindOfClass:[DFClassDefinition class]]) {
-            colour = [self colourForClassDefinition:(DFClassDefinition*)definition];
-        } else if ([definition isKindOfClass:[DFProtocolDefinition class]]) {
-            colour = @"pink";
-        }
+        colour = [self colourForContainerDefinition:definition];
     }
     
     if ([colour length]) {
@@ -134,16 +134,38 @@
     return [NSString stringWithFormat:@"[%@]", definition.name];
 }
 
-- (NSString*)colourForClassDefinition:(DFClassDefinition*)classDef {
+- (NSString*)colourForContainerDefinition:(DFContainerDefinition*)containerDef {
     NSString* colour = nil;
-    DFClassDefinition* def = classDef;
     
-    while (def) {
-        colour = [self.colourPairs objectForKey:def.name];
-        if (colour) {
-            break;
+    if ([containerDef isKindOfClass:[DFClassDefinition class]]) {
+        DFClassDefinition* def = (DFClassDefinition*)containerDef;
+        
+        while (def) {
+            colour = [self.colourPairs objectForKey:def.name];
+            if (colour) {
+                break;
+            }
+            def = def.superclassDef;
         }
-        def = def.superclassDef;
+    } else if ([containerDef isKindOfClass:[DFProtocolDefinition class]]) {
+        colour = [self colourForProtocol:(DFProtocolDefinition*)containerDef];
+    }
+    return colour;
+}
+
+// Find first super-protocol that has a colour.
+- (NSString*)colourForProtocol:(DFProtocolDefinition*)protoDef {
+    __block NSString* colour = nil;
+    
+    DFProtocolDefinition* def = protoDef;
+    colour = [self.colourPairs objectForKey:def.name];
+    if (!colour) {
+        [protoDef.protocols enumerateKeysAndObjectsUsingBlock:^(id key, DFProtocolDefinition* superProto, BOOL *stop) {
+            colour = [self colourForProtocol:superProto];
+            if (colour) {
+                *stop = YES;
+            }
+        }];
     }
     
     return colour;
@@ -151,9 +173,9 @@
 
 #pragma mark - Utility methods
 
-- (BOOL)shouldPrintSuperclassOf:(DFClassDefinition*)classDef {
-    if ( [classDef.superclassDef.name length] ) {
-        BOOL replacedByColour = [self.colourPairs objectForKey:classDef.superclassDef.name] && ![self.keyContainerDefinitions objectForKey:classDef.superclassDef.name];
+- (BOOL)shouldPrintContainer:(DFContainerDefinition*)def {
+    if ( [def.name length] ) {
+        BOOL replacedByColour = [self.colourPairs objectForKey:def.name] && ![self.keyContainerDefinitions objectForKey:def.name];
         return !replacedByColour;
     }
     return NO;
