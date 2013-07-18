@@ -99,46 +99,21 @@
          
                 if (cursor.kind == CXCursor_ObjCMessageExpr) {
                     __block NSString* memberName = nil;
+                    __block NSString* referencedObject = nil;
                     __block NSString* methodName = [NSString stringWithUTF8String:clang_getCString(clang_getCursorDisplayName(cursor))];
 
+                    
                     clang_visitChildrenWithBlock(cursor, ^enum CXChildVisitResult(CXCursor cursor, CXCursor parent) {
                         if (cursor.kind == CXCursor_MemberRefExpr) {
                             memberName = [NSString stringWithUTF8String:clang_getCString(clang_getCursorDisplayName(cursor))];
-                            
-                            return CXChildVisit_Continue;
-                        }
-                        
-                        if (memberName) {
-                            NSLog(@"Messaging %@ using method name: %@ with parameter: %s", memberName, methodName, clang_getCString(clang_getCursorSpelling(cursor)));
-                        }
-                        return CXChildVisit_Break;
-                    });
-                }
-                
-                
-
-                if (cursor.kind == CXCursor_MemberRefExpr) {
-                    if (parent.kind == CXCursor_ObjCMessageExpr) {
-                        // Sending a message to a member variable
-                        NSString* memberName = [NSString stringWithUTF8String:clang_getCString(clang_getCursorDisplayName(parent))];
-                        //NSLog(@"%s -> %@", clang_getCString(clang_getCursorDisplayName(cursor)), memberName);
-
-                        
-//                        // need to grab the class def for the type we are messaging.. in this case self but for others too
-//                        CXCursor test = clang_getCursorSemanticParent(clang_getCursorSemanticParent(cursor));
-//                        CXCursor def = clang_getCursorDefinition(test);
-//                        CXType type = clang_getCursorType(cursor);
-                        
-                        // if self...
-                        DFPropertyDefinition* messagedProperty = [[self.currentContainerDef childDefinitions] objectForKey:memberName];
-                        if (messagedProperty) {
-                            if ([messagedProperty.className isEqualToString:@"NSMutableArray"] || [messagedProperty.className isEqualToString:@"NSMutableDictionary"]) {
-                                // what did we pass in?
+                            referencedObject = [NSString stringWithUTF8String:clang_getCString(clang_getCursorDisplayName(clang_getCursorSemanticParent(clang_getCursorReferenced(cursor))))];
+                        } else {
+                            if (memberName) {
+                                NSLog(@"[%@.%@ %@ %s]", referencedObject, memberName, methodName, clang_getCString(clang_getCursorSpelling(cursor)));
                             }
                         }
-                        
-                        
-                    }
+                        return CXChildVisit_Continue;
+                    });
                 }
                 return CXChildVisit_Recurse;
             });
@@ -150,8 +125,7 @@
 }
 
 - (void)classParser:(DFClangParser *)parser foundEntityReference:(const CXIdxEntityRefInfo *)entityRef {
-//    if (entityRef->parentEntity)
-//    NSLog(@"%@ -> %d -> %s -> %s", self.currentContainerDef.name, entityRef->parentEntity->kind, entityRef->parentEntity->name, entityRef->referencedEntity->name);
+    // Not used...
 }
 
 #pragma mark - Declaration processors
