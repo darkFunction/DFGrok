@@ -9,5 +9,5 @@
 #import "DFDataModel.h"
 
 @interface DFDemoDataSource : NSObject <DFDataModelDelegate>
-
+@property (nonatomic) NSDictionary* testDict;
 @end

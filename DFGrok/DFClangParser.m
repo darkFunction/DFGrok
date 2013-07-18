@@ -12,10 +12,12 @@
 // Supported indexer callback functions
 void indexDeclaration(CXClientData client_data, const CXIdxDeclInfo* declaration);
 CXIdxClientFile ppIncludedFile(CXClientData client_data, const CXIdxIncludedFileInfo* included_file);
+void indexEntityReference(CXClientData client_data, const CXIdxEntityRefInfo *);
 
 static IndexerCallbacks indexerCallbacks = {
     .indexDeclaration = indexDeclaration,
     .ppIncludedFile = ppIncludedFile,
+    .indexEntityReference = indexEntityReference,
 };
 
 @interface DFClangParser ( /* Private */ )
@@ -48,16 +50,17 @@ static IndexerCallbacks indexerCallbacks = {
     }
 
     // TODO: accept compiler flags from command line, force ARC for now
-    const char * command_line_args[2];
+    const char * command_line_args[3];
     command_line_args[0] = "-fobjc-arc";
     command_line_args[1] = "-F/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.1.sdk/System/Library/Frameworks";
+    command_line_args[2] = "-ast-dump";
     
     self.translationUnit = clang_parseTranslationUnit(index,
                                                       [self.fileName fileSystemRepresentation],
                                                       command_line_args, 2,
                                                       NULL, 0,
                                                       // CXTranslationUnit_DetailedPreprocessingRecord enables ppIncludedFile callback
-                                                      CXTranslationUnit_SkipFunctionBodies | CXTranslationUnit_Incomplete/* | CXTranslationUnit_DetailedPreprocessingRecord */);
+                                                      CXTranslationUnit_Incomplete/* | CXTranslationUnit_DetailedPreprocessingRecord */);
     
     if (!self.translationUnit) {
         if (completion) {
@@ -105,6 +108,15 @@ CXIdxClientFile ppIncludedFile(CXClientData client_data, const CXIdxIncludedFile
             return [parser.delegate classParser:parser includedFile:included_file];
         }
         return NULL;
+    }
+}
+
+void indexEntityReference(CXClientData client_data, const CXIdxEntityRefInfo * entityRef) {
+    @autoreleasepool {
+        DFClangParser* parser = (__bridge DFClangParser*)client_data;
+        if ([parser.delegate respondsToSelector: @selector(classParser:foundEntityReference:)]) {
+            [parser.delegate classParser:parser foundEntityReference:entityRef];
+        }
     }
 }
 

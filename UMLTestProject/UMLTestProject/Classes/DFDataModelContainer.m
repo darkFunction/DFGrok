@@ -7,6 +7,7 @@
 //
 
 #import "DFDataModelContainer.h"
+#import "DFDemoDataSource.h"
 
 @interface DFDataModelContainer ( /* Private */ )
 @property (nonatomic) NSMutableArray* dataModels;
@@ -24,7 +25,12 @@
 }
 
 - (void)addDataModel:(id<DFDataModelInterface>)dataModel {
-    [self.dataModels addObject:dataModel];
+    DFDemoDataSource* testSource = [[DFDemoDataSource alloc] init];
+    NSMutableDictionary* breasts = [NSMutableDictionary dictionaryWithCapacity:0];
+    
+    [testSource.testDict objectForKey:@"fuck"];
+    [self.dataModels addObject:breasts];
+    [breasts removeAllObjects];
 }
 
 #pragma mark - DFDataModelDelegate
