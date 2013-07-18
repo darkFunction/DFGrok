@@ -98,16 +98,20 @@
             clang_visitChildrenWithBlock(declaration->cursor, ^enum CXChildVisitResult(CXCursor cursor, CXCursor parent) {
          
                 if (cursor.kind == CXCursor_ObjCMessageExpr) {
+                    __block NSString* memberName = nil;
+                    __block NSString* methodName = [NSString stringWithUTF8String:clang_getCString(clang_getCursorDisplayName(cursor))];
+
                     clang_visitChildrenWithBlock(cursor, ^enum CXChildVisitResult(CXCursor cursor, CXCursor parent) {
-                        
                         if (cursor.kind == CXCursor_MemberRefExpr) {
-                            NSString* memberName = [NSString stringWithUTF8String:clang_getCString(clang_getCursorDisplayName(cursor))];
-                            NSLog(@"messaging %@", memberName);
-                        } else {
-                            NSLog(@">> %d, %s", cursor.kind, clang_getCString(clang_getCursorSpelling(cursor)));
+                            memberName = [NSString stringWithUTF8String:clang_getCString(clang_getCursorDisplayName(cursor))];
+                            
+                            return CXChildVisit_Continue;
                         }
                         
-                        return CXChildVisit_Continue;
+                        if (memberName) {
+                            NSLog(@"Messaging %@ using method name: %@ with parameter: %s", memberName, methodName, clang_getCString(clang_getCursorSpelling(cursor)));
+                        }
+                        return CXChildVisit_Break;
                     });
                 }
                 
