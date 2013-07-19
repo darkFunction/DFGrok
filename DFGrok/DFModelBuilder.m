@@ -94,31 +94,8 @@
             break;
         
         case CXIdxEntity_ObjCInstanceMethod:
-        {
-            clang_visitChildrenWithBlock(declaration->cursor, ^enum CXChildVisitResult(CXCursor cursor, CXCursor parent) {
-         
-                if (cursor.kind == CXCursor_ObjCMessageExpr) {
-                    __block NSString* memberName = nil;
-                    __block NSString* referencedObject = nil;
-                    __block NSString* methodName = [NSString stringWithUTF8String:clang_getCString(clang_getCursorDisplayName(cursor))];
-
-                    
-                    clang_visitChildrenWithBlock(cursor, ^enum CXChildVisitResult(CXCursor cursor, CXCursor parent) {
-                        if (cursor.kind == CXCursor_MemberRefExpr) {
-                            memberName = [NSString stringWithUTF8String:clang_getCString(clang_getCursorDisplayName(cursor))];
-                            referencedObject = [NSString stringWithUTF8String:clang_getCString(clang_getCursorDisplayName(clang_getCursorSemanticParent(clang_getCursorReferenced(cursor))))];
-                        } else {
-                            if (memberName) {
-                                NSLog(@"[%@.%@ %@ %s]", referencedObject, memberName, methodName, clang_getCString(clang_getCursorSpelling(cursor)));
-                            }
-                        }
-                        return CXChildVisit_Continue;
-                    });
-                }
-                return CXChildVisit_Recurse;
-            });
+            [self processMethodDeclaration:declaration];
             break;
-        }
         default:
             break;
     }
@@ -207,6 +184,43 @@
             [self.currentContainerDef.childDefinitions setObject:propertyDef forKey:name];
         }
     }
+}
+
+// Examine the code to search for multiple property relationships with arrays and dictionaries
+- (void)processMethodDeclaration:(const CXIdxDeclInfo *)declaration {
+    clang_visitChildrenWithBlock(declaration->cursor, ^enum CXChildVisitResult(CXCursor cursor, CXCursor parent) {
+        
+        if (cursor.kind == CXCursor_ObjCMessageExpr) {
+            __block NSString* memberName = nil;
+            __block NSString* referencedObjectName = nil;
+            __block NSString* methodName = [NSString stringWithUTF8String:clang_getCString(clang_getCursorDisplayName(cursor))];
+            
+            clang_visitChildrenWithBlock(cursor, ^enum CXChildVisitResult(CXCursor cursor, CXCursor parent) {
+                if (cursor.kind == CXCursor_MemberRefExpr) {
+                    memberName = [NSString stringWithUTF8String:clang_getCString(clang_getCursorDisplayName(cursor))];
+                    referencedObjectName = [NSString stringWithUTF8String:clang_getCString(clang_getCursorDisplayName(clang_getCursorSemanticParent(clang_getCursorReferenced(cursor))))];
+                } else {
+                    if (memberName) {
+                        NSString* param = [NSString stringWithUTF8String:clang_getCString(clang_getCursorSpelling(cursor))];
+                        NSLog(@"[(%@).%@ %@%@]", referencedObjectName, memberName, methodName, param);
+                        
+                        DFContainerDefinition* ownerObject = [self.definitions objectForKey:referencedObjectName];
+                        DFDefinition* passedObject = [self.definitions objectForKey:param];
+                        DFPropertyDefinition* messagedProperty = [[ownerObject childDefinitions] objectForKey:memberName];
+                        if (messagedProperty && passedObject) {
+                            if ([messagedProperty.className isEqualToString:@"NSMutableArray"] || [messagedProperty.className isEqualToString:@"NSMutableDictionary"]) {
+                                // We have discovered that passedObject is passed to a mutable array or dictionary property of ownerObject,
+                                // so we assume that ownerObject owns multiple passedObjects
+                                
+                            }
+                        }
+                    }
+                }
+                return CXChildVisit_Continue;
+            });
+        }
+        return CXChildVisit_Recurse;
+    });
 }
 
 #pragma mark - Utility methods
