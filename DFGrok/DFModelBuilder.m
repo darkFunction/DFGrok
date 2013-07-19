@@ -193,7 +193,7 @@
         if (cursor.kind == CXCursor_ObjCMessageExpr) {
             __block NSString* memberName = nil;
             __block NSString* referencedObjectName = nil;
-            __block NSString* methodName = [NSString stringWithUTF8String:clang_getCString(clang_getCursorDisplayName(cursor))];
+            //__block NSString* methodName = [NSString stringWithUTF8String:clang_getCString(clang_getCursorDisplayName(cursor))];
             
             clang_visitChildrenWithBlock(cursor, ^enum CXChildVisitResult(CXCursor cursor, CXCursor parent) {
                 if (cursor.kind == CXCursor_MemberRefExpr) {
@@ -202,15 +202,17 @@
                 } else {
                     if (memberName) {
                         NSString* param = [NSString stringWithUTF8String:clang_getCString(clang_getCursorSpelling(cursor))];
-                        NSLog(@"[(%@).%@ %@%@]", referencedObjectName, memberName, methodName, param);
+                        //NSLog(@"[(%@).%@ %@%@]", referencedObjectName, memberName, methodName, param);
                         
                         DFContainerDefinition* ownerObject = [self.definitions objectForKey:referencedObjectName];
                         DFDefinition* passedObject = [self.definitions objectForKey:param];
                         DFPropertyDefinition* messagedProperty = [[ownerObject childDefinitions] objectForKey:memberName];
                         if (messagedProperty && passedObject) {
                             if ([messagedProperty.className isEqualToString:@"NSMutableArray"] || [messagedProperty.className isEqualToString:@"NSMutableDictionary"]) {
+                                
                                 // We have discovered that passedObject is passed to a mutable array or dictionary property of ownerObject,
                                 // so we assume that ownerObject owns multiple passedObjects
+                                
                                 
                             }
                         }
