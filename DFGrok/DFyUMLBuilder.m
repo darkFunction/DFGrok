@@ -11,7 +11,7 @@
 #import "DFDefinition.h"
 #import "DFClassDefinition.h"
 #import "DFProtocolDefinition.h"
-#import "DFPropertyDefinition.h"
+#import "DFPropertyDefinitionInterface.h"
 
 // Note, in yUML, the first in a relationship pait is placed ABOVE the second in the pair. So it is better to use
 // SUPERCLASS_OF and IMPLEMENTED_BY.
@@ -80,7 +80,7 @@
     };
     
     // Properties
-    [containerDef.childDefinitions enumerateKeysAndObjectsUsingBlock:^(NSString* key, DFPropertyDefinition* propertyDef, BOOL *stop) {
+    [containerDef.childDefinitions enumerateKeysAndObjectsUsingBlock:^(NSString* key, id<DFPropertyDefinitionInterface> propertyDef, BOOL *stop) {
         
         if ([self isKeyClass:[self.definitions objectForKey:propertyDef.className]]) {
             printProperty(containerDef, propertyDef.isWeak, [self.definitions objectForKey:propertyDef.className], propertyDef.name);
