@@ -31,7 +31,7 @@
 
 #pragma mark - DFPropertyDefintionInterface
 
-- (NSString*)className {
+- (NSString*)typeName {
     return self.containerDef.name;
 }
 

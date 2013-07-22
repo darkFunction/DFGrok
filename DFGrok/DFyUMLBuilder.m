@@ -82,8 +82,8 @@
     // Properties
     [containerDef.childDefinitions enumerateKeysAndObjectsUsingBlock:^(NSString* key, id<DFPropertyDefinitionInterface> propertyDef, BOOL *stop) {
         
-        if ([self isKeyClass:[self.definitions objectForKey:propertyDef.className]]) {
-            printProperty(containerDef, propertyDef.isWeak, propertyDef.isMultiple, [self.definitions objectForKey:propertyDef.className], propertyDef.name);
+        if ([self isKeyClass:[self.definitions objectForKey:propertyDef.typeName]]) {
+            printProperty(containerDef, propertyDef.isWeak, propertyDef.isMultiple, [self.definitions objectForKey:propertyDef.typeName], propertyDef.name);
         } else {
             [propertyDef.protocolNames enumerateObjectsUsingBlock:^(NSString* protoName, NSUInteger idx, BOOL *stop) {
                 if ( [self isKeyProtocol:[self.definitions objectForKey:protoName]] ) {

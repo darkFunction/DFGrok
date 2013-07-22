@@ -30,9 +30,9 @@
     [self.dataModels addObject:dataModel];
 }
 
-//- (void)testAddConcreteDataModel:(DFDemoDataModelOne*)helpmeh {
-//    [self.dataModels addObject:helpmeh];
-//}
+- (void)testAddConcreteDataModel:(DFDemoDataModelOne*)helpmeh {
+    [self.dataModels addObject:helpmeh];
+}
 
 - (void)testAddConcreteDataModelNotPassed {
     DFDemoDataModelTwo* ohmergherd = [[DFDemoDataModelTwo alloc] init];
