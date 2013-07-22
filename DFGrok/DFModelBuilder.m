@@ -194,7 +194,6 @@
         if (cursor.kind == CXCursor_ObjCMessageExpr) {
             __block NSString* memberName = nil;
             __block NSString* referencedObjectName = nil;
-            //__block NSString* methodName = [NSString stringWithUTF8String:clang_getCString(clang_getCursorDisplayName(cursor))];
             
             clang_visitChildrenWithBlock(cursor, ^enum CXChildVisitResult(CXCursor cursor, CXCursor parent) {
                 if (cursor.kind == CXCursor_MemberRefExpr) {
@@ -202,20 +201,15 @@
                     referencedObjectName = [NSString stringWithUTF8String:clang_getCString(clang_getCursorDisplayName(clang_getCursorSemanticParent(clang_getCursorReferenced(cursor))))];
                 } else {
                     if (memberName) {
-                        //NSString* param = [NSString stringWithUTF8String:clang_getCString(clang_getCursorDisplayName(cursor))];
-                        //NSLog(@"[(%@).%@ %@%@]", referencedObjectName, memberName, methodName, param);
                         __block NSString* passedClassName = nil;
                         
                         clang_visitChildrenWithBlock(cursor, ^enum CXChildVisitResult(CXCursor cursor, CXCursor parent) {
-                            //NSString* param = [NSString stringWithUTF8String:clang_getCString(clang_getCursorDisplayName(cursor))];
                             if (cursor.kind == CXCursor_DeclRefExpr) {
                                 CXCursor def = clang_getCursorDefinition(cursor);
-                                if (def.kind == CXCursor_ParmDecl) {
-                                    clang_visitChildrenWithBlock(def, ^enum CXChildVisitResult(CXCursor cursor, CXCursor parent) {
-                                        passedClassName = [NSString stringWithUTF8String:clang_getCString(clang_getCursorDisplayName(cursor))];
-                                        return CXChildVisit_Break;
-                                    });
-                                }
+                                clang_visitChildrenWithBlock(def, ^enum CXChildVisitResult(CXCursor cursor, CXCursor parent) {
+                                    passedClassName = [NSString stringWithUTF8String:clang_getCString(clang_getCursorDisplayName(cursor))];
+                                    return CXChildVisit_Break;
+                                });
                             }
                             
                             return CXChildVisit_Recurse;
