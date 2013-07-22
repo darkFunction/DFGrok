@@ -138,4 +138,9 @@
     [self.protocolNames addObject:[NSString stringWithFormat:@"<%@>", protocolName]];
 }
 
+#pragma mark - DFPropertyDefinitionInterface
+- (BOOL)isMultiple {
+    return NO;
+}
+
 @end

@@ -16,6 +16,10 @@
 @implementation DFDefinition
 
 - (id)initWithName:(NSString*)name {
+    if (![name length]) {
+        return nil;
+    }
+    
     self = [super init];
     if (self) {
         self.name = name;

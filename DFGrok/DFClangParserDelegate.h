@@ -14,5 +14,6 @@
 @protocol DFClangParserDelegate <NSObject>
 @optional
 - (void)classParser:(DFClangParser*)parser foundDeclaration:(CXIdxDeclInfo const *)declaration;
+- (void)classParser:(DFClangParser*)parser foundEntityReference:(const CXIdxEntityRefInfo *)entityRef;
 - (CXIdxClientFile)classParser:(DFClangParser*)parser includedFile:(const CXIdxIncludedFileInfo *)includedFile;
 @end

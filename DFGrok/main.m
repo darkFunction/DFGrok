@@ -54,7 +54,7 @@ int main(int argc, char * argv[]) {
         }
         
         // Redirect clang errors to the void
-        freopen("/dev/null", "w", stderr);
+        //freopen("/dev/null", "w", stderr);
 
         DFModelBuilder* modelBuilder = [[DFModelBuilder alloc] initWithFilenames:filenames];
         [modelBuilder buildModelWithCompletion:^(NSError *error) {
