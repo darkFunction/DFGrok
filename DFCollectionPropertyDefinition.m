@@ -11,14 +11,17 @@
 
 @interface DFCollectionPropertyDefinition ( /* Private */ )
 @property (nonatomic) DFContainerDefinition* containerDef;
-@property (nonatomic) NSMutableArray* protocolNames;
+@property (nonatomic) NSMutableArray* cachedProtocolNames;
 @property (nonatomic, readwrite, getter = isWeak) BOOL weak;
 @end
 
 @implementation DFCollectionPropertyDefinition
 
-- (id)initWithContainerDefintion:(DFContainerDefinition*)containerDef isWeak:(BOOL)weak {
-    self = [super initWithName:containerDef.name];
+- (id)initWithContainerDefintion:(DFContainerDefinition*)containerDef
+                            name:(NSString*)name
+                          isWeak:(BOOL)weak {
+    
+    self = [super initWithName:name];
     if (self) {
         self.containerDef = containerDef;
         self.weak = weak;
@@ -33,15 +36,15 @@
 }
 
 - (NSMutableArray*)protocolNames {
-    if (!self.protocolNames && self.containerDef.protocols.count) {
-        self.protocolNames = [NSMutableArray arrayWithCapacity:self.containerDef.protocols.count];
+    if (!self.cachedProtocolNames && self.containerDef.protocols.count) {
+        self.cachedProtocolNames = [NSMutableArray arrayWithCapacity:self.containerDef.protocols.count];
         
         [self.containerDef.protocols enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-            [self.protocolNames addObject:key];
+            [self.cachedProtocolNames addObject:key];
         }];
     }
     
-    return self.protocolNames;
+    return self.cachedProtocolNames;
 }
 
 - (BOOL)isMultiple {

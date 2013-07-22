@@ -14,6 +14,8 @@
 
 @interface DFCollectionPropertyDefinition : DFDefinition <DFPropertyDefinitionInterface>
 
-- (id)initWithContainerDefintion:(DFContainerDefinition*)containerDef isWeak:(BOOL)weak;
+- (id)initWithContainerDefintion:(DFContainerDefinition*)containerDef
+                            name:(NSString*)name
+                          isWeak:(BOOL)weak;
 
 @end

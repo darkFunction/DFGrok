@@ -202,13 +202,20 @@
                     referencedObjectName = [NSString stringWithUTF8String:clang_getCString(clang_getCursorDisplayName(clang_getCursorSemanticParent(clang_getCursorReferenced(cursor))))];
                 } else {
                     if (memberName) {
-                        NSString* param = [NSString stringWithUTF8String:clang_getCString(clang_getCursorDisplayName(cursor))];
+                        //NSString* param = [NSString stringWithUTF8String:clang_getCString(clang_getCursorDisplayName(cursor))];
                         //NSLog(@"[(%@).%@ %@%@]", referencedObjectName, memberName, methodName, param);
+                        __block NSString* passedClassName = nil;
                         
                         clang_visitChildrenWithBlock(cursor, ^enum CXChildVisitResult(CXCursor cursor, CXCursor parent) {
-                            NSString* param = [NSString stringWithUTF8String:clang_getCString(clang_getCursorDisplayName(cursor))];
-                            if ([param isEqualToString:@"helpmeh"] && cursor.kind == CXCursor_DeclRefExpr) {
-                                // ???
+                            //NSString* param = [NSString stringWithUTF8String:clang_getCString(clang_getCursorDisplayName(cursor))];
+                            if (cursor.kind == CXCursor_DeclRefExpr) {
+                                CXCursor def = clang_getCursorDefinition(cursor);
+                                if (def.kind == CXCursor_ParmDecl) {
+                                    clang_visitChildrenWithBlock(def, ^enum CXChildVisitResult(CXCursor cursor, CXCursor parent) {
+                                        passedClassName = [NSString stringWithUTF8String:clang_getCString(clang_getCursorDisplayName(cursor))];
+                                        return CXChildVisit_Break;
+                                    });
+                                }
                             }
                             
                             return CXChildVisit_Recurse;
@@ -217,7 +224,7 @@
                         DFContainerDefinition* ownerObject = [self.definitions objectForKey:referencedObjectName];
                         
                         // Need to find out the type of the param
-                        DFContainerDefinition* passedObject = [self.definitions objectForKey:param];
+                        DFContainerDefinition* passedObject = [self.definitions objectForKey:passedClassName];
                         
                         DFPropertyDefinition* messagedProperty = [[ownerObject childDefinitions] objectForKey:memberName];
                         if (messagedProperty && passedObject) {
@@ -227,10 +234,11 @@
                                 // so we assume that ownerObject owns multiple passedObjects
                                 
                                 // Replace the array/dictionary property with a new collection property
-                                DFCollectionPropertyDefinition* collectionProperty = [[DFCollectionPropertyDefinition alloc] initWithContainerDefintion:passedObject isWeak:messagedProperty.isWeak];
+                                DFCollectionPropertyDefinition* collectionProperty = [[DFCollectionPropertyDefinition alloc] initWithContainerDefintion:passedObject name:memberName isWeak:messagedProperty.isWeak];
                                 [[ownerObject childDefinitions] setObject:collectionProperty forKey:memberName];
                             }
                         }
+                        return CXChildVisit_Break;
                     }
                 }
                 return CXChildVisit_Continue;
