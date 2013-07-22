@@ -14,6 +14,7 @@
 #import "DFClassDefinition.h"
 #import "DFProtocolDefinition.h"
 #import "DFPropertyDefinition.h"
+#import "DFCollectionPropertyDefinition.h"
 
 @interface DFModelBuilder ( /* Private */ )
 @property (nonatomic, readwrite) NSMutableDictionary* definitions;
@@ -92,10 +93,17 @@
         case CXIdxEntity_ObjCCategory:
             self.currentContainerDef = nil; 
             break;
-            
+        
+        case CXIdxEntity_ObjCInstanceMethod:
+            [self processMethodDeclaration:declaration];
+            break;
         default:
             break;
     }
+}
+
+- (void)classParser:(DFClangParser *)parser foundEntityReference:(const CXIdxEntityRefInfo *)entityRef {
+    // Not used...
 }
 
 #pragma mark - Declaration processors
@@ -177,6 +185,61 @@
             [self.currentContainerDef.childDefinitions setObject:propertyDef forKey:name];
         }
     }
+}
+
+// Examine the code to search for multiple property relationships with arrays and dictionaries
+- (void)processMethodDeclaration:(const CXIdxDeclInfo *)declaration {
+    clang_visitChildrenWithBlock(declaration->cursor, ^enum CXChildVisitResult(CXCursor cursor, CXCursor parent) {
+        
+        if (cursor.kind == CXCursor_ObjCMessageExpr) {
+            __block NSString* memberName = nil;
+            __block NSString* referencedObjectName = nil;
+            
+            clang_visitChildrenWithBlock(cursor, ^enum CXChildVisitResult(CXCursor cursor, CXCursor parent) {
+                if (cursor.kind == CXCursor_MemberRefExpr) {
+                    memberName = [NSString stringWithUTF8String:clang_getCString(clang_getCursorDisplayName(cursor))];
+                    referencedObjectName = [NSString stringWithUTF8String:clang_getCString(clang_getCursorDisplayName(clang_getCursorSemanticParent(clang_getCursorReferenced(cursor))))];
+                } else {
+                    if (memberName) {
+                        __block NSString* passedClassName = nil;
+                        
+                        clang_visitChildrenWithBlock(cursor, ^enum CXChildVisitResult(CXCursor cursor, CXCursor parent) {
+                            if (cursor.kind == CXCursor_DeclRefExpr) {
+                                CXCursor def = clang_getCursorDefinition(cursor);
+                                clang_visitChildrenWithBlock(def, ^enum CXChildVisitResult(CXCursor cursor, CXCursor parent) {
+                                    passedClassName = [NSString stringWithUTF8String:clang_getCString(clang_getCursorDisplayName(cursor))];
+                                    return CXChildVisit_Break;
+                                });
+                            }
+                            
+                            return CXChildVisit_Recurse;
+                        });
+                        
+                        DFContainerDefinition* ownerObject = [self.definitions objectForKey:referencedObjectName];
+                        
+                        // Need to find out the type of the param
+                        DFContainerDefinition* passedObject = [self.definitions objectForKey:passedClassName];
+                        
+                        DFPropertyDefinition* messagedProperty = [[ownerObject childDefinitions] objectForKey:memberName];
+                        if (messagedProperty && passedObject) {
+                            if ([messagedProperty.className isEqualToString:@"NSMutableArray"] || [messagedProperty.className isEqualToString:@"NSMutableDictionary"]) {
+                                
+                                // We have discovered that passedObject is passed to a mutable array or dictionary property of ownerObject,
+                                // so we assume that ownerObject owns multiple passedObjects
+                                
+                                // Replace the array/dictionary property with a new collection property
+                                DFCollectionPropertyDefinition* collectionProperty = [[DFCollectionPropertyDefinition alloc] initWithContainerDefintion:passedObject name:memberName isWeak:messagedProperty.isWeak];
+                                [[ownerObject childDefinitions] setObject:collectionProperty forKey:memberName];
+                            }
+                        }
+                        return CXChildVisit_Break;
+                    }
+                }
+                return CXChildVisit_Continue;
+            });
+        }
+        return CXChildVisit_Recurse;
+    });
 }
 
 #pragma mark - Utility methods

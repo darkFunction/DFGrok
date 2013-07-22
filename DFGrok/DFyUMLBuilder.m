@@ -11,7 +11,7 @@
 #import "DFDefinition.h"
 #import "DFClassDefinition.h"
 #import "DFProtocolDefinition.h"
-#import "DFPropertyDefinition.h"
+#import "DFPropertyDefinitionInterface.h"
 
 // Note, in yUML, the first in a relationship pait is placed ABOVE the second in the pair. So it is better to use
 // SUPERCLASS_OF and IMPLEMENTED_BY.
@@ -74,20 +74,20 @@
 - (NSString*)generateChildrenOfContainer:(DFContainerDefinition*)containerDef {
     __block NSMutableString* code = [NSMutableString string];
 
-    void(^printProperty)(DFContainerDefinition*, BOOL, DFContainerDefinition*, NSString*) = ^(DFContainerDefinition* owner, BOOL isWeak, DFContainerDefinition* child, NSString* name){
+    void(^printProperty)(DFContainerDefinition*, BOOL, BOOL, DFContainerDefinition*, NSString*) = ^(DFContainerDefinition* owner, BOOL isWeak, BOOL isMulti, DFContainerDefinition* child, NSString* name){
     
-        [code appendFormat:@"%@%@%@%@,\n", [self printDef:owner], name, (isWeak ? OWNS_WEAK : OWNS_STRONG), [self printDef:child]];
+        [code appendFormat:@"%@%@%@%@%@,\n", [self printDef:owner], name, (isWeak ? OWNS_WEAK : OWNS_STRONG), isMulti ? @"*" : @"", [self printDef:child]];
     };
     
     // Properties
-    [containerDef.childDefinitions enumerateKeysAndObjectsUsingBlock:^(NSString* key, DFPropertyDefinition* propertyDef, BOOL *stop) {
+    [containerDef.childDefinitions enumerateKeysAndObjectsUsingBlock:^(NSString* key, id<DFPropertyDefinitionInterface> propertyDef, BOOL *stop) {
         
         if ([self isKeyClass:[self.definitions objectForKey:propertyDef.className]]) {
-            printProperty(containerDef, propertyDef.isWeak, [self.definitions objectForKey:propertyDef.className], propertyDef.name);
+            printProperty(containerDef, propertyDef.isWeak, propertyDef.isMultiple, [self.definitions objectForKey:propertyDef.className], propertyDef.name);
         } else {
             [propertyDef.protocolNames enumerateObjectsUsingBlock:^(NSString* protoName, NSUInteger idx, BOOL *stop) {
                 if ( [self isKeyProtocol:[self.definitions objectForKey:protoName]] ) {
-                    printProperty(containerDef, propertyDef.isWeak, [self.definitions objectForKey:protoName], propertyDef.name);
+                    printProperty(containerDef, propertyDef.isWeak, propertyDef.isMultiple, [self.definitions objectForKey:protoName], propertyDef.name);
                 }
             }];
         }

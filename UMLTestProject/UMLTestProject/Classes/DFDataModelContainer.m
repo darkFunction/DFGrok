@@ -7,6 +7,9 @@
 //
 
 #import "DFDataModelContainer.h"
+#import "DFDemoDataSource.h"
+#import "DFDemoDataModelOne.h"
+#import "DFDemoDataModelTwo.h"
 
 @interface DFDataModelContainer ( /* Private */ )
 @property (nonatomic) NSMutableArray* dataModels;
@@ -25,6 +28,15 @@
 
 - (void)addDataModel:(id<DFDataModelInterface>)dataModel {
     [self.dataModels addObject:dataModel];
+}
+
+//- (void)testAddConcreteDataModel:(DFDemoDataModelOne*)helpmeh {
+//    [self.dataModels addObject:helpmeh];
+//}
+
+- (void)testAddConcreteDataModelNotPassed {
+    DFDemoDataModelTwo* ohmergherd = [[DFDemoDataModelTwo alloc] init];
+    [self.dataModels addObject:ohmergherd];
 }
 
 #pragma mark - DFDataModelDelegate

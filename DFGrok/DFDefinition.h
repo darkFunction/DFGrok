@@ -7,11 +7,12 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "DFDefinitionInterface.h"
 
 @class DFContainerDefinition;
 
-@interface DFDefinition : NSObject
-@property (nonatomic, copy, readonly) NSString* name;
+@interface DFDefinition : NSObject <DFDefinitionInterface>
 
 - (id)initWithName:(NSString*)name;
+
 @end
