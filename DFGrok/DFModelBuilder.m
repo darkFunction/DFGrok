@@ -14,6 +14,7 @@
 #import "DFClassDefinition.h"
 #import "DFProtocolDefinition.h"
 #import "DFPropertyDefinition.h"
+#import "DFCollectionPropertyDefinition.h"
 
 @interface DFModelBuilder ( /* Private */ )
 @property (nonatomic, readwrite) NSMutableDictionary* definitions;
@@ -201,11 +202,23 @@
                     referencedObjectName = [NSString stringWithUTF8String:clang_getCString(clang_getCursorDisplayName(clang_getCursorSemanticParent(clang_getCursorReferenced(cursor))))];
                 } else {
                     if (memberName) {
-                        NSString* param = [NSString stringWithUTF8String:clang_getCString(clang_getCursorSpelling(cursor))];
+                        NSString* param = [NSString stringWithUTF8String:clang_getCString(clang_getCursorDisplayName(cursor))];
                         //NSLog(@"[(%@).%@ %@%@]", referencedObjectName, memberName, methodName, param);
                         
+                        clang_visitChildrenWithBlock(cursor, ^enum CXChildVisitResult(CXCursor cursor, CXCursor parent) {
+                            NSString* param = [NSString stringWithUTF8String:clang_getCString(clang_getCursorDisplayName(cursor))];
+                            if ([param isEqualToString:@"helpmeh"] && cursor.kind == CXCursor_DeclRefExpr) {
+                                // ???
+                            }
+                            
+                            return CXChildVisit_Recurse;
+                        });
+                        
                         DFContainerDefinition* ownerObject = [self.definitions objectForKey:referencedObjectName];
-                        DFDefinition* passedObject = [self.definitions objectForKey:param];
+                        
+                        // Need to find out the type of the param
+                        DFContainerDefinition* passedObject = [self.definitions objectForKey:param];
+                        
                         DFPropertyDefinition* messagedProperty = [[ownerObject childDefinitions] objectForKey:memberName];
                         if (messagedProperty && passedObject) {
                             if ([messagedProperty.className isEqualToString:@"NSMutableArray"] || [messagedProperty.className isEqualToString:@"NSMutableDictionary"]) {
@@ -213,7 +226,9 @@
                                 // We have discovered that passedObject is passed to a mutable array or dictionary property of ownerObject,
                                 // so we assume that ownerObject owns multiple passedObjects
                                 
-                                
+                                // Replace the array/dictionary property with a new collection property
+                                DFCollectionPropertyDefinition* collectionProperty = [[DFCollectionPropertyDefinition alloc] initWithContainerDefintion:passedObject isWeak:messagedProperty.isWeak];
+                                [[ownerObject childDefinitions] setObject:collectionProperty forKey:memberName];
                             }
                         }
                     }
