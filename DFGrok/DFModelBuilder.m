@@ -205,14 +205,25 @@
                 } else {
                     if (memberName) {
                         __block NSString* passedClassName = nil;
+                        __block NSMutableArray* passedProtocolNames = [NSMutableArray array];
                         
                         clang_visitChildrenWithBlock(cursor, ^enum CXChildVisitResult(CXCursor cursor, CXCursor parent) {
                             if (cursor.kind == CXCursor_DeclRefExpr) {
                                 CXCursor def = clang_getCursorDefinition(cursor);
+                                
+                                __block int index = 0;
                                 clang_visitChildrenWithBlock(def, ^enum CXChildVisitResult(CXCursor cursor, CXCursor parent) {
-                                    passedClassName = [NSString stringWithUTF8String:clang_getCString(clang_getCursorDisplayName(cursor))];
-                                                                        
-                                    return CXChildVisit_Break;
+                                    NSString* token = [NSString stringWithUTF8String:clang_getCString(clang_getCursorDisplayName(cursor))];
+
+                                    // First token is className, remaining are protocols
+                                    if (!index) {
+                                        passedClassName = token;
+                                    } else {
+                                        [passedProtocolNames addObject:[NSString stringWithFormat:@"<%@>", token]];
+                                    }
+                                    index ++;
+                                    
+                                    return CXChildVisit_Continue;
                                 });
                             }
                             
@@ -220,20 +231,20 @@
                         });
                         
                         DFContainerDefinition* ownerObject = [self.definitions objectForKey:referencedObjectName];
-                        DFContainerDefinition* passedObject = [self.definitions objectForKey:passedClassName];
                         
                         DFPropertyDefinition* messagedProperty = [[ownerObject childDefinitions] objectForKey:memberName];
-                        if (messagedProperty && passedObject) {
+                        if (messagedProperty && passedClassName) {
                             if ([messagedProperty.typeName isEqualToString:@"NSMutableArray"] || [messagedProperty.typeName isEqualToString:@"NSMutableDictionary"]) {
                                 
-                                // We have discovered that passedObject is passed to a mutable array or dictionary property of ownerObject,
+                                // We have discovered that passedClassName<passedProtocolNames> is passed to a mutable array or dictionary property of ownerObject,
                                 // so we assume that ownerObject owns multiple passedObjects
                                 
                                 // Replace the array/dictionary property with a new collection property
-                                DFCollectionPropertyDefinition* collectionProperty = [[DFCollectionPropertyDefinition alloc] initWithContainerDefintion:passedObject name:memberName isWeak:messagedProperty.isWeak];
+                                DFCollectionPropertyDefinition* collectionProperty = [[DFCollectionPropertyDefinition alloc] initWithTypeName:passedClassName protocolNames:passedProtocolNames name:memberName isWeak:messagedProperty.isWeak];
+
                                 [[ownerObject childDefinitions] setObject:collectionProperty forKey:memberName];
                             }
-                        }
+                        } 
                         return CXChildVisit_Break;
                     }
                 }

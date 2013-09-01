@@ -60,54 +60,44 @@
                 [code appendFormat:@"%@,\n", [self printDef:classDef]];
             }
             
-            // Implements protocols
-            [code appendString:[self generateProtocolsOfContainer:classDef]];
-            
             // Properties
-            [code appendString:[self generateChildrenOfContainer:classDef]];
+            [code appendString:[self generateChildrenOfClass:classDef]];
         }
     }];
     
     return code;
 }
 
-- (NSString*)generateChildrenOfContainer:(DFContainerDefinition*)containerDef {
+- (NSString*)generateChildrenOfClass:(DFClassDefinition*)classDef {
     __block NSMutableString* code = [NSMutableString string];
-
-    void(^printProperty)(DFContainerDefinition*, BOOL, BOOL, DFContainerDefinition*, NSString*) = ^(DFContainerDefinition* owner, BOOL isWeak, BOOL isMulti, DFContainerDefinition* child, NSString* name){
-    
-        [code appendFormat:@"%@%@%@%@%@,\n", [self printDef:owner], name, (isWeak ? OWNS_WEAK : OWNS_STRONG), isMulti ? @"*" : @"", [self printDef:child]];
-    };
     
     // Properties
-    [containerDef.childDefinitions enumerateKeysAndObjectsUsingBlock:^(NSString* key, id<DFPropertyDefinitionInterface> propertyDef, BOOL *stop) {
-        
+    [classDef.childDefinitions enumerateKeysAndObjectsUsingBlock:^(NSString* key, id<DFPropertyDefinitionInterface> propertyDef, BOOL *stop) {
+        __block BOOL shouldPrint = NO;
         if ([self isKeyClass:[self.definitions objectForKey:propertyDef.typeName]]) {
-            printProperty(containerDef, propertyDef.isWeak, propertyDef.isMultiple, [self.definitions objectForKey:propertyDef.typeName], propertyDef.name);
+            shouldPrint = YES; 
         } else {
             [propertyDef.protocolNames enumerateObjectsUsingBlock:^(NSString* protoName, NSUInteger idx, BOOL *stop) {
                 if ( [self isKeyProtocol:[self.definitions objectForKey:protoName]] ) {
-                    printProperty(containerDef, propertyDef.isWeak, propertyDef.isMultiple, [self.definitions objectForKey:protoName], propertyDef.name);
+                    shouldPrint = YES;
+                    *stop = YES;
                 }
             }];
         }
         
-    }];
-    return code;
-}
-
-- (NSString*)generateProtocolsOfContainer:(DFContainerDefinition*)containerDef {
-    
-    NSMutableString* code = [NSMutableString string];
-    [containerDef.protocols enumerateKeysAndObjectsUsingBlock:^(NSString* protocolKey, DFProtocolDefinition* protocolDef, BOOL *stop) {
-        if ([self shouldPrintContainer:protocolDef]) {
+        if (shouldPrint) {
             
-            if (![[self printedDefs] containsObject:protocolDef]) {
-                [code appendString:[self generateChildrenOfContainer:protocolDef]];
-                [code appendString:[self generateProtocolsOfContainer:protocolDef]];
-            }
+            NSMutableArray* protocolNames = [NSMutableArray arrayWithArray:[[self.definitions objectForKey:propertyDef.typeName] protocols].allKeys];
+            NSArray* extraProtocolNames = propertyDef.protocolNames;
+            [protocolNames addObjectsFromArray:extraProtocolNames];
             
-            [code appendFormat:@"%@%@%@,\n", [self printDef:protocolDef], IMPLEMENTED_BY,[self printDef:containerDef]];
+            [code appendFormat:@"%@%@%@%@%@,\n",
+                [self printDef:classDef],
+                propertyDef.name,
+                (propertyDef.isWeak ? OWNS_WEAK : OWNS_STRONG),
+                propertyDef.isMultiple ? @"*" : @"",
+                [self printClassWithName:propertyDef.typeName protocolNames:protocolNames andColour:[self colourForContainerDefinition:[self.definitions objectForKey:propertyDef.typeName]]]
+             ];
         }
         
     }];
@@ -116,27 +106,58 @@
 
 - (NSString*)printDef:(DFContainerDefinition*)definition {
     NSAssert(definition, @"Attempt to print nil definition");
+    NSAssert([definition isKindOfClass:[DFClassDefinition class]], @"Currently only supports class definitions");
+    
+    BOOL isInitialDefiniton = NO;
     
     if (![self.printedDefs containsObject:definition]) {
         [self.printedDefs addObject:definition];
         
-        return [self printInitialDefinition:definition];
+        isInitialDefiniton = YES;
     }
     
-    return [NSString stringWithFormat:@"[%@]", definition.name];
+    return [self printClass:(DFClassDefinition*)definition withColour:isInitialDefiniton];
 }
 
-- (NSString*)printInitialDefinition:(DFContainerDefinition*)definition {
-    NSString* colour = nil;
+- (NSString*)printClassWithName:(NSString*)className
+                  protocolNames:(NSArray*)protocolNames
+                      andColour:(NSString*)colourName {
     
-    if (!colour) {
-        colour = [self colourForContainerDefinition:definition];
+    NSMutableString* code = [NSMutableString string];
+    
+    // First, append protocols
+    if (protocolNames.count) {
+        [protocolNames enumerateObjectsUsingBlock:^(NSString* name, NSUInteger idx, BOOL *stop) {
+            name = [name stringByReplacingOccurrencesOfString:@"<" withString:@"\\<"];
+            name = [name stringByReplacingOccurrencesOfString:@">" withString:@"\\>"];
+            if (idx == protocolNames.count - 1) {
+                [code appendString:name];
+            } else {
+                [code appendFormat:@"%@\\n", name];
+            }
+        }];
+        
+        // Line
+        [code appendString:@"|\\n"];
+        
+        // Class
+        [code appendFormat:@"%@\\n\\n", className];
+    } else {
+        [code appendString:className];
     }
     
-    if ([colour length]) {
-        return [NSString stringWithFormat:@"[%@{bg:%@}]", definition.name, colour];
+    
+    // Append colour
+    if ([colourName length]) {
+        code = [NSString stringWithFormat:@"%@{bg:%@}", code, colourName];
     }
-    return [NSString stringWithFormat:@"[%@]", definition.name];
+    
+    return [NSString stringWithFormat:@"[%@]", code];
+}
+
+
+- (NSString*)printClass:(DFClassDefinition*)classDef withColour:(BOOL)withColour {
+    return [self printClassWithName:classDef.name protocolNames:classDef.protocols.allKeys andColour:withColour ? [self colourForContainerDefinition:classDef] : nil];
 }
 
 - (NSString*)colourForContainerDefinition:(DFContainerDefinition*)containerDef {

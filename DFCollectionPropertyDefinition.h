@@ -10,12 +10,11 @@
 #import "DFPropertyDefinitionInterface.h"
 #import "DFDefinition.h"
 
-@class DFContainerDefinition;
-
 @interface DFCollectionPropertyDefinition : DFDefinition <DFPropertyDefinitionInterface>
 
-- (id)initWithContainerDefintion:(DFContainerDefinition*)containerDef
-                            name:(NSString*)name
-                          isWeak:(BOOL)weak;
+- (id)initWithTypeName:(NSString*)typeName
+         protocolNames:(NSArray*)protocolNames
+                  name:(NSString*)name
+                isWeak:(BOOL)weak;
 
 @end
