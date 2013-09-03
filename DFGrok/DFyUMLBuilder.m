@@ -240,6 +240,11 @@
     } else if ([containerDef isKindOfClass:[DFProtocolDefinition class]]) {
         colour = [self colourForProtocol:(DFProtocolDefinition*)containerDef];
     }
+    
+    if (!colour) {
+        colour = @"white";
+    }
+    
     return colour;
 }
 

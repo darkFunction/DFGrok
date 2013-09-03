@@ -97,7 +97,7 @@ NSDictionary* defaultColours() {
             @"green", @"UIViewController",
             @"orchid", @"UIView",
             @"orange", @"DFDataModel",
-            @"white", @"NSObject",
+            @"gray", @"NSObject",
             @"pink", @"<NSObject>",
             nil];
 }
