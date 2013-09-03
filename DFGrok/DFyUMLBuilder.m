@@ -74,12 +74,12 @@
         [self.printedDefs enumerateObjectsUsingBlock:^(DFClassDefinition* def, NSUInteger idx, BOOL *stop) {
 
             if ([virtualDef isSubclassOf:def]) {
-                [code appendFormat:@"%@%@%@,\n", [self printClass:def], SUPERCLASS_OF, [self printClass:virtualDef]];
+                [code appendFormat:@"%@%@%@,\n", [self printClass:def], SUPERCLASS_OF, [self printClass:virtualDef includeProtocols:YES]];
             } else {
                 // If the def has a superclass which is also a subclass of the virtual def, don't show the relationship here as it will be shown higher up
                 if (! [def.superclassDef isSubclassOf:virtualDef]) {
                     if ([def isSubclassOf:virtualDef]) {
-                        [code appendFormat:@"%@%@%@,\n", [self printClass:virtualDef], SUPERCLASS_OF, [self printClass:def]];
+                        [code appendFormat:@"%@%@%@,\n", [self printClass:virtualDef includeProtocols:YES], SUPERCLASS_OF, [self printClass:def]];
                     }
                 }
             }
@@ -130,25 +130,38 @@
         }
         
         if (shouldPrint) {
-            NSMutableArray* protocolNames = [NSMutableArray arrayWithArray:[[self.definitions objectForKey:propertyDef.typeName] protocols].allKeys];
-            NSArray* extraProtocolNames = propertyDef.protocolNames;
-            [protocolNames addObjectsFromArray:extraProtocolNames];
+            DFClassDefinition* existingDef = [self.definitions objectForKey:propertyDef.typeName];
             
-            // Create a new definition for our property class
-            __block DFClassDefinition* virtualDef = [[DFClassDefinition alloc] initWithName:propertyDef.typeName];
-            [protocolNames enumerateObjectsUsingBlock:^(NSString* name, NSUInteger idx, BOOL *stop) {
-                DFProtocolDefinition* protocolDef = [[DFProtocolDefinition alloc] initWithName:name];
-                [virtualDef.protocols setValue:protocolDef forKey:name];
+            __block BOOL addedMore = NO;
+            NSMutableArray* protocolNames = [NSMutableArray arrayWithArray:existingDef.protocols.allKeys];
+            NSArray* extraProtocolNames = propertyDef.protocolNames;
+            [extraProtocolNames enumerateObjectsUsingBlock:^(NSString* name, NSUInteger idx, BOOL *stop) {
+                if (![existingDef.protocols objectForKey:name]) {
+                    addedMore = YES;
+                    [protocolNames addObject:name];
+                }
             }];
             
-            [self.virtualDefs addObject:virtualDef];
-
+            DFClassDefinition* childDef = existingDef;
+            
+            if (addedMore) {
+                // Create a new definition for our property class
+                childDef = [[DFClassDefinition alloc] initWithName:propertyDef.typeName];
+                
+                [protocolNames enumerateObjectsUsingBlock:^(NSString* name, NSUInteger idx, BOOL *stop) {
+                    DFProtocolDefinition* protocolDef = [[DFProtocolDefinition alloc] initWithName:name];
+                    [childDef.protocols setValue:protocolDef forKey:name];
+                }];
+                
+                [self.virtualDefs addObject:childDef];
+            }
+            
             [code appendFormat:@"%@%@%@%@%@,\n",
                 [self printClass:classDef],
                 propertyDef.name,
                 (propertyDef.isWeak ? OWNS_WEAK : OWNS_STRONG),
                 propertyDef.isMultiple ? @"*" : @"",
-                [self printClass:virtualDef]
+                [self printClass:childDef includeProtocols:addedMore]
              ];
         }
         
@@ -158,6 +171,10 @@
 }
 
 - (NSString*)printClass:(DFClassDefinition*)classDef {
+    return [self printClass:classDef includeProtocols:NO];
+}
+
+- (NSString*)printClass:(DFClassDefinition*)classDef includeProtocols:(BOOL)includeProtocols {
     NSAssert(classDef, @"Attempt to print nil definition");
     
     BOOL isInitialDefiniton = NO;
@@ -168,7 +185,11 @@
         isInitialDefiniton = YES;
     }
     
-    return [self printClass:classDef withColour:isInitialDefiniton];
+    return [self printClass:classDef withColour:isInitialDefiniton includeProtocols:includeProtocols];
+}
+
+- (NSString*)printClass:(DFClassDefinition*)classDef withColour:(BOOL)withColour includeProtocols:(BOOL)includeProtocols {
+    return [self printClassWithName:classDef.name protocolNames:(includeProtocols ? classDef.protocols.allKeys : nil) andColour:withColour ? [self colourForContainerDefinition:classDef] : nil];
 }
 
 - (NSString*)printClassWithName:(NSString*)className
@@ -181,7 +202,7 @@
         [code appendString:className];
     } else {
         // Class
-        [code appendFormat:@"%@\\n\\n", className];
+        [code appendFormat:@"%@\\n", className];
     
         [protocolNames enumerateObjectsUsingBlock:^(NSString* name, NSUInteger idx, BOOL *stop) {
             name = [name stringByReplacingOccurrencesOfString:@"<" withString:@"\\<"];
@@ -189,7 +210,7 @@
             if (idx == protocolNames.count - 1) {
                 [code appendString:name];
             } else {
-                [code appendFormat:@"%@\\n", name];
+                [code appendFormat:@"%@", name];
             }
         }];
     }
@@ -201,11 +222,6 @@
     }
     
     return [NSString stringWithFormat:@"[%@]", code];
-}
-
-
-- (NSString*)printClass:(DFClassDefinition*)classDef withColour:(BOOL)withColour {
-    return [self printClassWithName:classDef.name protocolNames:classDef.protocols.allKeys andColour:withColour ? [self colourForContainerDefinition:classDef] : nil];
 }
 
 - (NSString*)colourForContainerDefinition:(DFContainerDefinition*)containerDef {
