@@ -36,4 +36,8 @@
     [dataModelContainer addDataModel:dataModelTwo];
 }
 
+- (void)containerDidUpdate:(DFDataModelContainer*)container {
+    
+}
+
 @end

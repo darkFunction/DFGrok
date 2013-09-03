@@ -11,11 +11,21 @@
 @implementation DFClassDefinition
 
 - (BOOL)isSubclassOf:(DFClassDefinition*)parent {
-    DFClassDefinition* def = self;
+    BOOL isId = [parent.name isEqualToString:@"id"];
     
+    // Make sure that we implement all same protocols as parent
+    __block NSMutableDictionary* searchProtocols = [NSMutableDictionary dictionaryWithDictionary:parent.protocols];
+    [searchProtocols removeObjectsForKeys:self.protocols.allKeys];
+    
+    DFClassDefinition* def = self;
     while ((def = def.superclassDef)) {
-        if (def == parent) {
-            return YES;
+        [searchProtocols removeObjectsForKeys:def.protocols.allKeys];
+        
+        if (def == parent || isId) {
+            // Found all protocols?
+            if (![searchProtocols count]) {
+                return YES;
+            }
         }
     }
     return NO;

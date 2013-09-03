@@ -11,7 +11,7 @@
 
 @interface DFyUMLBuilder : NSObject
 - (id)initWithDefinitions:(NSDictionary*)definitions
-  keyContainerDefinitions:(NSDictionary*)keyContainerDefinitions
+      keyClassDefinitions:(NSDictionary*)keyClassDefinitions
            andColourPairs:(NSDictionary*)colourPairs;
 - (NSString*)generate_yUML;
 @end

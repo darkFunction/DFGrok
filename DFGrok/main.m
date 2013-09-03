@@ -60,9 +60,8 @@ int main(int argc, char * argv[]) {
         [modelBuilder buildModelWithCompletion:^(NSError *error) {
             if (!error) {
                 DFyUMLBuilder* yUMLBuilder = [[DFyUMLBuilder alloc] initWithDefinitions:modelBuilder.definitions
-                                                                keyContainerDefinitions:[modelBuilder keyClassDefinitions]
+                                                                    keyClassDefinitions:[modelBuilder keyClassDefinitions]
                                                                          andColourPairs:colours];
-                
                 NSString* yUML = [yUMLBuilder generate_yUML];
                 
                 // print to stdout 
@@ -97,7 +96,7 @@ NSDictionary* defaultColours() {
     return [NSDictionary dictionaryWithObjectsAndKeys:
             @"green", @"UIViewController",
             @"orchid", @"UIView",
-            @"gray", @"NSObject",
+            @"white", @"NSObject",
             @"pink", @"<NSObject>",
             nil];
 }

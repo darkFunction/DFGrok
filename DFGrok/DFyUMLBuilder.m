@@ -25,22 +25,25 @@
 
 @interface DFyUMLBuilder ()
 @property (nonatomic) NSDictionary* definitions;
-@property (nonatomic) NSDictionary* keyContainerDefinitions;
+@property (nonatomic) NSDictionary* keyClassDefinitions;
 @property (nonatomic) NSDictionary* colourPairs;
 @property (nonatomic) NSMutableArray* printedDefs;
+// TODO: move into model builder? Virtual class defs are defs created from properties that don't represent an actual class and its protocols, eg, UIView<SomeProtocol> - doesn't exist but we need to model it
+@property (nonatomic) NSMutableArray* virtualDefs;
 @end
 
 @implementation DFyUMLBuilder
 
 - (id)initWithDefinitions:(NSDictionary*)definitions
-  keyContainerDefinitions:(NSDictionary*)keyContainerDefinitions
+      keyClassDefinitions:(NSDictionary*)keyClassDefinitions
            andColourPairs:(NSDictionary*)colourPairs {
     
     self = [super init];
     if (self) {
         self.definitions = definitions;
-        self.keyContainerDefinitions = keyContainerDefinitions;
+        self.keyClassDefinitions = keyClassDefinitions;
         self.printedDefs = [NSMutableArray array];
+        self.virtualDefs = [NSMutableArray array];
         self.colourPairs = colourPairs;
     }
     return self;
@@ -49,74 +52,123 @@
 - (NSString*)generate_yUML {
     NSMutableString* code = [NSMutableString string];
 
-    [self.keyContainerDefinitions enumerateKeysAndObjectsUsingBlock:^(NSString* key, DFDefinition* definition, BOOL *stop) {
-        if ([definition isKindOfClass:[DFClassDefinition class]]) {
-            DFClassDefinition* classDef = (DFClassDefinition*)definition;
-            
-            // Superclass relationship. Only include superclasses which are also key definitions
-            if ([self shouldPrintContainer:classDef.superclassDef]) {
-                [code appendFormat:@"%@%@%@\n", [self printDef:classDef.superclassDef], SUPERCLASS_OF, [self printDef:classDef]];
-            } else {
-                [code appendFormat:@"%@,\n", [self printDef:classDef]];
-            }
-            
-            // Properties
-            [code appendString:[self generateChildrenOfClass:classDef]];
+    [self.keyClassDefinitions enumerateKeysAndObjectsUsingBlock:^(NSString* key, DFClassDefinition* classDef, BOOL *stop) {
+        
+        // Superclass relationship. Only include superclasses which are also key definitions
+        if ([self shouldPrintContainer:classDef.superclassDef]) {
+            [code appendFormat:@"%@%@%@\n", [self printClass:classDef.superclassDef], SUPERCLASS_OF, [self printClass:classDef]];
+        } else {
+            [code appendFormat:@"%@,\n", [self printClass:classDef]];
         }
+
+        // Protocols
+        [code appendString:[self generateProtocolsOfClass:classDef]];
+        
+        // Properties
+        [code appendString:[self generateChildrenOfClass:classDef]];
     }];
+    
+    // Link the virtual defs with their concrete counterparts.
+    // TODO: optimise this junk
+    [self.virtualDefs enumerateObjectsUsingBlock:^(DFClassDefinition* virtualDef, NSUInteger idx, BOOL *stop) {
+        [self.printedDefs enumerateObjectsUsingBlock:^(DFClassDefinition* def, NSUInteger idx, BOOL *stop) {
+
+            if ([virtualDef isSubclassOf:def]) {
+                [code appendFormat:@"%@%@%@,\n", [self printClass:def], SUPERCLASS_OF, [self printClass:virtualDef]];
+            } else {
+                // If the def has a superclass which is also a subclass of the virtual def, don't show the relationship here as it will be shown higher up
+                if (! [def.superclassDef isSubclassOf:virtualDef]) {
+                    if ([def isSubclassOf:virtualDef]) {
+                        [code appendFormat:@"%@%@%@,\n", [self printClass:virtualDef], SUPERCLASS_OF, [self printClass:def]];
+                    }
+                }
+            }
+        }];
+    }];
+    
     
     return code;
 }
 
+- (NSString*)generateProtocolsOfClass:(DFClassDefinition*)classDef {
+    return [self generateProtocolsOfContainer:classDef withConcreteAdopter:classDef];
+}
+
+- (NSString*)generateProtocolsOfContainer:(DFContainerDefinition*)containerDef withConcreteAdopter:(DFClassDefinition*)classDef {
+    
+    NSMutableString* code = [NSMutableString string];
+    [containerDef.protocols enumerateKeysAndObjectsUsingBlock:^(NSString* protocolKey, DFProtocolDefinition* protocolDef, BOOL *stop) {
+        if ([self shouldPrintContainer:protocolDef]) {
+            
+            if (![[self printedDefs] containsObject:protocolDef]) {
+                [code appendString:[self generateChildrenOfContainer:protocolDef withConcreteAdopter:classDef]];
+                [code appendString:[self generateProtocolsOfContainer:protocolDef withConcreteAdopter:classDef]];
+            }
+        }
+        
+    }];
+    return code;
+}
 - (NSString*)generateChildrenOfClass:(DFClassDefinition*)classDef {
+    return [self generateChildrenOfContainer:classDef withConcreteAdopter:classDef];
+}
+
+- (NSString*)generateChildrenOfContainer:(DFContainerDefinition*)containerDef withConcreteAdopter:(DFClassDefinition*)classDef {
     __block NSMutableString* code = [NSMutableString string];
     
     // Properties
-    [classDef.childDefinitions enumerateKeysAndObjectsUsingBlock:^(NSString* key, id<DFPropertyDefinitionInterface> propertyDef, BOOL *stop) {
+    [containerDef.childDefinitions enumerateKeysAndObjectsUsingBlock:^(NSString* key, id<DFPropertyDefinitionInterface> propertyDef, BOOL *stop) {
         __block BOOL shouldPrint = NO;
         if ([self isKeyClass:[self.definitions objectForKey:propertyDef.typeName]]) {
             shouldPrint = YES; 
         } else {
             [propertyDef.protocolNames enumerateObjectsUsingBlock:^(NSString* protoName, NSUInteger idx, BOOL *stop) {
                 if ( [self isKeyProtocol:[self.definitions objectForKey:protoName]] ) {
-                    shouldPrint = YES;
-                    *stop = YES;
+                    shouldPrint = *stop = YES;
                 }
             }];
         }
         
         if (shouldPrint) {
-            
             NSMutableArray* protocolNames = [NSMutableArray arrayWithArray:[[self.definitions objectForKey:propertyDef.typeName] protocols].allKeys];
             NSArray* extraProtocolNames = propertyDef.protocolNames;
             [protocolNames addObjectsFromArray:extraProtocolNames];
             
+            // Create a new definition for our property class
+            __block DFClassDefinition* virtualDef = [[DFClassDefinition alloc] initWithName:propertyDef.typeName];
+            [protocolNames enumerateObjectsUsingBlock:^(NSString* name, NSUInteger idx, BOOL *stop) {
+                DFProtocolDefinition* protocolDef = [[DFProtocolDefinition alloc] initWithName:name];
+                [virtualDef.protocols setValue:protocolDef forKey:name];
+            }];
+            
+            [self.virtualDefs addObject:virtualDef];
+
             [code appendFormat:@"%@%@%@%@%@,\n",
-                [self printDef:classDef],
+                [self printClass:classDef],
                 propertyDef.name,
                 (propertyDef.isWeak ? OWNS_WEAK : OWNS_STRONG),
                 propertyDef.isMultiple ? @"*" : @"",
-                [self printClassWithName:propertyDef.typeName protocolNames:protocolNames andColour:[self colourForContainerDefinition:[self.definitions objectForKey:propertyDef.typeName]]]
+                [self printClass:virtualDef]
              ];
         }
         
     }];
+    
     return code;
 }
 
-- (NSString*)printDef:(DFContainerDefinition*)definition {
-    NSAssert(definition, @"Attempt to print nil definition");
-    NSAssert([definition isKindOfClass:[DFClassDefinition class]], @"Currently only supports class definitions");
+- (NSString*)printClass:(DFClassDefinition*)classDef {
+    NSAssert(classDef, @"Attempt to print nil definition");
     
     BOOL isInitialDefiniton = NO;
     
-    if (![self.printedDefs containsObject:definition]) {
-        [self.printedDefs addObject:definition];
+    if (![self.printedDefs containsObject:classDef]) {
+        [self.printedDefs addObject:classDef];
         
         isInitialDefiniton = YES;
     }
     
-    return [self printClass:(DFClassDefinition*)definition withColour:isInitialDefiniton];
+    return [self printClass:classDef withColour:isInitialDefiniton];
 }
 
 - (NSString*)printClassWithName:(NSString*)className
@@ -125,8 +177,12 @@
     
     NSMutableString* code = [NSMutableString string];
     
-    // First, append protocols
-    if (protocolNames.count) {
+    if (!protocolNames.count) {
+        [code appendString:className];
+    } else {
+        // Class
+        [code appendFormat:@"%@\\n\\n", className];
+    
         [protocolNames enumerateObjectsUsingBlock:^(NSString* name, NSUInteger idx, BOOL *stop) {
             name = [name stringByReplacingOccurrencesOfString:@"<" withString:@"\\<"];
             name = [name stringByReplacingOccurrencesOfString:@">" withString:@"\\>"];
@@ -136,14 +192,6 @@
                 [code appendFormat:@"%@\\n", name];
             }
         }];
-        
-        // Line
-        [code appendString:@"|\\n"];
-        
-        // Class
-        [code appendFormat:@"%@\\n\\n", className];
-    } else {
-        [code appendString:className];
     }
     
     
@@ -201,14 +249,14 @@
 
 - (BOOL)shouldPrintContainer:(DFContainerDefinition*)def {
     if ( [def.name length] ) {
-        BOOL replacedByColour = [self.colourPairs objectForKey:def.name] && ![self.keyContainerDefinitions objectForKey:def.name];
+        BOOL replacedByColour = [self.colourPairs objectForKey:def.name] && ![self.keyClassDefinitions objectForKey:def.name];
         return !replacedByColour;
     }
     return NO;
 }
 
 - (BOOL)isKeyClass:(DFClassDefinition*)classDef {
-    if ([self.keyContainerDefinitions objectForKey:classDef.name]) {
+    if ([self.keyClassDefinitions objectForKey:classDef.name]) {
         return YES;
     }
     return NO;
@@ -217,7 +265,7 @@
 - (BOOL)isKeyProtocol:(DFProtocolDefinition*)protoDef {
     __block BOOL isProtocolOfKeyClass = NO;
     
-    [self.keyContainerDefinitions enumerateKeysAndObjectsUsingBlock:^(id key, DFDefinition* keyDef, BOOL *stop) {
+    [self.keyClassDefinitions enumerateKeysAndObjectsUsingBlock:^(id key, DFDefinition* keyDef, BOOL *stop) {
         if ([(DFContainerDefinition*)keyDef implementsProtocolDefinition:protoDef]) {
             isProtocolOfKeyClass = YES;
             *stop = YES;
