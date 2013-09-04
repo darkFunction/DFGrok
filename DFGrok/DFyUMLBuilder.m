@@ -142,7 +142,7 @@
                 }
             }];
             
-            DFClassDefinition* childDef = existingDef;
+            __block DFClassDefinition* childDef = existingDef;
             
             if (addedMore) {
                 // Create a new definition for our property class
@@ -153,7 +153,18 @@
                     [childDef.protocols setValue:protocolDef forKey:name];
                 }];
                 
-                [self.virtualDefs addObject:childDef];
+                // Check whether we already have a virtual definition
+                __block BOOL alreadyHave = NO;
+                [self.virtualDefs enumerateObjectsUsingBlock:^(DFClassDefinition* def, NSUInteger idx, BOOL *stop) {
+                    if ([def isEqual:childDef]) {
+                        alreadyHave = YES;
+                        *stop = YES;
+                    }
+                }];
+
+                if (!alreadyHave) {
+                    [self.virtualDefs addObject:childDef];
+                }
             }
             
             [code appendFormat:@"%@%@%@%@%@,\n",

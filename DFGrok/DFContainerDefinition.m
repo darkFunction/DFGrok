@@ -42,4 +42,27 @@
     return found;
 }
 
+- (BOOL)isEqual:(DFContainerDefinition*)otherContainer {
+    if (![self.name isEqualToString:otherContainer.name]) {
+        return NO;
+    }
+    
+    __block BOOL matches = YES;
+    [self.protocols enumerateKeysAndObjectsUsingBlock:^(NSString* protocolName, DFProtocolDefinition* protocolDef, BOOL *stop) {
+        __block BOOL found = NO;
+        [otherContainer.protocols enumerateKeysAndObjectsUsingBlock:^(NSString* otherProtocolName, DFProtocolDefinition* otherProtocolDef, BOOL *stop) {
+            if ([protocolName isEqualToString:otherProtocolName]) {
+                found = YES;
+                *stop = YES;
+            }
+        }];
+        if (!found) {
+            matches = NO;
+            *stop = YES;
+        }
+    }];
+    
+    return matches;
+}
+
 @end
