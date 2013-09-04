@@ -1,7 +1,7 @@
 DFGrok
 =========
 
-Generates yUML ( http://yuml.me/ ) code from Objective-C++.  [Download latest build](http://notes.darkfunction.com/files/dfgrok) (OSX)
+Generates yUML ( http://yuml.me/ ) code from Objective-C++.  [Download latest build](https://github.com/darkFunction/DFGrok/releases) (OSX)
 
 ###Usage 
 `dfgrok class1.m class2.m ...`
