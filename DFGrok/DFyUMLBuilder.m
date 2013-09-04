@@ -79,7 +79,7 @@
                 // If the def has a superclass which is also a subclass of the virtual def, don't show the relationship here as it will be shown higher up
                 if (! [def.superclassDef isSubclassOf:virtualDef]) {
                     if ([def isSubclassOf:virtualDef]) {
-                        [code appendFormat:@"%@%@%@,\n", [self printClass:virtualDef includeProtocols:YES], SUPERCLASS_OF, [self printClass:def]];
+                        [code appendFormat:@"%@%@%@,\n", [self printClass:virtualDef includeProtocols:YES], IMPLEMENTED_BY, [self printClass:def]];
                     }
                 }
             }
