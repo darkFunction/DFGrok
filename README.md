@@ -33,7 +33,7 @@ It just helps you to quickly see class relationships by creating a 'back of napk
 ![yUML](http://notes.darkfunction.com/images/yuml2.png)
 
 ###What's with the colours?
-The idea is to reduce clutter by replacing some classes with colours.  In the example above, any class that inherits from `UIViewController` is green, and any protocol which inherits from `<NSObject>` is pink.  This means you can see at a glance what type of entity you are looking at without following the class heirarchy back, and there is no need to add the entity to the diagram.
+The idea is to reduce clutter by replacing some classes with colours.  In the example above, any class that inherits from `UIViewController` is green.  This means you can see at a glance what type of entity you are looking at without following the class heirarchy back, and there is no need to add the entity to the diagram.
 
 
 ####Notes for contributors
