@@ -6,6 +6,8 @@ Generates yUML ( http://yuml.me/ ) code from Objective-C++.  [Download latest bu
 ###Usage 
 `dfgrok class1.m class2.m ...`
 
+... Then copy-paste output into http://yuml.me/diagram/plain/class/draw 
+
 ###What's it for?
 It just helps you to quickly see class relationships by creating a 'back of napkin' style diagram.  It's useful as a starting point for looking at a bunch of unfamiliar classes or simply as a shared reference for discussion.
 
