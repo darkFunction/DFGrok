@@ -16,21 +16,25 @@ It just helps you to quickly see class relationships by creating a 'back of napk
 ```
 [DFDataModel{bg:orange}]^-[DFDemoDataModelOne{bg:orange}]
 [DFDataModel],
-[<DFDataModelInterface>{bg:pink}]delegate+->[<DFDataModelDelegate>{bg:pink}],
-[<DFDataModelSuperInterface>{bg:pink}]^-.-[<DFDataModelInterface>],
-[<DFDataModelInterface>]^-.-[DFDataModel],
+[DFDataModel]delegate+->[id\n\<DFDataModelDelegate\>{bg:white}],
 [DFDemoDataSource{bg:gray}],
-[<DFDataModelDelegate>]^-.-[DFDemoDataSource],
 [DFDemoDataSource]dataModelContainer++->[DFDataModelContainer{bg:gray}],
 [DFDataModel]^-[DFDemoDataModelTwo{bg:orange}]
 [DFDemoController{bg:green}],
 [DFDemoController]demoDataSource++->[DFDemoDataSource],
 [DFDataModelContainer],
-[<DFDataModelInterface>]^-.-[DFDataModelContainer],
-[<DFDataModelDelegate>]^-.-[DFDataModelContainer],
+[DFDataModelContainer]delegate+->[id\n\<DFDataModelContainerDelegate\>{bg:white}],
+[DFDataModelContainer]dataModels++->*[id\n\<DFDataModelInterface\>{bg:white}],
+[id\n\<DFDataModelDelegate\>]^-.-[DFDataModelContainer],
+[id\n\<DFDataModelContainerDelegate\>]^-.-[DFDemoDataSource],
+[id\n\<DFDataModelInterface\>]^-.-[DFDataModel],
 ```
 
-![yUML](http://notes.darkfunction.com/images/yuml.png)
+![yUML](http://notes.darkfunction.com/images/yuml2.png)
 
 ###What's with the colours?
 The idea is to reduce clutter by replacing some classes with colours.  In the example above, any class that inherits from `UIViewController` is green, and any protocol which inherits from `<NSObject>` is pink.  This means you can see at a glance what type of entity you are looking at without following the class heirarchy back, and there is no need to add the entity to the diagram.
+
+
+####Notes for contributors
+The code is pretty messy at the moment so I apologise for that- the project is tracer code really for playing with clang and yUML.
