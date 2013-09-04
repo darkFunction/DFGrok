@@ -218,7 +218,7 @@
                                     // First token is className, remaining are protocols
                                     if (!index) {
                                         passedClassName = token;
-                                    } else {
+                                    } else if (token.length) {
                                         [passedProtocolNames addObject:[NSString stringWithFormat:@"<%@>", token]];
                                     }
                                     index ++;
