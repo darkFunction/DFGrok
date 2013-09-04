@@ -11,44 +11,24 @@
 @interface DFPropertyDefinition ( /* Private */ )
 @property (nonatomic, readwrite, getter = isWeak) BOOL weak;
 @property (nonatomic, readwrite) NSMutableArray* protocolNames;
-@property (nonatomic, readwrite) NSString* className;
+@property (nonatomic, readwrite) NSString* typeName;
 @property (nonatomic) NSMutableArray* tokens;
 @end
 
 @implementation DFPropertyDefinition
 
-- (id)initWithDeclaration:(const CXIdxObjCPropertyDeclInfo*)declaration andTranslationUnit:(CXTranslationUnit)translationUnit {
-    NSString* name = [NSString stringWithUTF8String:declaration->declInfo->entityInfo->name];
-    if (![name length]) {
-        return nil;
-    }
+- (id)initWithName:(NSString*)name andTokens:(NSArray*)tokens {
     
     self = [super initWithName:name];
     if (self) {
         // Setup
         self.protocolNames = [NSMutableArray array];
-        self.tokens = [self getStringTokensFromDeclaration:declaration inTranslationUnit:translationUnit];
+        self.tokens = [NSMutableArray arrayWithArray:tokens];
         
         // Parse
         [self consumeTokens];
     }
     return self;
-}
-
-- (NSMutableArray*)getStringTokensFromDeclaration:(const CXIdxObjCPropertyDeclInfo*)declaration inTranslationUnit:(CXTranslationUnit)translationUnit {
-    CXSourceRange range = clang_getCursorExtent(declaration->declInfo->cursor);
-    CXToken *tokens = 0;
-    unsigned int nTokens = 0;
-    clang_tokenize(translationUnit, range, &tokens, &nTokens);
-    NSMutableArray* stringTokens = [NSMutableArray arrayWithCapacity:nTokens];
-    
-    for (unsigned int i=0; i<nTokens; ++i) {
-        CXString spelling = clang_getTokenSpelling(translationUnit, tokens[i]);
-        [stringTokens addObject:[NSString stringWithUTF8String:clang_getCString(spelling)]];
-        clang_disposeString(spelling);
-    }
-    clang_disposeTokens(translationUnit, tokens, nTokens);
-    return stringTokens;
 }
 
 - (void)consumeTokens {
@@ -61,7 +41,7 @@
         if ([token isEqualToString:@";"] || [token isEqualToString:@"*"] || [token isEqualToString:self.name]) {
             // Ignore
         } else {
-            self.className = token;
+            self.typeName = token;
             *stop = YES;
         }
     }];
@@ -109,12 +89,6 @@
     }
 }
 
-- (void)attributeFound:(NSString*)name {
-    if ([name isEqualToString:@"weak"]) {
-        self.weak = YES;
-    }
-}
-
 - (void)consumeProtocols {
     __block NSRange consumeRange;
     consumeRange.location = NSNotFound;
@@ -136,6 +110,13 @@
 
 - (void)protocolFound:(NSString*)protocolName {
     [self.protocolNames addObject:[NSString stringWithFormat:@"<%@>", protocolName]];
+}
+
+
+- (void)attributeFound:(NSString*)name {
+    if ([name isEqualToString:@"weak"]) {
+        self.weak = YES;
+    }
 }
 
 #pragma mark - DFPropertyDefinitionInterface

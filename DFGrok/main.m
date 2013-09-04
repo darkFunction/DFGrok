@@ -54,15 +54,14 @@ int main(int argc, char * argv[]) {
         }
         
         // Redirect clang errors to the void
-        //freopen("/dev/null", "w", stderr);
+        freopen("/dev/null", "w", stderr);
 
         DFModelBuilder* modelBuilder = [[DFModelBuilder alloc] initWithFilenames:filenames];
         [modelBuilder buildModelWithCompletion:^(NSError *error) {
             if (!error) {
                 DFyUMLBuilder* yUMLBuilder = [[DFyUMLBuilder alloc] initWithDefinitions:modelBuilder.definitions
-                                                                keyContainerDefinitions:[modelBuilder keyClassDefinitions]
+                                                                    keyClassDefinitions:[modelBuilder keyClassDefinitions]
                                                                          andColourPairs:colours];
-                
                 NSString* yUML = [yUMLBuilder generate_yUML];
                 
                 // print to stdout 
@@ -97,6 +96,7 @@ NSDictionary* defaultColours() {
     return [NSDictionary dictionaryWithObjectsAndKeys:
             @"green", @"UIViewController",
             @"orchid", @"UIView",
+            @"orange", @"DFDataModel",
             @"gray", @"NSObject",
             @"pink", @"<NSObject>",
             nil];

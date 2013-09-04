@@ -10,7 +10,7 @@
 #import "DFDefinitionInterface.h"
 
 @protocol DFPropertyDefinitionInterface <DFDefinitionInterface>
-- (NSString*)className;
+- (NSString*)typeName;
 - (NSMutableArray*)protocolNames;
 - (BOOL)isWeak;
 - (BOOL)isMultiple;

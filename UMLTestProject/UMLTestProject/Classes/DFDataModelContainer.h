@@ -9,6 +9,14 @@
 #import <Foundation/Foundation.h>
 #import "DFDataModel.h"
 
-@interface DFDataModelContainer : NSObject  <DFDataModelInterface, DFDataModelDelegate>
+@protocol DFDataModelContainerDelegate;
+
+@interface DFDataModelContainer : NSObject  <DFDataModelDelegate>
+@property (nonatomic, weak) id<DFDataModelContainerDelegate> delegate;
 - (void)addDataModel:(id<DFDataModelInterface>)dataModel;
 @end
+
+@protocol DFDataModelContainerDelegate <NSObject>
+- (void)containerDidUpdate:(DFDataModelContainer*)container;
+@end
+
