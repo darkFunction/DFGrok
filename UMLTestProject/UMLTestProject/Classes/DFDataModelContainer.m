@@ -33,15 +33,15 @@
 //- (void)testAddConcreteDataModel:(DFDemoDataModelOne*)helpmeh {
 //    [self.dataModels addObject:helpmeh];
 //}
-
-- (void)testAddConcreteDataModelNotPassed {
-    DFDemoDataModelTwo* ohmergherd = [[DFDemoDataModelTwo alloc] init];
-    [self.dataModels addObject:ohmergherd];
-}
+//
+//- (void)testAddConcreteDataModelNotPassed {
+//    DFDemoDataModelTwo* ohmergherd = [[DFDemoDataModelTwo alloc] init];
+//    [self.dataModels addObject:ohmergherd];
+//}
 
 #pragma mark - DFDataModelDelegate
 - (void)dataModelDidUpdate:(id<DFDataModelInterface>)dataModel {
-    [self.delegate dataModelDidUpdate:dataModel];
+    [self.delegate containerDidUpdate:self];
 }
 
 @end

@@ -181,7 +181,10 @@
     if (self.currentContainerDef && ![self.currentContainerDef.childDefinitions objectForKey:name]) {
         const CXIdxObjCPropertyDeclInfo *propertyDeclaration = clang_index_getObjCPropertyDeclInfo(declaration);
         if (propertyDeclaration) {
-            DFPropertyDefinition* propertyDef = [[DFPropertyDefinition alloc] initWithDeclaration:propertyDeclaration andTranslationUnit:self.currentParser.translationUnit];
+            NSArray* tokens = [self getStringTokensFromCursor:propertyDeclaration->declInfo->cursor];
+            NSString* name = [NSString stringWithUTF8String:propertyDeclaration->declInfo->entityInfo->name];
+            
+            DFPropertyDefinition* propertyDef = [[DFPropertyDefinition alloc] initWithName:name andTokens:tokens];
             [self.currentContainerDef.childDefinitions setObject:propertyDef forKey:name];
         }
     }
@@ -202,13 +205,25 @@
                 } else {
                     if (memberName) {
                         __block NSString* passedClassName = nil;
+                        __block NSMutableArray* passedProtocolNames = [NSMutableArray array];
                         
                         clang_visitChildrenWithBlock(cursor, ^enum CXChildVisitResult(CXCursor cursor, CXCursor parent) {
                             if (cursor.kind == CXCursor_DeclRefExpr) {
                                 CXCursor def = clang_getCursorDefinition(cursor);
+                                
+                                __block int index = 0;
                                 clang_visitChildrenWithBlock(def, ^enum CXChildVisitResult(CXCursor cursor, CXCursor parent) {
-                                    passedClassName = [NSString stringWithUTF8String:clang_getCString(clang_getCursorDisplayName(cursor))];
-                                    return CXChildVisit_Break;
+                                    NSString* token = [NSString stringWithUTF8String:clang_getCString(clang_getCursorDisplayName(cursor))];
+
+                                    // First token is className, remaining are protocols
+                                    if (!index) {
+                                        passedClassName = token;
+                                    } else if (token.length) {
+                                        [passedProtocolNames addObject:[NSString stringWithFormat:@"<%@>", token]];
+                                    }
+                                    index ++;
+                                    
+                                    return CXChildVisit_Continue;
                                 });
                             }
                             
@@ -217,21 +232,19 @@
                         
                         DFContainerDefinition* ownerObject = [self.definitions objectForKey:referencedObjectName];
                         
-                        // Need to find out the type of the param
-                        DFContainerDefinition* passedObject = [self.definitions objectForKey:passedClassName];
-                        
                         DFPropertyDefinition* messagedProperty = [[ownerObject childDefinitions] objectForKey:memberName];
-                        if (messagedProperty && passedObject) {
-                            if ([messagedProperty.className isEqualToString:@"NSMutableArray"] || [messagedProperty.className isEqualToString:@"NSMutableDictionary"]) {
+                        if (messagedProperty && passedClassName) {
+                            if ([messagedProperty.typeName isEqualToString:@"NSMutableArray"] || [messagedProperty.typeName isEqualToString:@"NSMutableDictionary"]) {
                                 
-                                // We have discovered that passedObject is passed to a mutable array or dictionary property of ownerObject,
+                                // We have discovered that passedClassName<passedProtocolNames> is passed to a mutable array or dictionary property of ownerObject,
                                 // so we assume that ownerObject owns multiple passedObjects
                                 
                                 // Replace the array/dictionary property with a new collection property
-                                DFCollectionPropertyDefinition* collectionProperty = [[DFCollectionPropertyDefinition alloc] initWithContainerDefintion:passedObject name:memberName isWeak:messagedProperty.isWeak];
+                                DFCollectionPropertyDefinition* collectionProperty = [[DFCollectionPropertyDefinition alloc] initWithTypeName:passedClassName protocolNames:passedProtocolNames name:memberName isWeak:messagedProperty.isWeak];
+
                                 [[ownerObject childDefinitions] setObject:collectionProperty forKey:memberName];
                             }
-                        }
+                        } 
                         return CXChildVisit_Break;
                     }
                 }
@@ -255,6 +268,24 @@
         [self.definitions setObject:def forKey:name];
     }
     return def;
+}
+
+- (NSMutableArray*)getStringTokensFromCursor:(CXCursor)cursor {
+    CXTranslationUnit translationUnit = self.currentParser.translationUnit;
+    CXSourceRange range = clang_getCursorExtent(cursor);
+    CXToken *tokens = 0;
+    unsigned int nTokens = 0;
+    
+    clang_tokenize(translationUnit, range, &tokens, &nTokens);
+    NSMutableArray* stringTokens = [NSMutableArray arrayWithCapacity:nTokens];
+    
+    for (unsigned int i=0; i<nTokens; ++i) {
+        CXString spelling = clang_getTokenSpelling(translationUnit, tokens[i]);
+        [stringTokens addObject:[NSString stringWithUTF8String:clang_getCString(spelling)]];
+        clang_disposeString(spelling);
+    }
+    clang_disposeTokens(translationUnit, tokens, nTokens);
+    return stringTokens;
 }
 
 @end

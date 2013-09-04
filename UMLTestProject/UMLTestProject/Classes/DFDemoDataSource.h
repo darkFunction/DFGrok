@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 Sam Taylor. All rights reserved.
 //
 
-#import "DFDataModel.h"
+#import "DFDataModelContainer.h"
 
-@interface DFDemoDataSource : NSObject <DFDataModelDelegate>
+@interface DFDemoDataSource : NSObject <DFDataModelContainerDelegate>
 @property (nonatomic) NSDictionary* testDict;
 @end

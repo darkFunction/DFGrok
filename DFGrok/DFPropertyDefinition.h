@@ -7,12 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <clang-c/Index.h>
 #import "DFDefinition.h"
 #import "DFPropertyDefinitionInterface.h"
 
 @interface DFPropertyDefinition : DFDefinition <DFPropertyDefinitionInterface>
 
-- (id)initWithDeclaration:(const CXIdxObjCPropertyDeclInfo*)declaration andTranslationUnit:(CXTranslationUnit)translationUnit;
+- (id)initWithName:(NSString*)name andTokens:(NSArray*)tokens;
 
 @end
