@@ -1,3 +1,0 @@
-[submodule "lib/yuml"]
-	path = lib/yuml
-	url = git@github.com:darkFunction/yuml.git
