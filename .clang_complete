@@ -1,0 +1,17 @@
+-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.1.sdk
+-isystem /usr/lib/clang/4.2
+-F/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.1.sdk/System/Library/Frameworks
+-I/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.1.sdk/usr/include
+-D __MACH__
+-D __IPHONE_OS_VERSION_MIN_REQUIRED=40300
+-fblocks
+-fobjc-nonfragile-abi
+-fno-builtin
+-m32
+-Wall
+-Wextra
+-Wno-unknown-pragmas
+-Wno-unused-parameter
+-Wno-sign-compare
+-I./DFGrok
+-I/Users/samtaylor/BTSync/llvm/tools/clang/include
